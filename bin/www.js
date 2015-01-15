@@ -22,16 +22,16 @@ var server = app.listen(config.port, function() {
 
 var io = require('socket.io')(server),
 	redis = require("redis"),
-	socket_redis = require('socket.io-redis'),
-	//client = redis.createClient(config.redis.port,config.redis.url);
-	client = redis.createClient(config.redis.port,config.redis.url,{auth_pass:config.redis.password});
+	socket_redis = require('socket.io-redis');
+	
 
 if (config.dev_mode) {
 	//redis没有密码的情况
+	var client = redis.createClient(config.redis.port,config.redis.url);
 	io.adapter(socket_redis({ host: config.redis.url, port: config.redis.port }));
 } else {
 	//redis有密码的情况
-
+	var client = redis.createClient(config.redis.port,config.redis.url,{auth_pass:config.redis.password});
 	var pub = redis.createClient(config.redis.port, config.redis.url, {auth_pass:config.redis.password});
 	var sub = redis.createClient(config.redis.port, config.redis.url, {detect_buffers: true, auth_pass:config.redis.password} );
 	io.adapter( socket_redis({pubClient: pub, subClient: sub}) );
@@ -64,6 +64,7 @@ chatRoom.on('connection',function(socket){
 			client.PERSIST(memberIdInfo);
 			client.HGET(roomIdInfo,'name',function(err,roomName){
 				client.SADD("roomNameIndex",roomName);
+				socket.roomName = roomName;
 			});
 
 			socket.roomId = roomId;

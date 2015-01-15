@@ -17,8 +17,9 @@
 //线下数据
 var config = {
   dev_mode: true,
-  redis: {url:"192.168.1.136",port:"6379",password:"missevan_chat_password_tom" },
-  port: 3000
+  redis: {url:"192.168.1.138",port:"6379",password:"missevan_chat_password_tom" },
+  port: 3000,
+  time: 180
 };
 
 module.exports = config;

@@ -20,6 +20,7 @@ User.LeaveRoom =
 		var roomIdInfo = "room"+socket.roomId+"Info";
 		var roomIdPerson = "room"+socket.roomId+"Person";
 		var memberIdInfo = "member"+socket.userId+"Info";
+		
 		client.HINCRBY(roomIdPerson,memberIdInfo,-1,function(err,num){
 			if(num<=0){
 				socket.leave(socket.broomId);
@@ -27,6 +28,9 @@ User.LeaveRoom =
 				client.HDEL(roomIdPerson,memberIdInfo);
 				client.EXISTS(roomIdPerson,function(err,exist){
 					if(!exist){
+						client.SREM('roomNameIndex',socket.roomName);
+						client.SETEX(socket.roomName,30,true);
+						client.ZREM('roomIdIndex',socket.roomId);
 						client.EXPIRE(roomIdInfo,30);
 					}
 				});
@@ -41,7 +45,7 @@ User.LeaveRoom =
 					});
 					multi.exec(function(err,exists){
 						if(exists.length === 0){
-							client.DEL(memberIdInfo);
+							client.EXPIRE(memberIdInfo,30);
 						}
 					});
 				});
