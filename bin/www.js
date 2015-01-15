@@ -2,9 +2,10 @@ var express = require('express');
 
 //添加model
 var config = require('./../conf.js'),
-	Message = require('../model/message.js'),
-	User = require('../model/user.js'),
-	Bridge = require('../model/bridge.js');
+  Model = require('../model'),
+	Message = Model.Message,
+	User = Model.User,
+	Bridge = Model.Bridge;
 
 var app = express(),
 	bridge = new Bridge();
@@ -24,13 +25,14 @@ var io = require('socket.io')(server),
 	socket_redis = require('socket.io-redis');
 
 
+var client;
 if (config.dev_mode) {
 	//redis没有密码的情况
-	var client = redis.createClient(config.redis.port,config.redis.url);
+	client = redis.createClient(config.redis.port,config.redis.url);
 	io.adapter(socket_redis({ host: config.redis.url, port: config.redis.port }));
 } else {
 	//redis有密码的情况
-	var client = redis.createClient(config.redis.port,config.redis.url,{auth_pass:config.redis.password});
+	client = redis.createClient(config.redis.port,config.redis.url,{auth_pass:config.redis.password});
 	var pub = redis.createClient(config.redis.port, config.redis.url, {auth_pass:config.redis.password});
 	var sub = redis.createClient(config.redis.port, config.redis.url, {detect_buffers: true, auth_pass:config.redis.password} );
 	io.adapter( socket_redis({pubClient: pub, subClient: sub}) );
@@ -130,7 +132,7 @@ chatRoom.on('connection',function(socket){
 	});
 
 	//发送信息
-	socket.on("send message",function(data,callback){
+	socket.on("send message",function (data, callback) {
 		try{
 			if((typeof(callback)!=="function"))
 				throw new Error("非法参数");
@@ -138,7 +140,7 @@ chatRoom.on('connection',function(socket){
 				return;
 
 			var message = new Message(data);
-			message.sendMessage(socket,callback,client);
+			message.sendMessage(socket, client, callback);
 		}catch(e){
 			socket.emit("errorinfo",e.message);
 		}
