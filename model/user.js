@@ -10,6 +10,7 @@
 */
 
 var User = {};
+var config = require('../bin/conf.js');
 
 //离开房间
 User.LeaveRoom =
@@ -29,9 +30,9 @@ User.LeaveRoom =
 				client.EXISTS(roomIdPerson,function(err,exist){
 					if(!exist){
 						client.SREM('roomNameIndex',socket.roomName);
-						client.SETEX(socket.roomName,30,true);
+						client.SETEX(socket.roomName,config.redis.time,true);
 						client.ZREM('roomIdIndex',socket.roomId);
-						client.EXPIRE(roomIdInfo,30);
+						client.EXPIRE(roomIdInfo,config.redis.time);
 					}
 				});
 				client.HGETALL(memberIdInfo,function(err,userInfo){
@@ -45,7 +46,7 @@ User.LeaveRoom =
 					});
 					multi.exec(function(err,exists){
 						if(exists.length === 0){
-							client.EXPIRE(memberIdInfo,30);
+							client.EXPIRE(memberIdInfo,config.redis.time);
 						}
 					});
 				});

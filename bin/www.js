@@ -4,7 +4,6 @@ var express = require('express');
 var config = require('./conf.js'),
 	Message = require('../model/message.js'),
 	User = require('../model/user.js'),
-	Room = require('../model/room.js'),
 	Bridge = require('../model/bridge.js');
 
 var app = express(),
