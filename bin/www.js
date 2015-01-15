@@ -25,22 +25,28 @@ var io = require('socket.io')(server),
 	socket_redis = require('socket.io-redis'),
 	//client = redis.createClient(config.redis.port,config.redis.url);
 	client = redis.createClient(config.redis.port,config.redis.url,{auth_pass:config.redis.password});
-	
+
+if (config.dev_mode) {
 	//redis没有密码的情况
-	//io.adapter(socket_redis({ host: config.redis.url, port: config.redis.port }));
-	//redis有密码的情况	
+	io.adapter(socket_redis({ host: config.redis.url, port: config.redis.port }));
+} else {
+	//redis有密码的情况
+
 	var pub = redis.createClient(config.redis.port, config.redis.url, {auth_pass:config.redis.password});
 	var sub = redis.createClient(config.redis.port, config.redis.url, {detect_buffers: true, auth_pass:config.redis.password} );
 	io.adapter( socket_redis({pubClient: pub, subClient: sub}) );
+}
 
 //client连接错误
 client.on("error", function (err) {
-    //console.log("Error " + err);
+	if (config.dev_mode) {
+    console.error("Error " + err);
+	}
 });
 
 var chatRoom = io.of('/chatRoom');
 chatRoom.on('connection',function(socket){
-	
+
 	//进入房间
 	socket.on("enter room",function(info,callback){
 		try{
@@ -49,25 +55,25 @@ chatRoom.on('connection',function(socket){
 			//创建房间
 			var roomId = info.roomId;
 			var memberId = info.userId;
-			
+
 			var roomIdInfo = 'room' + roomId + 'Info';
 			var memberIdInfo = 'member' + memberId + 'Info';
 			var roomIdPerson = 'room'+socket.roomId+'Person';
-			
+
 			client.PERSIST(roomIdInfo);
 			client.PERSIST(memberIdInfo);
 			client.HGET(roomIdInfo,'name',function(err,roomName){
 				client.SADD("roomNameIndex",roomName);
 			});
-			
+
 			socket.roomId = roomId;
 			socket.broomId = "room"+roomId;
 			socket.join(socket.broomId);
-			
+
 			socket.userId = memberId;
 			socket.buserId = "room"+socket.roomId+"user"+socket.userId;
 			socket.join(socket.buserId);
-			
+
 			client.HINCRBY(roomIdPerson,memberIdInfo,1,function(err,num){
 				if(num==1){
 					client.HGETALL(memberIdInfo,function(err,member){
@@ -77,7 +83,7 @@ chatRoom.on('connection',function(socket){
 					client.ZINCRBY('roomIdIndex',1,roomId);
 				}
 			});
-			
+
 			//获取所有在线人员信息
 			client.HKEYS(roomIdPerson,function(err,keys){
 				multi = client.multi();
@@ -88,7 +94,7 @@ chatRoom.on('connection',function(socket){
 					callback({state:true,member:userInfos});
 				});
 			});
-			
+
 			//获取在线的message
 			[1,3,4].forEach(function(num,index){
 				var roomIdMessage = "room"+socket.roomId+"MessageType"+num;
@@ -104,7 +110,7 @@ chatRoom.on('connection',function(socket){
 			socket.emit("errorinfo",e.message);
 		}
 	});
-	
+
 	//断开连接
 	socket.on("leaving",function(){
 		try{
@@ -113,7 +119,7 @@ chatRoom.on('connection',function(socket){
 			socket.emit("errorinfo",e.message);
 		}
 	});
-	
+
 	//离开房间
 	socket.on("disconnect",function(){
 		try{
@@ -122,7 +128,7 @@ chatRoom.on('connection',function(socket){
 			socket.emit("errorinfo",e.message);
 		}
 	});
-	
+
 	//发送信息
 	socket.on("send message",function(data,callback){
 		try{
@@ -131,14 +137,14 @@ chatRoom.on('connection',function(socket){
 			if(socket.userId==undefined){
 				return;
 			}
-			
+
 			var message = new Message(data);
-			message.sendMessage(socket,callback,client);	
+			message.sendMessage(socket,callback,client);
 		}catch(e){
 			socket.emit("errorinfo",e.message);
 		}
 	});
-	
+
 });
 
 var roomInfo = io.of('/roomInfo');
@@ -156,5 +162,5 @@ function isEmptyObject(obj) {
 }
 
 process.on('uncaughtException',function(err){
-	console.log(err);
+	console.error(err);
 });
