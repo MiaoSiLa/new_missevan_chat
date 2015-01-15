@@ -30,7 +30,7 @@ User.LeaveRoom =
 				client.EXISTS(roomIdPerson,function(err,exist){
 					if(!exist){
 						client.SREM('roomNameIndex',socket.roomName);
-						client.SETEX(socket.roomName,config.redis.time,true);
+						client.SETEX('rN' + socket.roomName,config.redis.time,true);
 						client.ZREM('roomIdIndex',socket.roomId);
 						client.EXPIRE(roomIdInfo,config.redis.time);
 					}

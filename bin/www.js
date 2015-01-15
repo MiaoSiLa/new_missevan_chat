@@ -45,7 +45,6 @@ client.on("error", function (err) {
 
 var chatRoom = io.of('/chatRoom');
 chatRoom.on('connection',function(socket){
-
 	//进入房间
 	socket.on("enter room",function(info,callback){
 		try{
@@ -53,11 +52,12 @@ chatRoom.on('connection',function(socket){
 				throw new Error("非法参数");
 			//创建房间
 			var roomId = info.roomId;
+			console.log(info.roomId);
 			var memberId = info.userId;
 
 			var roomIdInfo = 'room' + roomId + 'Info';
 			var memberIdInfo = 'member' + memberId + 'Info';
-			var roomIdPerson = 'room'+socket.roomId+'Person';
+			var roomIdPerson = 'room' + roomId + 'Person';
 
 			client.PERSIST(roomIdInfo);
 			client.PERSIST(memberIdInfo);
