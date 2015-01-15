@@ -1,7 +1,7 @@
 var express = require('express');
 
 //添加model
-var config = require('./conf.js'),
+var config = require('./../conf.js'),
 	Message = require('../model/message.js'),
 	User = require('../model/user.js'),
 	Bridge = require('../model/bridge.js');
@@ -22,7 +22,7 @@ var server = app.listen(config.port, function() {
 var io = require('socket.io')(server),
 	redis = require("redis"),
 	socket_redis = require('socket.io-redis');
-	
+
 
 if (config.dev_mode) {
 	//redis没有密码的情况
@@ -136,7 +136,7 @@ chatRoom.on('connection',function(socket){
 				throw new Error("非法参数");
 			if(!socket.userId)
 				return;
-			
+
 			var message = new Message(data);
 			message.sendMessage(socket,callback,client);
 		}catch(e){

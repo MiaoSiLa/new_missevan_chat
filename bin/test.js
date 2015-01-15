@@ -1,4 +1,4 @@
-var config = require('./conf');
+var config = require('./../conf');
 var Server = require('socket.io');
 var io = new Server(); //var io = require('socket.io')();
 //io.origins("http://localhost");

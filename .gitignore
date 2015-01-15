@@ -75,5 +75,5 @@ $RECYCLE.BIN/
 *.msp
 
 # config
-bin/conf.js
+conf.js
 

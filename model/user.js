@@ -1,16 +1,16 @@
-/**   
+/**
 * @Title: message.js
 * @Package model
-* 
-* @author 操杰朋 
+*
+* @author 操杰朋
 * @create 2014/12/19
-* @version 0.0.1 
-* 
+* @version 0.0.1
+*
 * @Description:
 */
 
 var User = {};
-var config = require('../bin/conf.js');
+var config = require('./../conf.js');
 
 //离开房间
 User.LeaveRoom =
@@ -21,7 +21,7 @@ User.LeaveRoom =
 		var roomIdInfo = "room"+socket.roomId+"Info";
 		var roomIdPerson = "room"+socket.roomId+"Person";
 		var memberIdInfo = "member"+socket.userId+"Info";
-		
+
 		client.HINCRBY(roomIdPerson,memberIdInfo,-1,function(err,num){
 			if(num<=0){
 				socket.leave(socket.broomId);
