@@ -8,7 +8,7 @@ var config = require('./conf.js'),
 	Bridge = require('../model/bridge.js');
 
 var app = express(),
- 	bridge = new Bridge();
+	bridge = new Bridge();
 
 var server = app.listen(config.port, function() {
   console.log('Express server listening on port ' + server.address().port);
@@ -72,15 +72,15 @@ chatRoom.on('connection',function(socket){
 				if(num==1){
 					client.HGETALL(memberIdInfo,function(err,member){
 						socket.broadcast.to(socket.broomId).emit("add new member",member);
+						bridge.emit('enter room',{room:socket.roomId,number:"+1",personInfo:member});
 					});
-					bridge.emit('enter room',{room:socket.roomId,number:"+1",personInfo:_this});
 					client.ZINCRBY('roomIdIndex',1,roomId);
 				}
 			});
 			
 			//获取所有在线人员信息
 			client.HKEYS(roomIdPerson,function(err,keys){
-				multi = client.multi();
+				var multi = client.multi();
 				keys.forEach(function(key,index){
 					multi.HGETALL(key);
 				});
@@ -126,14 +126,12 @@ chatRoom.on('connection',function(socket){
 	//发送信息
 	socket.on("send message",function(data,callback){
 		try{
-			if(!(typeof(callback)==="function"))
+			if((typeof(callback)!=="function"))
 				throw new Error("非法参数");
-			if(socket.userId==undefined){
+			if(!socket.userId)
 				return;
-			}
-			
 			var message = new Message(data);
-			message.sendMessage(socket,callback,client);	
+			message.sendMessage(socket,callback,client);
 		}catch(e){
 			socket.emit("errorinfo",e.message);
 		}
