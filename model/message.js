@@ -1,44 +1,62 @@
-/**   
+/**
 * @Title: message.js
 * @Package model
-* 
-* @author 操杰朋 
+*
+* @author 操杰朋, tengattack
 * @create 2014/12/19
-* @version 0.0.1 
-* 
+* @version 0.0.1
+*
 * @Description:
 */
+"use strict";
+
+var util = require('util'),
+  _ = require('underscore'),
+  validator = require('validator');
+var ModelBase = require('./../lib/base');
+var ObjectID = require('mongodb').ObjectID;
 
 //信息处理
-var Message = function (data){
+var Message = function (data) {
+	ModelBase.call(this);
+
+  if (!data) {
+    return;
+  }
+
 	if(typeof data.type !== "number")
 		throw new Error("非法参数");
-	var flag = [1,2,3,4,5,6].some(function(num,index){
-		if(num == data.type){
-			return true;
-		}
-	});
+
 	this.msg = data.msg.trim();
-	flag?this.type = data.type:this.type = 1;
+
+	var flag = [1,2,3,4,5,6].indexOf(data.type);
+	if (flag !== -1) {
+		this.type = data.type;
+	} else {
+		this.type = 1;
+	}
+
 	this.userId = data.userId || "";
 }
 
+util.inherits(Message, ModelBase);
+
 //发送信息
-Message.prototype.sendMessage = 
+Message.prototype.sendMessage =
 function(socket,callback,client){
 	if(!(this.msg && this.type)){
 		callback({state:false,info:"发送信息不可为空"});
 		return;
 	}
-	
+
 	(this.type===2 && this.userId !== "") ?sendPrivate(this,client,socket)
 			:sendMessages(this,client,socket);
-	
+
 	//发送信息
 	function sendMessages(message,client,socket){
 		if(message.type==2)
 			message.type = 1;
-		var memberIdInfo = "member"+socket.userId+"Info";	
+		var memberIdInfo = "member"+socket.userId+"Info";
 		client.HGETALL(memberIdInfo,function(err,userInfo){
 			var newMessage = {msg:message.msg,type:message.type,sender:userInfo};
 			var newMessageString = JSON.stringify(newMessage);
@@ -55,7 +73,7 @@ function(socket,callback,client){
 		});
 		callback({state:true,info:"信息发送成功",msg:message.msg,type:message.type});
 	}
-	
+
 	//发送私信
 	function sendPrivate(message,client,socket){
 		var roomIdPerson = "room"+socket.roomId+"Person";
@@ -72,8 +90,10 @@ function(socket,callback,client){
 				callback({state:false,info:"用户不存在"});
 		});
 	}
-	
+
 	//发送音乐
 };
 
 module.exports = Message;
+
+ModelBase.register('message', Message);

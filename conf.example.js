@@ -26,8 +26,12 @@ var config = {
   db: {
     host: '192.168.1.138',
     port: 27017,
+    name: 'missevan',
     username: '',
     password: ''
+  },
+  cache: {
+    enable: false
   },
   port: 3000
 };
