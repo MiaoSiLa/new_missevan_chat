@@ -145,17 +145,50 @@ function *connection() {
     }
   });
 
-  //发送信息
-  socket.yon("send message",function *(data, callback) {
-    if (typeof(callback) !== "function")
+  socket.yon("get history",function *(data, callback) {
+    if (typeof(callback) !== 'function' || typeof(data) !== 'object')
       throw new Error("非法参数");
 
     var socket = this.socket;
     if (!socket.userId)
       return;
 
-    var message = new Message(data);
-    var r = yield message.sendMessage(socket);
+    if (data.userId && typeof data.userId !== "number")
+      throw new Error("非法参数");
+
+    //set data.userId to get private message
+    var message = new Message(data, socket);
+    var r = message.getHistory();
+    callback();
+  });
+
+  //发送信息
+  socket.yon("send message",function *(data, callback) {
+    if (typeof(callback) !== 'function' || typeof(data) !== 'object')
+      throw new Error("非法参数");
+
+    var socket = this.socket;
+    if (!socket.userId)
+      return;
+
+    if (typeof data.type !== "number"
+      || (data.userId && typeof data.userId !== "number"))
+      throw new Error("非法参数");
+
+    data.msg = data.msg.trim();
+
+    var flag = [ 1, 2, 3, 4, 5, 6 ].indexOf(data.type);
+    if (flag !== -1) {
+      data.type = data.type;
+      if (data.type == 2) {
+        data.type = 1;
+      }
+    } else {
+      data.type = 1;
+    }
+
+    var message = new Message(data, socket);
+    var r = yield message.sendMessage();
     callback(r);
   });
 }

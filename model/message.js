@@ -15,34 +15,35 @@ var ModelBase = require('./../lib/base');
 var ObjectID = require('mongodb').ObjectID;
 
 // 信息处理
-var Message = function(data) {
+var Message = function(data, socket) {
 	ModelBase.call(this);
 
+	this.socket = socket;
 	if (!data) {
 		return;
 	}
 
-	if (typeof data.type !== "number")
-		throw new Error("非法参数");
+	this.type = data.type;
+	this.msg = data.msg;
 
-	this.msg = data.msg.trim();
-
-	var flag = [ 1, 2, 3, 4, 5, 6 ].indexOf(data.type);
-	if (flag !== -1) {
-		this.type = data.type;
-	} else {
-		this.type = 1;
-	}
-
-	this.userId = data.userId || "";
+	this.userId = data.userId || 0;
 }
 
 util.inherits(Message, ModelBase);
 
+Message.prototype.getHistory = function *() {
+	var q = {};
+	if (this.userId) {
+		q.userId = this.userId;
+	} else {
+		q.roomId = this.socket.roomId;
+	}
+	return yield this.getAll(q);
+};
+
 // 发送信息
-Message.prototype.sendMessages = function *(socket) {
-	if (this.type == 2)
-		this.type = 1;
+Message.prototype.sendRoomMessage = function *() {
+	var socket = this.socket;
 	var memberIdInfo = "member" + socket.userId + "Info";
 	var userInfo = yield this.yclient.HGETALL(memberIdInfo);
 	var newMessage = {
@@ -78,7 +79,8 @@ Message.prototype.sendMessages = function *(socket) {
 };
 
 // 发送私信
-Message.prototype.sendPrivate = function *(socket) {
+Message.prototype.sendPrivate = function *() {
+	var socket = this.socket;
 	var roomIdPerson = "room" + socket.roomId + "Person";
 	var ToMember = "member" + message.userId + "Info";
 	var memberIdInfo = "member" + socket.userId + "Info";
@@ -109,7 +111,7 @@ Message.prototype.sendPrivate = function *(socket) {
 // 发送音乐
 
 // 发送信息
-Message.prototype.sendMessage = function *(socket) {
+Message.prototype.sendMessage = function *() {
 	if (!(this.msg && this.type)) {
 		return {
 			state : false,
@@ -118,9 +120,9 @@ Message.prototype.sendMessage = function *(socket) {
 	}
 
 	if (this.type === 2 && this.userId !== "") {
-		return yield this.sendPrivate(socket);
+		return yield this.sendPrivate();
 	} else {
-		return yield this.sendMessages(socket);
+		return yield this.sendRoomMessage();
 	}
 };
 
