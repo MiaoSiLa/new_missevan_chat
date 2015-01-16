@@ -48,10 +48,20 @@ Message.prototype.sendMessages = function *(socket) {
 	var newMessage = {
 		msg : this.msg,
 		type : this.type,
-		sender : userInfo
+		sender : userInfo,
+		time: new Date().valueOf()
 	};
 	var newMessageString = JSON.stringify(newMessage);
 	socket.broadcast.to(socket.broomId).emit("new message", newMessage);
+
+
+	var len = yield yclient.LLEN(roomIdMessage);
+	if (len <= 50) {
+		yield yclient.RPUSH(roomIdMessage, newMessageString);
+	} else {
+		yield yclient.RPUSH(roomIdMessage, newMessageString);
+		yield yclient.LPOP(roomIdMessage);
+  }
 
 	newMessage.userId = socket.userId;
 	newMessage.roomId = socket.roomId;
