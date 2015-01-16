@@ -145,18 +145,15 @@ function *connection() {
   });
 
   //发送信息
-  socket.on("send message",function (data, callback) {
-    try{
-      if((typeof(callback)!=="function"))
-        throw new Error("非法参数");
-      if(!socket.userId)
-        return;
+  socket.yon("send message",function *(data, callback) {
+    if (typeof(callback) !== "function")
+      throw new Error("非法参数");
+    if (!socket.userId)
+      return;
 
-      var message = new Message(data);
-      message.sendMessage(socket, client, callback);
-    }catch(e){
-      socket.emit("errorinfo",e.message);
-    }
+    var message = new Message(data);
+    var r = yield message.sendMessage(this.socket);
+    callback(r);
   });
 }
 
