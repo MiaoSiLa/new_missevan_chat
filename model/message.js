@@ -1,11 +1,11 @@
 /**
  * @Title: message.js
  * @Package model
- * 
+ *
  * @author 操杰朋, tengattack
  * @create 2014/12/19
  * @version 0.0.1
- * 
+ *
  * @Description:
  */
 "use strict";

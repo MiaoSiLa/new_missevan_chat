@@ -158,8 +158,8 @@ function *connection() {
 
     //set data.userId to get private message
     var message = new Message(data, socket);
-    var r = message.getHistory();
-    callback();
+    var r = yield message.getHistory();
+    callback(r);
   });
 
   //发送信息
