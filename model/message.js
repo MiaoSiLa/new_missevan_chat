@@ -1,35 +1,33 @@
 /**
-* @Title: message.js
-* @Package model
-*
-* @author 操杰朋, tengattack
-* @create 2014/12/19
-* @version 0.0.1
-*
-* @Description:
-*/
+ * @Title: message.js
+ * @Package model
+ * 
+ * @author 操杰朋, tengattack
+ * @create 2014/12/19
+ * @version 0.0.1
+ * 
+ * @Description:
+ */
 "use strict";
 
-var util = require('util'),
-  _ = require('underscore'),
-  validator = require('validator');
+var util = require('util'), _ = require('underscore'), validator = require('validator');
 var ModelBase = require('./../lib/base');
 var ObjectID = require('mongodb').ObjectID;
 
-//信息处理
-var Message = function (data) {
+// 信息处理
+var Message = function(data) {
 	ModelBase.call(this);
 
-  if (!data) {
-    return;
-  }
+	if (!data) {
+		return;
+	}
 
-	if(typeof data.type !== "number")
+	if (typeof data.type !== "number")
 		throw new Error("非法参数");
 
 	this.msg = data.msg.trim();
 
-	var flag = [1,2,3,4,5,6].indexOf(data.type);
+	var flag = [ 1, 2, 3, 4, 5, 6 ].indexOf(data.type);
 	if (flag !== -1) {
 		this.type = data.type;
 	} else {
@@ -41,59 +39,83 @@ var Message = function (data) {
 
 util.inherits(Message, ModelBase);
 
-//发送信息
-Message.prototype.sendMessages = function (client, socket, callback) {
-  if(this.type==2)
-    this.type = 1;
-  var memberIdInfo = "member"+socket.userId+"Info";
-  client.HGETALL(memberIdInfo,function(err,userInfo){
-    var newMessage = {msg:this.msg,type:this.type,sender:userInfo};
-    var newMessageString = JSON.stringify(newMessage);
-    socket.broadcast.to(socket.broomId).emit("new message",newMessage);
-    var roomIdMessage = "room"+socket.roomId+"MessageType"+this.type;
-    client.LLEN(roomIdMessage,function(err,len){
-      if(len<=50){
-        client.RPUSH(roomIdMessage,newMessageString);
-      }else{
-        client.RPUSH(roomIdMessage,newMessageString);
-        client.LPOP(roomIdMessage);
-      }
-    });
-  });
-  callback({state:true,info:"信息发送成功",msg:this.msg,type:this.type});
+// 发送信息
+Message.prototype.sendMessages = function(client, socket, callback) {
+	if (this.type == 2)
+		this.type = 1;
+	var memberIdInfo = "member" + socket.userId + "Info";
+	client.HGETALL(memberIdInfo, function(err, userInfo) {
+		var newMessage = {
+			msg : this.msg,
+			type : this.type,
+			sender : userInfo
+		};
+		var newMessageString = JSON.stringify(newMessage);
+		socket.broadcast.to(socket.broomId).emit("new message", newMessage);
+		var roomIdMessage = "room" + socket.roomId + "MessageType" + this.type;
+		client.LLEN(roomIdMessage, function(err, len) {
+			if (len <= 50) {
+				client.RPUSH(roomIdMessage, newMessageString);
+			} else {
+				client.RPUSH(roomIdMessage, newMessageString);
+				client.LPOP(roomIdMessage);
+			}
+		});
+	});
+	callback({
+		state : true,
+		info : "信息发送成功",
+		msg : this.msg,
+		type : this.type
+	});
 };
 
-//发送私信
-Message.prototype.sendPrivate = function (client, socket, callback) {
-  var roomIdPerson = "room"+socket.roomId+"Person";
-  var ToMember = "member"+message.userId+"Info";
-  var memberIdInfo = "member"+socket.userId+"Info";
-  client.HEXISTS(roomIdPerson,ToMember,function(err,exist){
-    var bToMember = "room"+socket.roomId+"user"+this.userId;
-    if(exist){
-      client.HGETALL(memberIdInfo,function(err,userInfo){
-        socket.broadcast.to(bToMember).emit("new message",{msg:this.msg,type:this.type,sender:userInfo});
-      });
-      callback({state:true,info:"私信发送成功",msg:this.msg,type:this.type});
-    }else
-      callback({state:false,info:"用户不存在"});
-    });
+// 发送私信
+Message.prototype.sendPrivate = function(client, socket, callback) {
+	var roomIdPerson = "room" + socket.roomId + "Person";
+	var ToMember = "member" + message.userId + "Info";
+	var memberIdInfo = "member" + socket.userId + "Info";
+	client.HEXISTS(roomIdPerson, ToMember, function(err, exist) {
+		var bToMember = "room" + socket.roomId + "user" + this.userId;
+		if (exist) {
+			client.HGETALL(memberIdInfo, function(err, userInfo) {
+				socket.broadcast.to(bToMember).emit("new message", {
+					msg : this.msg,
+					type : this.type,
+					sender : userInfo
+				});
+			});
+			callback({
+				state : true,
+				info : "私信发送成功",
+				msg : this.msg,
+				type : this.type
+			});
+		} else
+			callback({
+				state : false,
+				info : "用户不存在"
+			});
+	});
 };
 
-  //发送音乐
+// 发送音乐
 
-//发送信息
-Message.prototype.sendMessage = function (socket, client, callback) {
-	if(!(this.msg && this.type)){
-		callback({state:false,info:"发送信息不可为空"});
+// 发送信息
+Message.prototype.sendMessage = function(socket, client, callback) {
+	if (!(this.msg && this.type)) {
+		callback({
+			state : false,
+			info : "发送信息不可为空"
+		});
 		return;
 	}
 
-	if (this.type===2 && this.userId !== "") {
-    this.sendPrivate(client, socket, callback);
-  } else {
-    this.sendMessages(client, socket, callback);
-  }
+	if (this.type === 2 && this.userId !== "") {
+		this.sendPrivate(client, socket, callback);
+	} else {
+		this.sendMessages(client, socket, callback);
+	}
 };
 
 module.exports = Message;
