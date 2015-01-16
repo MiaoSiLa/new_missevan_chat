@@ -22,8 +22,11 @@
 		socket.emit('enter room',a,function(data){
 			console.log(data);
 			socket.emit('send message',b,function(data){
-			console.log(data);
-		});
+				console.log(data);
+			});
+			socket.emit('get history',{},function(data){
+				console.log(data);
+			});
 		});
 		
 		
@@ -31,9 +34,7 @@
 			console.log(data);
 		});
 		
-		socket.emit('get history',{},function(data){
-			console.log(data);
-		});
+		
 	</script>
 </body>
 </html>
