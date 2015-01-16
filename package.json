@@ -6,6 +6,7 @@
     "start": "node --harmony ./bin/www"
   },
   "dependencies": {
+    "co": "^4.1.0",
     "express": "~4.9.0",
     "mongodb": "^1.4.28",
     "redis": "0.12.1",
