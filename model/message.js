@@ -1,11 +1,11 @@
 /**
  * @Title: message.js
  * @Package model
- * 
+ *
  * @author 操杰朋, tengattack
  * @create 2014/12/19
  * @version 0.0.1
- * 
+ *
  * @Description:
  */
 "use strict";
@@ -40,81 +40,76 @@ var Message = function(data) {
 util.inherits(Message, ModelBase);
 
 // 发送信息
-Message.prototype.sendMessages = function(client, socket, callback) {
+Message.prototype.sendMessages = function *(socket) {
 	if (this.type == 2)
 		this.type = 1;
 	var memberIdInfo = "member" + socket.userId + "Info";
-	client.HGETALL(memberIdInfo, function(err, userInfo) {
-		var newMessage = {
-			msg : this.msg,
-			type : this.type,
-			sender : userInfo
-		};
-		var newMessageString = JSON.stringify(newMessage);
-		socket.broadcast.to(socket.broomId).emit("new message", newMessage);
-		var roomIdMessage = "room" + socket.roomId + "MessageType" + this.type;
-		client.LLEN(roomIdMessage, function(err, len) {
-			if (len <= 50) {
-				client.RPUSH(roomIdMessage, newMessageString);
-			} else {
-				client.RPUSH(roomIdMessage, newMessageString);
-				client.LPOP(roomIdMessage);
-			}
-		});
-	});
-	callback({
+	var userInfo = yield this.yclient.HGETALL(memberIdInfo);
+	var newMessage = {
+		msg : this.msg,
+		type : this.type,
+		sender : userInfo
+	};
+	var newMessageString = JSON.stringify(newMessage);
+	socket.broadcast.to(socket.broomId).emit("new message", newMessage);
+
+	newMessage.userId = socket.userId;
+	newMessage.roomId = socket.roomId;
+
+	yield this.collection.save(newMessage);
+
+	return {
 		state : true,
 		info : "信息发送成功",
 		msg : this.msg,
 		type : this.type
-	});
+	};
 };
 
 // 发送私信
-Message.prototype.sendPrivate = function(client, socket, callback) {
+Message.prototype.sendPrivate = function *(socket) {
 	var roomIdPerson = "room" + socket.roomId + "Person";
 	var ToMember = "member" + message.userId + "Info";
 	var memberIdInfo = "member" + socket.userId + "Info";
-	client.HEXISTS(roomIdPerson, ToMember, function(err, exist) {
-		var bToMember = "room" + socket.roomId + "user" + this.userId;
-		if (exist) {
-			client.HGETALL(memberIdInfo, function(err, userInfo) {
-				socket.broadcast.to(bToMember).emit("new message", {
-					msg : this.msg,
-					type : this.type,
-					sender : userInfo
-				});
-			});
-			callback({
-				state : true,
-				info : "私信发送成功",
-				msg : this.msg,
-				type : this.type
-			});
-		} else
-			callback({
-				state : false,
-				info : "用户不存在"
-			});
-	});
+
+	var exist = yield this.yclient.HEXISTS(roomIdPerson, ToMember);
+	var bToMember = "room" + socket.roomId + "user" + this.userId;
+	if (exist) {
+		var userInfo = yield this.yclient.HGETALL(memberIdInfo);
+		socket.broadcast.to(bToMember).emit("new message", {
+			msg : this.msg,
+			type : this.type,
+			sender : userInfo
+		});
+		return {
+			state : true,
+			info : "私信发送成功",
+			msg : this.msg,
+			type : this.type
+		};
+	} else {
+		return {
+			state : false,
+			info : "用户不存在"
+		};
+	}
 };
 
 // 发送音乐
 
 // 发送信息
-Message.prototype.sendMessage = function(socket, client, callback) {
+Message.prototype.sendMessage = function *(socket) {
 	if (!(this.msg && this.type)) {
-		callback({
+		return {
 			state : false,
 			info : "发送信息不可为空"
-		});
-		return;
+		};
 	}
 
 	if (this.type === 2 && this.userId !== "") {
-		this.sendPrivate(client, socket, callback);
+		return yield this.sendPrivate(socket);
 	} else {
-		this.sendMessages(client, socket, callback);
+		return yield this.sendMessages(socket);
 	}
 };
 

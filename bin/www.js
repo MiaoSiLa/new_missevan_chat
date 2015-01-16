@@ -2,6 +2,7 @@ var express = require('express');
 
 //添加model
 var config = require('./../conf.js'),
+  ModelBase = require('./../lib/base'),
   Model = require('../model'),
 	Message = Model.Message,
 	User = Model.User,
@@ -27,7 +28,6 @@ var io = require('socket.io')(server),
 	redis = require("redis"),
 	socket_redis = require('socket.io-redis');
 
-
 var client;
 if (config.dev_mode) {
 	//redis没有密码的情况
@@ -52,6 +52,7 @@ var roomInfo = io.of('/roomInfo');
 var chatRoom = io.of('/chatRoom');
 
 var yclient = new generator(client);
+ModelBase.addParam('yclient', yclient);
 
 function *connection() {
   var socket = this.socket;
@@ -62,7 +63,7 @@ function *connection() {
       throw new Error("非法参数");
     }
 
-    var socket = this;
+    var socket = this.socket;
     //创建房间
     var roomId = info.roomId;
     var memberId = info.userId;
