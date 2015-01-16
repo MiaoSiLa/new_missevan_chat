@@ -64,6 +64,7 @@ function *connection() {
     }
 
     var socket = this.socket;
+
     //创建房间
     var roomId = info.roomId;
     var memberId = info.userId;
@@ -115,7 +116,7 @@ function *connection() {
     //获取在线的message
     var msgTypes = [1,3,4];
     for (var i = 0; i < msgTypes.length; i++) {
-      var num = i;
+      var num = msgTypes[i];
       var roomIdMessage = 'room' + socket.roomId + 'MessageType' + num;
       var data = yield yclient.LRANGE(roomIdMessage, 0, -1);
       var messages = [];
@@ -148,11 +149,13 @@ function *connection() {
   socket.yon("send message",function *(data, callback) {
     if (typeof(callback) !== "function")
       throw new Error("非法参数");
+
+    var socket = this.socket;
     if (!socket.userId)
       return;
 
     var message = new Message(data);
-    var r = yield message.sendMessage(this.socket);
+    var r = yield message.sendMessage(socket);
     callback(r);
   });
 }

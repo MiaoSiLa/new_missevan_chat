@@ -51,16 +51,17 @@ Message.prototype.sendMessages = function *(socket) {
 		sender : userInfo,
 		time: new Date().valueOf()
 	};
+
 	var newMessageString = JSON.stringify(newMessage);
 	socket.broadcast.to(socket.broomId).emit("new message", newMessage);
 
-
-	var len = yield yclient.LLEN(roomIdMessage);
+	var roomIdMessage = "room" + socket.roomId + "MessageType" + this.type;
+	var len = yield this.yclient.LLEN(roomIdMessage);
 	if (len <= 50) {
-		yield yclient.RPUSH(roomIdMessage, newMessageString);
+		yield this.yclient.RPUSH(roomIdMessage, newMessageString);
 	} else {
-		yield yclient.RPUSH(roomIdMessage, newMessageString);
-		yield yclient.LPOP(roomIdMessage);
+		yield this.yclient.RPUSH(roomIdMessage, newMessageString);
+		yield this.yclient.LPOP(roomIdMessage);
   }
 
 	newMessage.userId = socket.userId;

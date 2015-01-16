@@ -2,7 +2,7 @@
 <head>
 	<title>聊天室1</title>
 	<style>
-		
+
 	</style>
 </head>
 <body>
@@ -14,7 +14,7 @@
 	<script type = "text/javascript">
 		//var socket = io('http://testslb.missevan.cn:82/chatRoom').connect();
 		var socket = io('http://localhost:3000/chatRoom').connect();
-		var a = {roomId:'t1',userId:6};
+		var a = {roomId:'t16',userId:65708};
 		socket.on('add new member',function(data){
 			console.log(data);
 		});
