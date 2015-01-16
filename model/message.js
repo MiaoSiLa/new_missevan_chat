@@ -2,9 +2,10 @@
  * @Title: message.js
  * @Package model
  *
- * @author 操杰朋, tengattack
+ * @author 操杰朋, 腾袭
  * @create 2014/12/19
- * @version 0.0.1
+* @update 2015/01/16
+ * @version 0.1.1
  *
  * @Description:
  */
@@ -15,7 +16,7 @@ var ModelBase = require('./../lib/base');
 var ObjectID = require('mongodb').ObjectID;
 
 // 信息处理
-var Message = function(data, socket) {
+function Message(data, socket) {
 	ModelBase.call(this);
 
 	this.socket = socket;

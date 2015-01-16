@@ -5,7 +5,7 @@ var config = require('./../conf.js'),
   ModelBase = require('./../lib/base'),
   Model = require('../model'),
 	Message = Model.Message,
-	User = Model.User,
+	Room = Model.Room,
 	Bridge = Model.Bridge;
 
 var ioMiddleware = require('./../lib/iomiddleware'),
@@ -51,7 +51,7 @@ client.on("error", function (err) {
 var roomInfo = io.of('/roomInfo');
 var chatRoom = io.of('/chatRoom');
 
-var yclient = new generator(client);
+var yclient = new generator(client, { wrapResult: 'multi' });
 ModelBase.addParam('yclient', yclient);
 
 function *connection() {
@@ -137,12 +137,12 @@ function *connection() {
   });
 
   //离开房间
-  socket.on("disconnect",function(){
-    try{
-      User.LeaveRoom(socket,bridge,client);
-    }catch(e){
-      socket.emit("errorinfo",e.message);
+  socket.yon("disconnect",function *() {
+    if (!this.socket.userId) {
+      return;
     }
+    var room = new Room(null, this.socket, bridge);
+    yield room.leave();
   });
 
   socket.yon("get history",function *(data, callback) {
