@@ -1,6 +1,6 @@
 var express = require('express');
 
-//添加model
+// 添加model
 var config = require('./../conf.js'),
   ModelBase = require('./../lib/base'),
   Model = require('../model'),
@@ -18,10 +18,10 @@ var server = app.listen(config.port, function() {
   console.log('Express server listening on port ' + server.address().port);
 });
 
-//  var io = require('socket.io')();
-//  io.origins("http://www.missevan.cn");
-//  io.serveClient(false);
-//  io.attach(server);
+// var io = require('socket.io')();
+// io.origins("http://www.missevan.cn");
+// io.serveClient(false);
+// io.attach(server);
 
 
 var io = require('socket.io')(server),
@@ -30,18 +30,18 @@ var io = require('socket.io')(server),
 
 var client;
 if (config.dev_mode) {
-	//redis没有密码的情况
+	// redis没有密码的情况
 	client = redis.createClient(config.redis.port,config.redis.url);
 	io.adapter(socket_redis({ host: config.redis.url, port: config.redis.port }));
 } else {
-	//redis有密码的情况
+	// redis有密码的情况
 	client = redis.createClient(config.redis.port,config.redis.url,{auth_pass:config.redis.password});
 	var pub = redis.createClient(config.redis.port, config.redis.url, {auth_pass:config.redis.password});
 	var sub = redis.createClient(config.redis.port, config.redis.url, {detect_buffers: true, auth_pass:config.redis.password} );
 	io.adapter( socket_redis({pubClient: pub, subClient: sub}) );
 }
 
-//client连接错误
+// client连接错误
 client.on("error", function (err) {
   if (err) {
     console.error(err);
@@ -57,7 +57,7 @@ ModelBase.addParam('yclient', yclient);
 function *connection() {
   var socket = this.socket;
 
-  //进入房间
+  // 进入房间
   socket.yon("enter room", function *(info, callback) {
     if ((typeof(callback) !== 'function') || (typeof(info) !== 'object')) {
       throw new Error("非法参数");
@@ -65,9 +65,14 @@ function *connection() {
 
     var socket = this.socket;
 
-    //创建房间
+    // 创建房间
     var roomId = info.roomId;
     var memberId = info.userId;
+    if(!memberId){
+    	socket.broomId = "room"+roomId;
+        socket.join(socket.broomId);
+        return;
+    }
 
     var roomIdInfo = 'room' + roomId + 'Info';
     var memberIdInfo = 'member' + memberId + 'Info';
@@ -103,7 +108,7 @@ function *connection() {
       client.ZINCRBY('roomIdIndex', 1, roomId);
     }
 
-    //获取所有在线人员信息
+    // 获取所有在线人员信息
     var keys = yield yclient.HKEYS(roomIdPerson);
     var multi = client.multi();
     keys.forEach(function (key, index) {
@@ -113,7 +118,7 @@ function *connection() {
       callback({ state: true, member: userInfos });
     });
 
-    //获取在线的message
+    // 获取在线的message
     var msgTypes = [1,3,4];
     for (var i = 0; i < msgTypes.length; i++) {
       var num = msgTypes[i];
@@ -127,18 +132,20 @@ function *connection() {
     }
   });
 
-  //断开连接
-  socket.on("leaving",function(){
-    try{
-      User.LeaveRoom(socket,bridge,client);
-    }catch(e){
-      socket.emit("errorinfo",e.message);
-    }
+  // 断开连接
+  socket.yon("leaving",function *(){
+	  if (!this.socket.userId) {
+	      socket.leave(socket.broomId);
+	      return;
+	    }
+	    var room = new Room(null, this.socket, bridge);
+	    yield room.leave();
   });
 
-  //离开房间
+  // 离开房间
   socket.yon("disconnect",function *() {
     if (!this.socket.userId) {
+      socket.leave(socket.broomId);
       return;
     }
     var room = new Room(null, this.socket, bridge);
@@ -156,13 +163,13 @@ function *connection() {
     if (data.userId && typeof data.userId !== "number")
       throw new Error("非法参数");
 
-    //set data.userId to get private message
+    // set data.userId to get private message
     var message = new Message(data, socket);
     var r = yield message.getHistory();
     callback(r);
   });
 
-  //发送信息
+  // 发送信息
   socket.yon("send message",function *(data, callback) {
     if (typeof(callback) !== 'function' || typeof(data) !== 'object')
       throw new Error("非法参数");
