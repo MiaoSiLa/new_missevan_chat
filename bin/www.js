@@ -58,96 +58,29 @@ function *connection() {
   var socket = this.socket;
 
   // 进入房间
-  socket.yon("enter room", function *(info, callback) {
-    if ((typeof(callback) !== 'function') || (typeof(info) !== 'object')) {
+  socket.yon("enter room", function *(data, callback) {
+    if ((typeof(callback) !== 'function') || (typeof(data) !== 'object')) {
       throw new Error("非法参数");
     }
 
-    var socket = this.socket;
+    var room = new Room(data, this.socket, bridge);
+    var r = yield room.enter();
+    callback(r);
 
-    // 创建房间
-    var roomId = info.roomId;
-    var memberId = info.userId;
-    if(!memberId){
-    	socket.broomId = "room"+roomId;
-        socket.join(socket.broomId);
-        return;
-    }
-
-    var roomIdInfo = 'room' + roomId + 'Info';
-    var memberIdInfo = 'member' + memberId + 'Info';
-    var roomIdPerson = 'room' + roomId + 'Person';
-
-    client.PERSIST(roomIdInfo);
-    client.PERSIST(memberIdInfo);
-
-    var roomName = yield yclient.HGET(roomIdInfo, 'name');
-    client.SADD("roomNameIndex", roomName);
-
-    socket.roomName = roomName;
-
-    socket.roomId = roomId;
-    socket.broomId = "room"+roomId;
-    socket.join(socket.broomId);
-
-    socket.userId = memberId;
-    socket.buserId = "room"+socket.roomId+"user"+socket.userId;
-    socket.join(socket.buserId);
-
-    var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, 1);
-    if (num == 1) {
-      var member = yield yclient.HGETALL(memberIdInfo);
-      if (member) {
-        socket.broadcast.to(socket.broomId).emit('add new member', member);
-        bridge.emit('enter room', {
-          room: socket.roomId,
-          number: '+1',
-          personInfo: member
-        });
-      }
-      client.ZINCRBY('roomIdIndex', 1, roomId);
-    }
-
-    // 获取所有在线人员信息
-    var keys = yield yclient.HKEYS(roomIdPerson);
-    var multi = client.multi();
-    keys.forEach(function (key, index) {
-      multi.HGETALL(key);
-    });
-    multi.exec(function (err, userInfos) {
-      callback({ state: true, member: userInfos });
-    });
-
-    // 获取在线的message
-    var msgTypes = [1,3,4];
-    for (var i = 0; i < msgTypes.length; i++) {
-      var num = msgTypes[i];
-      var roomIdMessage = 'room' + socket.roomId + 'MessageType' + num;
-      var data = yield yclient.LRANGE(roomIdMessage, 0, -1);
-      var messages = [];
-      data.forEach(function (message) {
-        messages.push(JSON.parse(message));
-      });
-      socket.emit('get message',{ state: true, msg: messages, type: num });
-    }
+    var message = new Message(null, this.socket);
+    yield message.getRecent();
   });
 
+  /* deprecate
   // 断开连接
   socket.yon("leaving",function *(){
-	  if (!this.socket.userId) {
-	      socket.leave(socket.broomId);
-	      return;
-	    }
-	    var room = new Room(null, this.socket, bridge);
-	    yield room.leave();
+	  var room = new Room(null, this.socket, bridge);
+	  yield room.leave();
   });
+  */
 
   // 离开房间
   socket.yon("disconnect",function *() {
-    if (!this.socket.userId) {
-      socket.leave(socket.broomId);
-      return;
-    }
     var room = new Room(null, this.socket, bridge);
     yield room.leave();
   });

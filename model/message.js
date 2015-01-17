@@ -32,6 +32,23 @@ function Message(data, socket) {
 
 util.inherits(Message, ModelBase);
 
+Message.prototype.getRecent = function *() {
+	var socket = this.socket;
+	var yclient = this.yclient;
+	// 获取在线的message
+	var msgTypes = [1, 3, 4];
+	for (var i = 0; i < msgTypes.length; i++) {
+		var num = msgTypes[i];
+		var roomIdMessage = 'room' + socket.roomId + 'MessageType' + num;
+		var data = yield yclient.LRANGE(roomIdMessage, 0, -1);
+		var messages = [];
+		for (var j = 0; j < data.length; j++) {
+			messages.push(JSON.parse(data[j]));
+		}
+		socket.emit('get message',{ state: true, msg: messages, type: num });
+	}
+};
+
 Message.prototype.getHistory = function *() {
 	var q = {};
 	if (this.userId) {

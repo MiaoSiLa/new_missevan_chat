@@ -18,14 +18,80 @@ var ModelBase = require('./../lib/base');
 function Room(data, socket, bridge) {
 	this.socket = socket;
 	this.bridge = bridge;
+
+	if (data) {
+		this.roomId = data.roomId;
+		this.userId = data.userId ? data.userId : 0;
+	}
 }
 
 util.inherits(Room, ModelBase);
+
+//进入房间
+Room.prototype.enter = function *() {
+	var socket = this.socket;
+	var yclient = this.yclient;
+
+	var roomId = this.roomId;
+	var memberId = this.userId;
+
+	var roomIdPerson = 'room' + roomId + 'Person';
+
+	socket.roomId = roomId;
+	socket.broomId = 'room' + roomId;
+	socket.join(socket.broomId);
+
+	if (memberId) {
+		var roomIdInfo = 'room' + roomId + 'Info';
+		var memberIdInfo = 'member' + memberId + 'Info';
+
+		yield yclient.PERSIST(roomIdInfo);
+		yield yclient.PERSIST(memberIdInfo);
+
+		var roomName = yield yclient.HGET(roomIdInfo, 'name');
+		yield yclient.SADD('roomNameIndex', roomName);
+
+		socket.roomName = roomName;
+
+		socket.userId = memberId;
+		socket.buserId = 'room' + this.roomId + 'user' + this.userId;
+		socket.join(socket.buserId);
+
+		var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, 1);
+		if (num == 1) {
+			var member = yield yclient.HGETALL(memberIdInfo);
+			if (member) {
+				socket.broadcast.to(socket.broomId).emit('add new member', member);
+				this.bridge.emit('enter room', {
+					room: socket.roomId,
+					number: '+1',
+					personInfo: member
+				});
+			}
+			yield yclient.ZINCRBY('roomIdIndex', 1, roomId);
+		}
+	}
+
+	// 获取所有在线人员信息
+	var keys = yield yclient.HKEYS(roomIdPerson);
+	var multi = yclient.multi();
+	for (var i = 0; i < keys.length; i++) {
+		multi.HGETALL(keys[i])();
+	}
+	var userInfos = yield multi.exec();
+
+	return { state: true, member: userInfos };
+};
 
 //离开房间
 Room.prototype.leave = function *() {
 		var socket = this.socket;
 		var yclient = this.yclient;
+
+		if (!socket.userId) {
+			socket.leave(socket.broomId);
+			return;
+		}
 
 		var roomIdInfo = "room"+socket.roomId+"Info";
 		var roomIdPerson = "room"+socket.roomId+"Person";
@@ -55,7 +121,7 @@ Room.prototype.leave = function *() {
 			var keys = yield yclient.KEYS("room*Person");
 			var multi = yclient.multi();
 			for (var i = 0; i < keys.length; i++) {
-				yield multi.SISMEMBER(keys[i], memberIdInfo);
+				multi.SISMEMBER(keys[i], memberIdInfo)();
 			};
 			var exists = yield multi.exec();
 			if (exists.length === 0) {
