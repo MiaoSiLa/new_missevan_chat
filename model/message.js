@@ -64,6 +64,9 @@ Message.prototype.sendRoomMessage = function *() {
 	var socket = this.socket;
 	var memberIdInfo = "member" + socket.userId + "Info";
 	var userInfo = yield this.yclient.HGETALL(memberIdInfo);
+	if (!userInfo) {
+		throw new Error('没有找到发信者');
+	}
 	var newMessage = {
 		msg : this.msg,
 		type : this.type,
@@ -107,10 +110,14 @@ Message.prototype.sendPrivate = function *() {
 	var bToMember = "room" + socket.roomId + "user" + this.userId;
 	if (exist) {
 		var userInfo = yield this.yclient.HGETALL(memberIdInfo);
+		if (!userInfo) {
+			throw new Error('没有找到发信者');
+		}
 		socket.broadcast.to(bToMember).emit("new message", {
 			msg : this.msg,
 			type : this.type,
-			sender : userInfo
+			sender : userInfo,
+			time: new Date().valueOf()
 		});
 		return {
 			state : true,
@@ -118,12 +125,11 @@ Message.prototype.sendPrivate = function *() {
 			msg : this.msg,
 			type : this.type
 		};
-	} else {
-		return {
-			state : false,
-			info : "用户不存在"
-		};
 	}
+	return {
+		state : false,
+		info : "用户不存在"
+	};
 };
 
 // 发送音乐
