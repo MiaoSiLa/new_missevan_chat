@@ -2,57 +2,29 @@ var express = require('express');
 
 // 添加model
 var config = require('./../conf.js'),
-  ModelBase = require('./../lib/base'),
-  Model = require('../model'),
+  Model = require('./../model'),
 	Message = Model.Message,
 	Room = Model.Room,
 	Bridge = Model.Bridge;
 
 var ioMiddleware = require('./../lib/iomiddleware'),
-  generator = require('./../lib/generator');
+  yclient = require('./../lib/yclient');
 
 var app = express(),
 	bridge = new Bridge();
 
-var server = app.listen(config.port, function() {
+var server = app.listen(config.port, function () {
   console.log('Express server listening on port ' + server.address().port);
 });
 
-// var io = require('socket.io')();
-// io.origins("http://www.missevan.cn");
-// io.serveClient(false);
-// io.attach(server);
+Model.Base.addParam('yclient', yclient.yclient);
 
+var io = require('socket.io')(server);
 
-var io = require('socket.io')(server),
-	redis = require("redis"),
-	socket_redis = require('socket.io-redis');
-
-var client;
-if (config.dev_mode) {
-	// redis没有密码的情况
-	client = redis.createClient(config.redis.port,config.redis.url);
-	io.adapter(socket_redis({ host: config.redis.url, port: config.redis.port }));
-} else {
-	// redis有密码的情况
-	client = redis.createClient(config.redis.port,config.redis.url,{auth_pass:config.redis.password});
-	var pub = redis.createClient(config.redis.port, config.redis.url, {auth_pass:config.redis.password});
-	var sub = redis.createClient(config.redis.port, config.redis.url, {detect_buffers: true, auth_pass:config.redis.password} );
-	io.adapter( socket_redis({pubClient: pub, subClient: sub}) );
-}
-
-// client连接错误
-client.on("error", function (err) {
-  if (err) {
-    console.error(err);
-  }
-});
+io.adapter(yclient.adapter);
 
 var roomInfo = io.of('/roomInfo');
 var chatRoom = io.of('/chatRoom');
-
-var yclient = new generator(client, { wrapResult: 'multi' });
-ModelBase.addParam('yclient', yclient);
 
 function *connection() {
   var socket = this.socket;
@@ -73,19 +45,19 @@ function *connection() {
 
   /* deprecate
   // 断开连接
-  socket.yon("leaving",function *(){
+  socket.yon("leaving", function *(){
 	  var room = new Room(null, this.socket, bridge);
 	  yield room.leave();
   });
   */
 
   // 离开房间
-  socket.yon("disconnect",function *() {
+  socket.yon("disconnect", function *() {
     var room = new Room(null, this.socket, bridge);
     yield room.leave();
   });
 
-  socket.yon("get history",function *(data, callback) {
+  socket.yon("get history", function *(data, callback) {
     if (typeof(callback) !== 'function' || typeof(data) !== 'object')
       throw new Error("非法参数");
 
@@ -93,7 +65,7 @@ function *connection() {
     if (!socket.userId)
       return;
 
-    if (data.userId && typeof data.userId !== "number")
+    if (data.userId && typeof data.userId !== 'number')
       throw new Error("非法参数");
 
     // set data.userId to get private message
@@ -103,7 +75,7 @@ function *connection() {
   });
 
   // 发送信息
-  socket.yon("send message",function *(data, callback) {
+  socket.yon("send message", function *(data, callback) {
     if (typeof(callback) !== 'function' || typeof(data) !== 'object')
       throw new Error("非法参数");
 
@@ -111,8 +83,8 @@ function *connection() {
     if (!socket.userId)
       return;
 
-    if (typeof data.type !== "number"
-      || (data.userId && typeof data.userId !== "number"))
+    if (typeof data.type !== 'number'
+      || (data.userId && typeof data.userId !== 'number'))
       throw new Error("非法参数");
 
     data.msg = data.msg.trim();
@@ -143,6 +115,6 @@ bridge.on('leave room', function(data){
 	roomInfo.emit('leave room', data);
 });
 
-process.on('uncaughtException',function (err) {
+process.on('uncaughtException', function (err) {
 	console.error(err);
 });

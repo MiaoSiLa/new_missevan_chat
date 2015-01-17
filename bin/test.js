@@ -1,7 +1,13 @@
 var config = require('./../conf');
 var Server = require('socket.io');
-var io = new Server(); //var io = require('socket.io')();
-//io.origins("http://localhost");
+var io = new Server();
+
+// var io = require('socket.io')();
+// io.origins("http://localhost");
+// io.origins("http://www.missevan.cn");
+// io.serveClient(false);
+// io.attach(server);
+
 io.serveClient(false);
 io.attach(config.port);
 
