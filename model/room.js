@@ -20,17 +20,37 @@ function Room(data, socket, bridge) {
 	this.bridge = bridge;
 
 	if (data) {
-		this.roomId = data.roomId;
+		this.roomId = data.roomId.toString();
 		this.userId = data.userId ? data.userId : 0;
 	}
 }
 
 util.inherits(Room, ModelBase);
 
+Room.prototype.isRoom = function () {
+	if (this.roomId) {
+		return /^t?[0-9]+$/.test(this.roomId);
+	}
+	return false;
+};
+
+Room.prototype.isLastingRoom = function () {
+	if (this.roomId) {
+		return /^[0-9]+$/.test(this.roomId);
+	}
+	return false;
+};
+
 //进入房间
 Room.prototype.enter = function *() {
 	var socket = this.socket;
 	var yclient = this.yclient;
+
+	if (!this.isRoom()) {
+		throw new Error('错误的房间号');
+	}
+
+	var lastingRoom = this.isLastingRoom();
 
 	var roomId = this.roomId;
 	var memberId = this.userId;
@@ -49,7 +69,12 @@ Room.prototype.enter = function *() {
 		yield yclient.PERSIST(memberIdInfo);
 
 		var roomName = yield yclient.HGET(roomIdInfo, 'name');
-		yield yclient.SADD('roomNameIndex', roomName);
+		if (!roomName) {
+			throw new Error('没有找到该房间');
+		}
+		if (!lastingRoom) {
+			yield yclient.SADD('roomNameIndex', roomName);
+		}
 
 		socket.roomName = roomName;
 
@@ -68,7 +93,9 @@ Room.prototype.enter = function *() {
 					personInfo: member
 				});
 			}
-			yield yclient.ZINCRBY('roomIdIndex', 1, roomId);
+			if (!lastingRoom) {
+				yield yclient.ZINCRBY('roomIdIndex', 1, roomId);
+			}
 		}
 	}
 
