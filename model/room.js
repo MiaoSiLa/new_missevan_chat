@@ -88,6 +88,7 @@ Room.prototype.enter = function *() {
 		socket.join(socket.buserId);
 
 		var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, 1);
+		yield yclient.HADD('roomIdPersonIndex',roomIdPerson);
 		if (num == 1) {
 			var member = yield yclient.HGETALL(memberIdInfo);
 			if (member) {
@@ -140,6 +141,7 @@ Room.prototype.leave = function *() {
 			yield yclient.HDEL(roomIdPerson, memberIdInfo);
 			var exist = yield yclient.EXISTS(roomIdPerson);
 			if (!exist) {
+				yield yclient.SREM('roomIdPersonIndex',roomIdPerson);
 				yield yclient.SREM('roomNameIndex', socket.roomName);
 				yield yclient.SETEX('rN' + socket.roomName, config.redis.time, true);
 				yield yclient.ZREM('roomIdIndex', socket.roomId);
