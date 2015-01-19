@@ -20,6 +20,7 @@ function Room(data, socket, bridge) {
 	this.bridge = bridge;
 
 	if (data) {
+		this.ticket = data.ticket;
 		this.roomId = data.roomId.toString();
 		this.userId = data.userId ? data.userId : 0;
 	}
@@ -76,6 +77,10 @@ Room.prototype.enter = function *() {
 			yield yclient.SADD('roomNameIndex', roomName);
 		}
 
+		if (this.ticket) {
+			socket.ticket = this.ticket;
+		}
+
 		socket.roomName = roomName;
 
 		socket.userId = memberId;
@@ -126,6 +131,10 @@ Room.prototype.leave = function *() {
 
 		var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
 		if (num <= 0) {
+			if (socket.ticket) {
+				yield yclient.SETEX('ticket' + socket.ticket, config.redis.time, socket.roomId);
+			}
+
 			socket.leave(socket.broomId);
 			socket.leave(socket.buserId);
 			yield yclient.HDEL(roomIdPerson, memberIdInfo);
