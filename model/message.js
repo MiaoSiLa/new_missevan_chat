@@ -103,7 +103,7 @@ Message.prototype.sendRoomMessage = function *() {
 Message.prototype.sendPrivate = function *() {
 	var socket = this.socket;
 	var roomIdPerson = "room" + socket.roomId + "Person";
-	var ToMember = "member" + message.userId + "Info";
+	var ToMember = "member" + this.userId + "Info";
 	var memberIdInfo = "member" + socket.userId + "Info";
 
 	var exist = yield this.yclient.HEXISTS(roomIdPerson, ToMember);
