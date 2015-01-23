@@ -141,7 +141,8 @@ Room.prototype.leave = function *() {
 			var exist = yield yclient.EXISTS(roomIdPerson);
 			if (!exist) {
 				yield yclient.SREM('roomNameIndex', socket.roomName);
-				yield yclient.SETEX('rN' + socket.roomName, config.redis.time, true);
+				if(socket.roomId[0] == 't')
+					yield yclient.SETEX('rN' + socket.roomName, config.redis.time, true);
 				yield yclient.ZREM('roomIdIndex', socket.roomId);
 				yield yclient.EXPIRE(roomIdInfo, config.redis.time);
 			}
