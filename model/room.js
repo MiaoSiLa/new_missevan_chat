@@ -145,6 +145,12 @@ Room.prototype.leave = function *() {
 					yield yclient.SETEX('rN' + socket.roomName, config.redis.time, true);
 				yield yclient.ZREM('roomIdIndex', socket.roomId);
 				yield yclient.EXPIRE(roomIdInfo, config.redis.time);
+				var messages = [];
+				[1,3,4].forEach(function(value){
+					var roomIdMessage = 'room' + socket.roomId + 'MessageType' +value;
+					messages.push(yclient.EXPIRE(roomIdMessage, config.redis.time));
+				});
+				yield messages;
 			}
 
 			var userInfo = yield yclient.HGETALL(memberIdInfo);
