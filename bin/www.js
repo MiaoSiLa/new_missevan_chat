@@ -108,11 +108,11 @@ function *connection() {
 chatRoom.on('connection', ioMiddleware(connection));
 
 bridge.on('enter room', function(data){
-	chatRoom.emit('enter room', data);
+	roomInfo.emit('enter room', data);
 });
 
 bridge.on('leave room', function(data){
-	chatRoom.emit('leave room', data);
+	roomInfo.emit('leave room', data);
 });
 
 process.on('uncaughtException', function (err) {
