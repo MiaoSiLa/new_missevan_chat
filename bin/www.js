@@ -35,6 +35,10 @@ function *connection() {
       throw new Error("非法参数");
     }
 
+    if (this.socket.userId) {
+      throw new Error("请勿多次进入房间");
+    }
+
     var room = new Room(data, this.socket, bridge);
     var r = yield room.enter();
     callback(r);
