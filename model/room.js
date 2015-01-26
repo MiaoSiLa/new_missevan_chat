@@ -55,7 +55,14 @@ Room.prototype.enter = function *() {
 
 	var roomId = this.roomId;
 	var memberId = this.userId;
-
+	var memberIdInfo = 'member' + memberId + 'Info';
+	if (memberId) {
+		var exist = yield yclient.EXISTS(memberId);
+		if (!exist) {
+			memberId = 0;
+		}
+	}
+	
 	var roomIdPerson = 'room' + roomId + 'Person';
 
 	socket.roomId = roomId;
@@ -64,11 +71,8 @@ Room.prototype.enter = function *() {
 
 	if (memberId) {
 		var roomIdInfo = 'room' + roomId + 'Info';
-		var memberIdInfo = 'member' + memberId + 'Info';
-
 		yield yclient.PERSIST(roomIdInfo);
 		yield yclient.PERSIST(memberIdInfo);
-
 		var roomName = yield yclient.HGET(roomIdInfo, 'name');
 		if (!roomName) {
 			throw new Error('没有找到该房间');
