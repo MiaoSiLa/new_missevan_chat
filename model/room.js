@@ -156,8 +156,7 @@ Room.prototype.leave = function *() {
 				});
 				yield messages;
 			}
-			
-			yield yclient.ZINCRBY('roomIdIndex', -1, socket.roomId);
+
 			var userInfo = yield yclient.HGETALL(memberIdInfo);
 			socket.broadcast.to(socket.broomId).emit('leave room', userInfo);
 			this.bridge.emit('leave room', {
