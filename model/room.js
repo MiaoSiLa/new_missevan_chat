@@ -57,7 +57,7 @@ Room.prototype.enter = function *() {
 	var memberId = this.userId;
 	var memberIdInfo = 'member' + memberId + 'Info';
 	if (memberId) {
-		var exist = yield yclient.EXISTS(memberId);
+		var exist = yield yclient.EXISTS(memberIdInfo);
 		if (!exist) {
 			memberId = 0;
 		}
@@ -156,7 +156,8 @@ Room.prototype.leave = function *() {
 				});
 				yield messages;
 			}
-
+			
+			//yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
 			var userInfo = yield yclient.HGETALL(memberIdInfo);
 			socket.broadcast.to(socket.broomId).emit('leave room', userInfo);
 			this.bridge.emit('leave room', {
