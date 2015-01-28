@@ -71,14 +71,17 @@ Room.prototype.enter = function *() {
 
 	if (memberId) {
 		var roomIdInfo = 'room' + roomId + 'Info';
+		var roomIdType = 'room'+roomId+'Type';
 		yield yclient.PERSIST(roomIdInfo);
 		yield yclient.PERSIST(memberIdInfo);
+		yield yclient.PERSIST(roomIdType);
 		var roomName = yield yclient.HGET(roomIdInfo, 'name');
 		if (!roomName) {
 			throw new Error('没有找到该房间');
 		}
 		if (!lastingRoom) {
-			yield yclient.SADD('roomNameIndex', roomName);
+			var TypeNum = yield yclient.GET(roomIdType);
+			yield yclient.SADD('roomNameIndex'+TypeNum, roomName);
 		}
 
 		if (this.ticket) {
@@ -88,7 +91,7 @@ Room.prototype.enter = function *() {
 		socket.roomName = roomName;
 
 		socket.userId = memberId;
-		socket.buserId = 'room' + this.roomId + 'user' + this.userId;
+		socket.buserId = 'room' + roomId + 'user' + memberId;
 		socket.join(socket.buserId);
 
 		var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, 1);
@@ -103,7 +106,8 @@ Room.prototype.enter = function *() {
 				});
 			}
 			if (!lastingRoom) {
-				yield yclient.ZINCRBY('roomIdIndex', 1, roomId);
+				var TypeNum = yield yclient.GET(roomIdType);
+				yield yclient.ZINCRBY('roomIdIndex'+TypeNum, 1, roomId);
 			}
 		}
 	}
@@ -144,10 +148,13 @@ Room.prototype.leave = function *() {
 			yield yclient.HDEL(roomIdPerson, memberIdInfo);
 			var exist = yield yclient.EXISTS(roomIdPerson);
 			if (!exist) {
-				yield yclient.SREM('roomNameIndex', socket.roomName);
-				if(socket.roomId[0] == 't')
-					yield yclient.SETEX('rN' + socket.roomName, config.redis.time, true);
-				yield yclient.ZREM('roomIdIndex', socket.roomId);
+				if(socket.roomId[0] == 't'){
+					yield yclient.SREM('roomNameIndex', socket.roomName);
+					var TypeNum = yield yclient.GET('room'+socket.roomId+'Type');
+					yield yclient.SETEX('rN'+socket.roomName+TypeNum, config.redis.time, socket.roomId);
+					yield yclient.ZREM('roomIdIndex'+TypeNum, socket.roomId);
+					yield yclient.EXPIRE('room'+socket.roomId+'Type',config.redis.time);
+				}
 				yield yclient.EXPIRE(roomIdInfo, config.redis.time);
 				var messages = [];
 				[1,3,4].forEach(function(value){
