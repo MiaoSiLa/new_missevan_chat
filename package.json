@@ -8,6 +8,7 @@
   "dependencies": {
     "co": "^4.1.0",
     "express": "~4.9.0",
+    "koa": "^0.16.0",
     "mongodb": "^1.4.28",
     "redis": "0.12.1",
     "socket.io": "1.2.0",

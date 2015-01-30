@@ -17,6 +17,10 @@
 //线下数据
 var config = {
   dev_mode: true,
+  web: {
+    address: '0.0.0.0',
+    port: 3000
+  },
   redis: {
     url: '192.168.1.138',
     port: 6379,
@@ -32,8 +36,7 @@ var config = {
   },
   cache: {
     enable: false
-  },
-  port: 3000
+  }
 };
 
 module.exports = config;

@@ -1,4 +1,5 @@
-var express = require('express');
+
+var koa = require('koa');
 
 // 添加model
 var config = require('./../conf.js'),
@@ -10,17 +11,23 @@ var config = require('./../conf.js'),
 var ioMiddleware = require('./../lib/iomiddleware'),
   yclient = require('./../lib/yclient');
 
-var app = express(),
-	bridge = new Bridge();
+var app = koa();
 
-var server = app.listen(config.port, function () {
-  console.log('Express server listening on port ' + server.address().port);
+var server = require('http').Server(app.callback()),
+  io = require('socket.io')(server),
+  bridge = new Bridge();
+
+server.listen(
+  process.env.PORT || config['web'].port || 3000,
+  config['web'].address || '::',
+  function () {
+    console.log('Chat Server running on ' +
+    server.address().address +
+    ':' + server.address().port
+  );
 });
 
 Model.Base.addParam('yclient', yclient.yclient);
-
-var io = require('socket.io')(server);
-
 io.adapter(yclient.adapter);
 
 var roomInfo = io.of('/roomInfo');
@@ -38,7 +45,7 @@ function *connection() {
 	if(!data.roomId){
 		throw new Error("非法参数");
 	}
-	
+
     if (this.socket.userId) {
       throw new Error("请勿多次进入房间");
     }
