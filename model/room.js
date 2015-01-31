@@ -75,7 +75,7 @@ Room.prototype.enter = function *() {
 		yield yclient.PERSIST(roomIdInfo);
 		yield yclient.PERSIST(memberIdInfo);
 		var exist = yield yclient.PERSIST(roomIdType);
-		if(!exist)
+		if(!exist && roomId[0] === 't')
 			yield yclient.SET(roomIdType,'Type1');
 		var roomName = yield yclient.HGET(roomIdInfo, 'name');
 		if (!roomName) {
