@@ -13,6 +13,7 @@
 var config = require('./../conf.js');
 
 var util = require('util');
+var _ = require('underscore');
 var ModelBase = require('./../lib/base');
 
 function Room(data, socket, bridge) {
@@ -72,15 +73,15 @@ Room.prototype.enter = function *() {
 	if (memberId) {
 		var roomIdInfo = 'room' + roomId + 'Info';
 		var roomIdType = 'room'+roomId+'Type';
-		
+
 		var roomName = yield yclient.HGET(roomIdInfo, 'name');
 		if (!roomName) {
 			throw new Error('没有找到该房间');
 		}
-		
+
 		yield yclient.PERSIST(roomIdInfo);
 		yield yclient.PERSIST(memberIdInfo);
-		
+
 		var TypeNum;
 		if (!lastingRoom) {
 			var exist = yield yclient.EXISTS(roomIdType);
@@ -148,7 +149,8 @@ Room.prototype.leave = function *() {
 
 		var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
 		var TypeNum = yield yclient.GET('room'+socket.roomId+'Type');
-		
+		console.log('TypeNum', TypeNum, socket.roomId);
+
 		if (num <= 0) {
 			if (socket.ticket) {
 				yield yclient.SETEX('ticket' + socket.ticket, config.redis.time, socket.roomId);
@@ -186,16 +188,16 @@ Room.prototype.leave = function *() {
 			var keys = yield yclient.KEYS("room*Person");
 			var multi = yclient.multi();
 			for (var i = 0; i < keys.length; i++) {
-				multi.SISMEMBER(keys[i], memberIdInfo)();
+				multi.HEXISTS(keys[i], memberIdInfo)();
 			};
 			var exists = yield multi.exec();
-			if (exists.length === 0) {
+			if (exists.every(function (ex) {
+				return ex == 0;
+			})) {
 				yield yclient.EXPIRE(memberIdInfo, config.redis.time);
 			}
 		}
 };
-
-
 
 module.exports = Room;
 
