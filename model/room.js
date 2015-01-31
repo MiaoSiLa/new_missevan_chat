@@ -80,16 +80,17 @@ Room.prototype.enter = function *() {
 
 		yield yclient.PERSIST(roomIdInfo);
 		yield yclient.PERSIST(memberIdInfo);
-		var exist = yield yclient.PERSIST(roomIdType);
+
 		var TypeNum;
 		if (!lastingRoom) {
+			var exist = yield yclient.PERSIST(roomIdType);
 			if (!exist) {
 				TypeNum = 'Type1';
 				yield yclient.SET(roomIdType, TypeNum);
 			} else {
 				TypeNum = yield yclient.GET(roomIdType);
 			}
-			yield yclient.SADD('roomNameIndex'+TypeNum, roomName);
+			yield yclient.SADD('roomNameIndex' + TypeNum, roomName);
 		}
 
 		if (this.ticket) {
