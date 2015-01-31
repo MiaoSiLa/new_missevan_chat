@@ -148,15 +148,15 @@ Room.prototype.leave = function *() {
 
 		var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
 		var TypeNum = yield yclient.GET('room'+socket.roomId+'Type');
-		yield yclient.ZINCRBY('roomIdIndex'+TypeNum, -1, socket.roomId);
+		
 		if (num <= 0) {
 			if (socket.ticket) {
 				yield yclient.SETEX('ticket' + socket.ticket, config.redis.time, socket.roomId);
 			}
-
 			socket.leave(socket.broomId);
 			socket.leave(socket.buserId);
 			yield yclient.HDEL(roomIdPerson, memberIdInfo);
+			yield yclient.ZINCRBY('roomIdIndex'+TypeNum, -1, socket.roomId);
 			var exist = yield yclient.EXISTS(roomIdPerson);
 			if (!exist) {
 				if(socket.roomId[0] == 't'){
