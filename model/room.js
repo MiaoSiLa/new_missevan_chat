@@ -140,6 +140,8 @@ Room.prototype.leave = function *() {
 		var memberIdInfo = "member"+socket.userId+"Info";
 
 		var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
+		var TypeNum = yield yclient.GET('room'+socket.roomId+'Type');
+		yield yclient.ZINCRBY('roomIdIndex'+TypeNum, -1, socket.roomId);
 		if (num <= 0) {
 			if (socket.ticket) {
 				yield yclient.SETEX('ticket' + socket.ticket, config.redis.time, socket.roomId);
@@ -151,7 +153,6 @@ Room.prototype.leave = function *() {
 			var exist = yield yclient.EXISTS(roomIdPerson);
 			if (!exist) {
 				if(socket.roomId[0] == 't'){
-					var TypeNum = yield yclient.GET('room'+socket.roomId+'Type');
 					yield yclient.SETEX('rN'+socket.roomName+TypeNum, config.redis.time, socket.roomId);
 					yield yclient.SREM('roomNameIndex'+TypeNum, socket.roomName);
 					yield yclient.ZREM('roomIdIndex'+TypeNum, socket.roomId);
