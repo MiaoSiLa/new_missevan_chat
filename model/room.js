@@ -74,7 +74,9 @@ Room.prototype.enter = function *() {
 		var roomIdType = 'room'+roomId+'Type';
 		yield yclient.PERSIST(roomIdInfo);
 		yield yclient.PERSIST(memberIdInfo);
-		yield yclient.PERSIST(roomIdType);
+		var exist = yield yclient.PERSIST(roomIdType);
+		if(!exist)
+			yield yclient.SET(roomIdType,'Type1');
 		var roomName = yield yclient.HGET(roomIdInfo, 'name');
 		if (!roomName) {
 			throw new Error('没有找到该房间');
