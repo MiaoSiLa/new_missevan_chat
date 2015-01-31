@@ -62,7 +62,7 @@ Room.prototype.enter = function *() {
 			memberId = 0;
 		}
 	}
-	
+
 	var roomIdPerson = 'room' + roomId + 'Person';
 
 	socket.roomId = roomId;
@@ -72,21 +72,26 @@ Room.prototype.enter = function *() {
 	if (memberId) {
 		var roomIdInfo = 'room' + roomId + 'Info';
 		var roomIdType = 'room'+roomId+'Type';
-		yield yclient.PERSIST(roomIdInfo);
-		yield yclient.PERSIST(memberIdInfo);
-		var exist = yield yclient.EXISTS(roomIdType);
-		if(!exist && !lastingRoom){
-			yield yclient.SET(roomIdType,'Type1');
-		}else{
-			yield yclient.PERSIST(roomIdType);
-		}
+		
 		var roomName = yield yclient.HGET(roomIdInfo, 'name');
 		if (!roomName) {
 			throw new Error('没有找到该房间');
 		}
+		
+		yield yclient.PERSIST(roomIdInfo);
+		yield yclient.PERSIST(memberIdInfo);
+		
+		var TypeNum;
 		if (!lastingRoom) {
-			var TypeNum = yield yclient.GET(roomIdType);
-			yield yclient.SADD('roomNameIndex'+TypeNum, roomName);
+			var exist = yield yclient.EXISTS(roomIdType);
+			if (!exist) {
+				TypeNum = 'Type1';
+				yield yclient.SET(roomIdType, TypeNum);
+			} else {
+				yield yclient.PERSIST(roomIdType);
+				TypeNum = yield yclient.GET(roomIdType);
+			}
+			yield yclient.SADD('roomNameIndex' + TypeNum, roomName);
 		}
 
 		if (this.ticket) {
@@ -111,8 +116,7 @@ Room.prototype.enter = function *() {
 				});
 			}
 			if (!lastingRoom) {
-				var TypeNum = yield yclient.GET(roomIdType);
-				yield yclient.ZINCRBY('roomIdIndex'+TypeNum, 1, roomId);
+				yield yclient.ZINCRBY('roomIdIndex' + TypeNum, 1, roomId);
 			}
 		}
 	}
@@ -164,12 +168,12 @@ Room.prototype.leave = function *() {
 				yield yclient.EXPIRE(roomIdInfo, config.redis.time);
 				var messages = [];
 				[1,3,4].forEach(function(value){
-					var roomIdMessage = 'room' + socket.roomId + 'MessageType' +value;
+					var roomIdMessage = 'room' + socket.roomId + 'MessageType' + value;
 					messages.push(yclient.EXPIRE(roomIdMessage, config.redis.time));
 				});
 				yield messages;
 			}
-			
+
 			//yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
 			var userInfo = yield yclient.HGETALL(memberIdInfo);
 			socket.broadcast.to(socket.broomId).emit('leave room', userInfo);
