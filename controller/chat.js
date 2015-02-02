@@ -7,7 +7,16 @@ var chat = new Router();
 module.exports = function (app) {
 
   chat.get('/', function *() {
-    this.body = 'index';
+    yield this.render('chat/index', {
+      title: 'Dollars_社区_聊天室_MissEvan'
+    });
+  });
+
+  chat.get('/room', function *() {
+    var title = 'Dollars_社区_聊天室_MissEvan';
+    yield this.render('chat/room', {
+      title: title
+    });
   });
 
   app.use(mount('/chat', chat.middleware()));
