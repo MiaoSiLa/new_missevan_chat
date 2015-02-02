@@ -37,6 +37,14 @@ var config = {
     dev_mode: dev_mode
   },
 
+  security: {
+    /* Security settings */
+    keyGrip: [
+      'phahMi0Pue3fohPae8Kohboo7phoAuy7ohnuqui9OhRoo3siLuEo1epi',
+      'reihet5Yhs3xaeDhee0ieken0HoxahV8zahthah0Wahhree3KauaPh2i'
+    ]
+  },
+
   web: {
     address: '0.0.0.0',
     port: 3000

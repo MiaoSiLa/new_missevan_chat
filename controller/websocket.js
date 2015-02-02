@@ -11,7 +11,7 @@ var bridge = new Bridge();
 
 Model.Base.addParam('yclient', yclient.yclient);
 
-function websocket(io) {
+function websocket(app, io) {
 
 io.adapter(yclient.adapter);
 
@@ -46,66 +46,66 @@ function *connection() {
   /* deprecate
   // 断开连接
   socket.yon("leaving", function *(){
-  var room = new Room(null, this.socket, bridge);
-  yield room.leave();
-});
-*/
+    var room = new Room(null, this.socket, bridge);
+    yield room.leave();
+  });
+  */
 
-// 离开房间
-socket.yon("disconnect", function *() {
-  var room = new Room(null, this.socket, bridge);
-  yield room.leave();
-});
+  // 离开房间
+  socket.yon("disconnect", function *() {
+    var room = new Room(null, this.socket, bridge);
+    yield room.leave();
+  });
 
-socket.yon("get history", function *(data, callback) {
-  if (typeof(callback) !== 'function' || typeof(data) !== 'object')
-  throw new Error("非法参数");
+  socket.yon("get history", function *(data, callback) {
+    if (typeof(callback) !== 'function' || typeof(data) !== 'object')
+    throw new Error("非法参数");
 
-  var socket = this.socket;
-  if (!socket.userId)
-  return;
+    var socket = this.socket;
+    if (!socket.userId)
+    return;
 
-  if (data.userId && typeof data.userId !== 'number')
-  throw new Error("非法参数");
+    if (data.userId && typeof data.userId !== 'number')
+    throw new Error("非法参数");
 
-  // set data.userId to get private message
-  var message = new Message(data, socket);
-  var r = yield message.getHistory();
-  callback(r);
-});
+    // set data.userId to get private message
+    var message = new Message(data, socket);
+    var r = yield message.getHistory();
+    callback(r);
+  });
 
-// 发送信息
-socket.yon("send message", function *(data, callback) {
-  if (typeof(callback) !== 'function' || typeof(data) !== 'object')
-  throw new Error("非法参数");
+  // 发送信息
+  socket.yon("send message", function *(data, callback) {
+    if (typeof(callback) !== 'function' || typeof(data) !== 'object')
+    throw new Error("非法参数");
 
-  var socket = this.socket;
-  if (!socket.userId)
-  return;
+    var socket = this.socket;
+    if (!socket.userId)
+      return;
 
-  if (typeof data.type !== 'number'
-  || (data.userId && typeof data.userId !== 'number'))
-  throw new Error("非法参数");
+    if (typeof data.type !== 'number'
+      || (data.userId && typeof data.userId !== 'number'))
+      throw new Error("非法参数");
 
-  data.msg = data.msg.trim();
+    data.msg = data.msg.trim();
 
-  var flag = [ 1, 2, 3, 4, 5, 6 ].indexOf(data.type);
-  if (flag !== -1) {
-    data.type = data.type;
-    if (!data.userId && data.type == 2) {
+    var flag = [ 1, 2, 3, 4, 5, 6 ].indexOf(data.type);
+    if (flag !== -1) {
+      data.type = data.type;
+      if (!data.userId && data.type == 2) {
+        data.type = 1;
+      }
+    } else {
       data.type = 1;
     }
-  } else {
-    data.type = 1;
-  }
 
-  var message = new Message(data, socket);
-  var r = yield message.sendMessage();
-  callback(r);
-});
+    var message = new Message(data, socket);
+    var r = yield message.sendMessage();
+    callback(r);
+  });
 }
 
-chatRoom.on('connection', ioMiddleware(connection));
+chatRoom.on('connection', ioMiddleware(app, connection));
 
 bridge.on('enter room', function(data){
   roomInfo.emit('enter room', data);

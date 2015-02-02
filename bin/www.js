@@ -16,7 +16,7 @@ var server = require('http').createServer(app.callback()),
   io = require('socket.io')(server);
 
 //websocket
-controller.websocket(io);
+controller.websocket(app, io);
 
 process.on('uncaughtException', function (err) {
 	console.error(err);
