@@ -19,5 +19,10 @@ module.exports = function (app) {
     });
   });
 
+  chat.post('/newroom', function *() {
+    var body = this.request.body;
+    
+  });
+
   app.use(mount('/chat', chat.middleware()));
 };
