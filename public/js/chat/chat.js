@@ -12,7 +12,7 @@ $(function() {
 *data json userinfo
 */
 function NewGuyEnter(data) {
-  index.chatBox.loadNewMember(data);
+  chatBox.loadNewMember(data);
 };
 
 //是否是第一次进入
@@ -21,7 +21,7 @@ function NewGuyEnter(data) {
 */
 function firstTimeEnter(data) {
   //console.log(data.member);
-  index.chatBox.loadNewMembers(data.member);
+  chatBox.loadNewMembers(data.member);
 };
 
 //有人离开
@@ -30,7 +30,7 @@ function firstTimeEnter(data) {
 */
 function leavingRoom(data) {
   //console.log(data);
-  index.chatBox.loadLeavingMember(data);
+  chatBox.loadLeavingMember(data);
 };
 
 //发送信息
@@ -50,7 +50,7 @@ function sendMessage(message,callback) {
 //第一次加载消息
 function getMessage(data) {
   //console.log(data);
-  index.chatBox.loadFirstMessage(data);
+  chatBox.loadFirstMessage(data);
 }
 
 //错误信息断开
@@ -62,7 +62,7 @@ function getMessage(data) {
 function newMessage(data) {
   //console.log('接收');
   //console.log(data);
-  index.chatBox.loadBubble(data);
+  chatBox.loadBubble(data);
 };
 
 function socketDiscon() {
@@ -81,10 +81,10 @@ function socketGetError(data) {
 
 function enter(data) {
   console.log(data);
-  index.chatBox.loadRoomList(data);
+  chatBox.loadRoomList(data);
 }
 
 function leave(data) {
   console.log(data);
-  index.chatBox.loadRoomList(data);
+  chatBox.loadRoomList(data);
 }
