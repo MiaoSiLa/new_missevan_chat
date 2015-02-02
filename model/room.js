@@ -149,7 +149,6 @@ Room.prototype.leave = function *() {
 
 		var num = yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
 		var TypeNum = yield yclient.GET('room'+socket.roomId+'Type');
-		console.log('TypeNum', TypeNum, socket.roomId);
 
 		if (num <= 0) {
 			if (socket.ticket) {
