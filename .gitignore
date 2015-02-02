@@ -75,7 +75,7 @@ $RECYCLE.BIN/
 *.msp
 
 # config
-conf.js
+config.js
 .project
 .jshintrc
 .tern-project

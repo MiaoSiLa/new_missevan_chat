@@ -1,4 +1,4 @@
-var config = require('./../conf');
+var config = require('./../config');
 var Server = require('socket.io');
 var io = new Server();
 

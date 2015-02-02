@@ -10,7 +10,7 @@
 * @Description:
 */
 
-var config = require('./../conf.js');
+var config = require('./../config');
 
 var util = require('util');
 var _ = require('underscore');
