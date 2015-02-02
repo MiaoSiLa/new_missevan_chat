@@ -1,10 +1,9 @@
 
-var socket = io(chatSocketUrl + '/roomInfo').connect();
-
-function enter(data){console.log(data)};
-function leave(data){console.log(data)};
+var socket;
 
 $(function() {
+	socket = io(chatSocketUrl + '/roomInfo').connect();
+
 	socket.on("enter room",function(data){
 		enter(data);
 	});
