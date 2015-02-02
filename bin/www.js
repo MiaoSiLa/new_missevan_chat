@@ -16,6 +16,7 @@ process.on('uncaughtException', function (err) {
 	console.error(err);
 });
 
+//开始监听
 server.listen(
   process.env.PORT || config['web'].port || 3000,
   config['web'].address || '::',
