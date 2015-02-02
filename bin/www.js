@@ -10,13 +10,7 @@ var app = koa();
 
 //wrap middlewares & controller
 middlewares(app);
-controller.chat(app);
-
-var server = require('http').createServer(app.callback()),
-  io = require('socket.io')(server);
-
-//websocket
-controller.websocket(app, io);
+var server = controller(app);
 
 process.on('uncaughtException', function (err) {
 	console.error(err);
