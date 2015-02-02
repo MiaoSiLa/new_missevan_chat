@@ -47,8 +47,15 @@ var config = {
 
   web: {
     address: '0.0.0.0',
-    port: 3000
+    port: 3000,
+    locals: {
+      resource: {
+        assets: '3b488057',
+        version: '20131229'
+      }
+    }
   },
+  
   redis: {
     url: '192.168.1.138',
     port: 6379,
