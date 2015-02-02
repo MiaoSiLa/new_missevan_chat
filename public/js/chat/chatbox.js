@@ -41,9 +41,9 @@ var chatBox = {
       $inputBoxTextareaId.val($inputBoxTextareaId.val().substring(0, index.mo.maxLength));
 
       var msg = $inputBoxTextareaId.val(),data;
-      if(data = index.chatBox.checkCmd({msg:msg, type:1})) {
+      if(data = chatBox.checkCmd({msg:msg, type:1})) {
         sendMessage(data, function() {
-          index.chatBox.loadBubble({
+          chatBox.loadBubble({
             msg:data.msg,
             type:data.type,
             sender:index.mo.sender
@@ -98,7 +98,7 @@ var chatBox = {
 
     if(data.msg.length > 0) {
       $.each(data.msg,function(n,message) {
-        index.chatBox.loadBubble({
+        chatBox.loadBubble({
           msg:message.msg,
           type:message.type,
           sender:message.sender
@@ -158,7 +158,7 @@ var chatBox = {
         //$chatBoxId.prepend(msg);
 
         $.each(msgs, function(n, msg) {
-          index.chatBox.loadBubble({
+          chatBox.loadBubble({
             msg:msg,
             type:1,
             sender:{
@@ -179,10 +179,10 @@ var chatBox = {
           soundManager.destroySound('soundeffect');
           index.mo.soundEffect = cmdNum;
           store.set('音效', cmdNum);
-          index.chatBox.addInfo('音效改动提示', '聊天音效修改为音效'+cmdNum);
+          chatBox.addInfo('音效改动提示', '聊天音效修改为音效'+cmdNum);
           return false;
         } else {
-          index.chatBox.addInfo('音效改动提示', '配置出错，音效配置范围为0~~4');
+          chatBox.addInfo('音效改动提示', '配置出错，音效配置范围为0~~4');
           return false;
         }
       }
@@ -192,10 +192,10 @@ var chatBox = {
         if(cmdNum >=1 && cmdNum <=2) {
           index.mo.bubbleType = cmdNum;
           store.set('气泡', cmdNum);
-          index.chatBox.addInfo('气泡改动提示', '气泡样式修改为气泡'+cmdNum);
+          chatBox.addInfo('气泡改动提示', '气泡样式修改为气泡'+cmdNum);
           return false;
         } else {
-          index.chatBox.addInfo('气泡改动提示', '配置出错，气泡配置范围为1~~2');
+          chatBox.addInfo('气泡改动提示', '配置出错，气泡配置范围为1~~2');
           return false;
         }
       }
@@ -212,10 +212,10 @@ var chatBox = {
           } else {
             $chatMainId.css('background','url("/images/index/chatbg' + index.mo.bgType + '.jpg")');
           }
-          index.chatBox.addInfo('背景改动提示', '聊天背景修改为背景'+cmdNum);
+          chatBox.addInfo('背景改动提示', '聊天背景修改为背景'+cmdNum);
           return false;
         } else {
-          index.chatBox.addInfo('背景改动提示', '配置出错，背景配置范围为1~~6');
+          chatBox.addInfo('背景改动提示', '配置出错，背景配置范围为1~~6');
           return false;
         }
       }
@@ -247,7 +247,7 @@ var chatBox = {
             data.type = 3;
 
             sendMessage(data, function() {
-              index.chatBox.loadBubble({
+              chatBox.loadBubble({
                 msg:data.msg,
                 type:data.type,
                 sender:index.mo.sender
@@ -287,7 +287,7 @@ var chatBox = {
             data.type = 6;
 
             sendMessage(data, function() {
-              index.chatBox.loadBubble({
+              chatBox.loadBubble({
                 msg:data.msg,
                 type:data.type,
                 sender:index.mo.sender
@@ -311,7 +311,7 @@ var chatBox = {
             var sound = data2.successVal.sound;
 
             sendMessage(data, function() {
-              index.chatBox.loadBubble({
+              chatBox.loadBubble({
                 msg:data.msg,
                 type:data.type,
                 sender:index.mo.sender
@@ -365,8 +365,8 @@ var chatBox = {
 
         $('#chatline' + index.mo.chatLine).data('bubble',moTool.boardReplaceTxt(data.msg));
         index.showBt('#chatline' + index.mo.chatLine,iconColor.split('m'),"#ffffff","#ffffff");
-        index.chatBox.addIconOpen("#chatline" + index.mo.chatLine);
-        index.chatBox.addNameAt("#chatline" + index.mo.chatLine);
+        chatBox.addIconOpen("#chatline" + index.mo.chatLine);
+        chatBox.addNameAt("#chatline" + index.mo.chatLine);
 
         index.mo.chatLine ++;
         break;
@@ -377,8 +377,8 @@ var chatBox = {
         targetName = data.sender.id == index.mo.sender.id?'':data.sender.name;
 
         if(!$('#privatechatbox' + targetId).length) {
-          index.chatBox.insertPrivateBox(targetId);
-          index.chatBox.loadPrivateBox(targetId, targetName);
+          chatBox.insertPrivateBox(targetId);
+          chatBox.loadPrivateBox(targetId, targetName);
         }
 
         $('#privatechatbox' + targetId)
@@ -394,7 +394,7 @@ var chatBox = {
 
         $('#privatechatline' + index.mo.pChatLine).data('bubble',moTool.boardReplaceTxt(data.msg));
         index.showBt('#privatechatline' + index.mo.pChatLine, '#ffffffm#ffffffm#ffffffm#ffffffm#ffffff'.split('m'), iconColor.split('m')[0], '#000000');
-        index.chatBox.addIconOpen('#privatechatline' + index.mo.pChatLine);
+        chatBox.addIconOpen('#privatechatline' + index.mo.pChatLine);
 
         //接收私聊信息自动显示
         var $privateBoxUserIdId = $('#privatebox' + targetId);
@@ -406,8 +406,8 @@ var chatBox = {
 
       case 3:
         data.msg = JSON.parse(data.msg);
-        index.chatBox.addSound(data.msg, data.sender);
-        index.chatBox.addInfo('声音推荐提示', data.sender.name + ' 推荐声音 「' + data.msg.soundstr + '」');
+        chatBox.addSound(data.msg, data.sender);
+        chatBox.addInfo('声音推荐提示', data.sender.name + ' 推荐声音 「' + data.msg.soundstr + '」');
         break;
 
       case 5:
@@ -432,11 +432,11 @@ var chatBox = {
       case 6:
         data.msg = JSON.parse(data.msg);
         index.soundBox.playChatStr(data.msg.soundurl);
-        index.chatBox.addInfo('声音播放提示', data.sender.name + ' 播放声音 「' + data.msg.soundstr + '」');
+        chatBox.addInfo('声音播放提示', data.sender.name + ' 播放声音 「' + data.msg.soundstr + '」');
         break;
     }
 
-    index.chatBox.delChats();
+    chatBox.delChats();
   },
 
   loadBt: function(message) {
@@ -483,8 +483,8 @@ var chatBox = {
 
       $('#chatline' + index.mo.chatLine).data('bubble',moTool.boardReplaceTxt(message.value));
       index.showBt('#chatline' + index.mo.chatLine,message.colors.split('m'),message.spikeColor,message.charColor);
-      index.chatBox.addIconOpen("#chatline" + index.mo.chatLine);
-      index.chatBox.addNameAt("#chatline" + index.mo.chatLine);
+      chatBox.addIconOpen("#chatline" + index.mo.chatLine);
+      chatBox.addNameAt("#chatline" + index.mo.chatLine);
 
       index.mo.chatLine ++;
     } else {
@@ -492,8 +492,8 @@ var chatBox = {
       targetName = message.userName == index.mo.username?message.toUserName:message.userName;
 
       if(!$('#privatechatbox' + targetId).length) {
-        index.chatBox.insertPrivateBox(targetId);
-        index.chatBox.loadPrivateBox(targetId, targetName);
+        chatBox.insertPrivateBox(targetId);
+        chatBox.loadPrivateBox(targetId, targetName);
       }
 
       $('#privatechatbox' + targetId)
@@ -509,7 +509,7 @@ var chatBox = {
 
       $('#privatechatline' + index.mo.pChatLine).data('bubble',moTool.boardReplaceTxt(message.value));
       index.showBt('#privatechatline' + index.mo.pChatLine, message.colors.split('m'), message.spikeColor, message.charColor);
-      index.chatBox.addIconOpen('#privatechatline' + index.mo.pChatLine);
+      chatBox.addIconOpen('#privatechatline' + index.mo.pChatLine);
 
       //接收私聊信息自动显示
       var $privateBoxUserIdId = $('#privatebox' + targetId);
@@ -577,7 +577,7 @@ var chatBox = {
 
   loadNewMembers: function(members) {
     $.each(members,function(n,member) {
-      index.chatBox.loadNewMember(member);
+      chatBox.loadNewMember(member);
     });
   },
 
@@ -597,7 +597,7 @@ var chatBox = {
 
       if(flag == 0) {
         if(index.mo.messageType == 1) {
-          index.chatBox.loadBt({
+          chatBox.loadBt({
             $chatBoxId: $('#chatbox'),
             userId: index.mo.userId,
             userName: '黑化店长',
@@ -636,7 +636,7 @@ var chatBox = {
 
       if(flag == 0) {
         if(index.mo.messageType == 1) {
-          index.chatBox.loadBt({
+          chatBox.loadBt({
             $chatBoxId: $('#chatbox'),
             userId: index.mo.userId,
             userName: '黑化店长',
@@ -665,8 +665,8 @@ var chatBox = {
       $privateBoxUserIdId = $('#privatebox' + userId);
 
       if(!$privateBoxUserIdId.length) {
-        index.chatBox.insertPrivateBox(userId);
-        index.chatBox.loadPrivateBox(userId, userName);
+        chatBox.insertPrivateBox(userId);
+        chatBox.loadPrivateBox(userId, userName);
       }
 
       var $privateBoxUserIdId = $('#privatebox' + userId);
@@ -768,7 +768,7 @@ var chatBox = {
       userId = parseInt(userId);
       sendMessage({msg:msg, userId:userId, type:2}, function() {
         //console.log(index.mo.sender);
-        index.chatBox.loadBubble({
+        chatBox.loadBubble({
           msg:msg,
           type:2,
           sender:index.mo.sender,
@@ -800,9 +800,9 @@ var chatRoomList = {
 
   loadNewRoom: function() {
     var $newRoomBtnId = $('#newroombtn'),
-    $newRoomNameId = $('#newroomname'),
-    $newRoomNumId = $('#newroomnum'),
-    $addRoomId = $('#addroom');
+      $newRoomNameId = $('#newroomname'),
+      $newRoomNumId = $('#newroomnum'),
+      $addRoomId = $('#addroom');
 
     $addRoomId.click(function() {
       $('#room0').toggle();

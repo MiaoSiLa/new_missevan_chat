@@ -44,7 +44,6 @@ state info msg type
 */
 function sendMessage(message,callback) {
   //console.log('发送');
-  //console.log(message);
   socket.emit('send message',message,callback);
 }
 //第一次加载消息

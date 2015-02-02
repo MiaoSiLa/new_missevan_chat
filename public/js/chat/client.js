@@ -24,12 +24,14 @@ $(function(){
 
 	var userinfo = $.parseJSON($("#info").text());
 	//Object.freeze(userinfo);
+
 	//进入房间
 	socket.on("connect", function (data) {
 		socket.emit("enter room", userinfo, function(data) {
 			firstTimeEnter(data);
 		});
 	});
+
 	//进房间拉信息
 	socket.on("get message", function (data) {
 		getMessage(data);
