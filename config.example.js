@@ -12,6 +12,8 @@
 
 var path = require('path');
 
+var recommendedusers = require('./recommendedusers.json');
+
 //'..' for config folder, '.' for config.js file
 var root_dir = path.resolve(__dirname, '.') + '/';
 var public_dir = root_dir + 'public/';
@@ -49,13 +51,15 @@ var config = {
     address: '0.0.0.0',
     port: 3000,
     locals: {
+      chatSocketUrl: 'http://127.0.0.1/chat',
+      recommendedUsers: recommendedusers,
       resource: {
         assets: '3b488057',
         version: '20131229'
       }
     }
   },
-  
+
   redis: {
     url: '192.168.1.138',
     port: 6379,

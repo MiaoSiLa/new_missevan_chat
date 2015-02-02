@@ -15,164 +15,20 @@
 
             <div id="l_c">
               <div id="l_i_s">
-
-                <div class="l_i_b pie" data-soundurl="201405/09/e28beb4642f1a98e261e089ec4f99f83215738.mp3" data-soundid="8914" data-name="丘比" data-str="希望能和我定下契约，成为魔法少女">
-                  <div class="l_w w_r" style="display:none;">
-
+                <% for (var i = 0; i < recommendedUsers.length; i++) {
+                      var u = recommendedUsers[i]; %>
+                <div class="l_i_b pie" data-soundurl="<%= u.soundurl %>" data-soundid="<%= u.soundid %>" data-name="<%= u.name %>" data-str="<%= u.str %>">
+                  <div class="l_w w_<%= u.popup %>" style="display:none;">
                   </div>
-                  <a target="_blank" hidefocus="true" href="/sound/8914"><img src="http://static.missevan.cn/icons/201107/20110726203401643.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201405/01/8d8cced973e1680ad33aa72cb74999de143646.mp3" data-soundid="7657" data-name="坂田银时" data-str="只要在我这把剑能达到的范围里，就是我的国家。">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/7657"><img src="http://static.missevan.cn/icons/201402/86ceb4e86b315f6d8d37b952bceb73cd225749.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201404/11/67df66496dd929235056549c41c74677213721.mp3" data-soundid="6739" data-name="槙岛圣护" data-str="你应该能够取悦我吧">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/6739"><img src="http://static.missevan.cn/icons/201404/495b87863307c9db6a08ad73db3bfd52233924.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201309/29/2a73c17dfcc7325ad16356dda977850b.mp3" data-soundid="6386" data-name="黑子哲也" data-str="被这样邀请我很高兴,请容许我郑重的拒绝">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/6386"><img src="http://static.missevan.cn/icons/201404/8a9f95f845280f1b74bd19ab9463c17b145449.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201310/03/4afa19ede7b1424f3175ba6d582c8b9c.mp3" data-soundid="6400" data-name="利威尔" data-str="目前你最需要的东西,用文字来描述的话,不是“教育”而是“教训”">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/6400"><img src="http://static.missevan.cn/icons/201304/e0aa9630509b210b9305962c840e6098.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201405/17/ca11cc90bd142e1a21ef14a1f9255991172302.mp3" data-soundid="10170" data-name="小圆" data-str="我要去救朋友......">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/10170"><img src="http://static.missevan.cn/icons/201404/d44409ff967bcfd18295a8717a37e3ee135614.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201307/13/a918f14ff9d603222d6ca24a08f685be.mp3" data-soundid="6003" data-name="三笠" data-str="我的特技是将肉削下">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/6003"><img src="http://static.missevan.cn/icons/201404/b875723edaa8a55ebdab76c3b8f293bf224132.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201404/11/7d7b7fcd23cc83942d4bb8f82215c5e0190807.mp3" data-soundid="6698" data-name="夜斗" data-str="嗨~这里是快捷便宜又放心的外派神明夜斗 您有困扰吗 我马上就到">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/6698"><img src="http://static.missevan.cn/icons/201402/f553c156588203d5e1061fb869c47bd1223425.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201405/08/62982fc3b9ee8918365e4ba60cdc650e180947.mp3" data-soundid="8704" data-name="鬼灯" data-str="也抚摸抚摸你们吧">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/8704"><img src="http://static.missevan.cn/icons/201402/17f002e009431a35838714e71ccffeb4104243.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201304/18/cd5f5a5fb84a19ce3e6f4c57c3233746.mp3" data-soundid="5827" data-name="宗像礼司" data-str="宗像拔刀!">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/5827"><img src="http://static.missevan.cn/icons/201402/c625d00ebe9cca06c48fd9dfaa9e43a9150923.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201205/23/467be22c271126cf52bea450618a8794.mp3" data-soundid="4595" data-name="夏尔凡多姆海恩" data-str="夏尔凡多姆的家主是我谢尔夏尔凡多姆">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/4595"><img src="http://static.missevan.cn/icons/201311/7a5f74af9c20e1eb5bfe196854d876f2162356.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201404/20/2f2e2370b7c83a4483681b13b965be9a141604.mp3" data-soundid="7102" data-name="艾伦" data-str="我要一只不剩的把巨人驱逐出去，走出这憋屈的墙壁，这就是我的梦想">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/7102"><img src="http://static.missevan.cn/icons/201304/40df0c19a75897f70728d467c1396664.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201404/05/42ad5596603ea99d36626ac8583644ff181847.mp3" data-soundid="6660" data-name="伊佐那社" data-str="我相信我的研究能给大家带来幸福，但是，我发现的东西是种孤独的力量吧">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/6660"><img src="http://static.missevan.cn/icons/201301/957d48984547a82ce936f924f6228a6e.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201308/25/4f2fccf77b702d3e4dd83af8bb534dc0.mp3" data-soundid="6185" data-name="阿拉丁" data-str="我是阿拉丁">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/6185"><img src="http://static.missevan.cn/icons/201210/042ba1901ed69c5567817be64092192d.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201405/20/e40f1db59510865ea4f91e85ffbb9a25000350.mp3" data-soundid="10478" data-name="塞巴斯蒂安" data-str="我不过是个【恶魔】执事罢了">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/10478"><img src="http://static.missevan.cn/icons/201208/4b2a67091a21b882d6c3ddb84239e5ca.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201207/08/c6d4a069b823c78346ec1be7654781f4.mp3" data-soundid="5112" data-name="蔻蔻·海克梅迪亚" data-str="我蔻蔻·海克梅迪亚怎么可能做先货后钱的买卖">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/5112"><img src="http://static.missevan.cn/icons/201207/4daf722b269d107cb49c64ed0888b56d.png	"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201302/19/b1803ac62a34340da218e4dd95a12d5e.mp3" data-soundid="5594" data-name="阿良良木历" data-str="斜七十七度排列的一边哭一边吼的七台750CC的摩托眺望远方">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/5594"><img src="http://static.missevan.cn/icons/201207/60d6d31915edf0d563e276611953bd83.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201202/14/15e94267c0ffd0203c1daffd123b09bf.mp3" data-soundid="276" data-name="格拉汉姆" data-str="少年!我是如此需要你啊!已经到了无法再忍耐的地步!">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/276"><img src="http://static.missevan.cn/icons/201212/442c431f4321fb3db6503904358e70f1.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201206/03/2dacec71a2cfc7c260648412bb0b76ff.mp3" data-soundid="4872" data-name="路飞" data-str="抱歉,我要死了!">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/4872"><img src="http://static.missevan.cn/icons/201207/52d5b26841636481ee049bb47b6b3120.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201206/29/337e58d6ccc5fbf967260a0224f30408.mp3" data-soundid="4952" data-name="熊猫君" data-str="pa-pan-pan-pa-pandan~">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/4952"><img src="http://static.missevan.cn/icons/201204/bdd3fe6a2f3e3177a6fa535bfedeaaa4.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201202/04/459419befac852ae37bd7760f06d0ece.MP3" data-soundid="33" data-name="折原临也" data-str="因为我喜欢人类啊">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/33"><img src="http://static.missevan.cn/icons/201201/b5ee50224acad54753829c401622bbed.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201202/04/019bc8d71216098a71dc27fccb02545a.mp3" data-soundid="17" data-name="平和岛静雄" data-str="我不喜欢暴力!">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/17"><img src="http://static.missevan.cn/icons/201201/74db2f2dfbf46d611c9550204533437a.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201208/23/6a0da5eb7fd4d9aa95e6f694070d4bde.mp3" data-soundid="5298" data-name="saber" data-str="试问,你是我的master吗">
-                  <div class="l_w w_r" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/5298"><img src="http://static.missevan.cn/icons/201110/20111025211541292.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201204/13/e6ef859e84d391c0840c79346b35a0f9.mp3" data-soundid="3003" data-name="夜神月" data-str="没错我就是基拉">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/3003"><img src="http://static.missevan.cn/icons/201108/20110802202932702.png"></a>
-                </div>
-                <div class="l_i_b pie" data-soundurl="201202/28/62a9736aeba873ede8c0477dd0bfbea6.mp3" data-soundid="1303" data-name="渚薰" data-str="我也许是为了遇见你而生存的">
-                  <div class="l_w w_l" style="display:none;">
-
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/1303"><img src="http://static.missevan.cn/icons/201107/20110710063742185.png"></a>
-                </div>
+                  <a target="_blank" hidefocus="true" href="/sound/<%= u.soundid %>"><img src="<%= u.avatar %>"></a>
+                </div><% } %>
               </div>
 
               <div id="l_r_b" class="pie">
                 <div id="l_1">
                   <div id="textbox">
 
-                    <form enctype="multipart/form-data" id="login-form" action="/member/login?backurl=%2Fchat" method="post">									<br>
+                    <form id="login-form" action="/member/login?backurl=%2Fchat" method="post">									<br>
                       <label class="label pie" for="LoginForm_email">邮箱</label>									<input class="label_input pie" name="LoginForm[email]" id="LoginForm_email" type="text" style="background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=);">									<div class="errorMessage" id="LoginForm_email_em_" style="display:none"></div>									<br><br>
 
                       <label class="label pie" for="LoginForm_password">密码</label>									<input class="label_input pie" name="LoginForm[password]" id="LoginForm_password" type="password" maxlength="64" style="background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=);">									<div class="errorMessage" id="LoginForm_password_em_" style="display:none"></div>									<br><br>
@@ -190,16 +46,15 @@
                       <a id="l_wb_s" target="_blank" href="http://weibo.com/missacg" style="color:#fff;">M站微博</a>
 
                       <a id="a_qq" href="https://graph.qq.com/oauth2.0/authorize?response_type=code&amp;client_id=101117657&amp;redirect_uri=http%3A%2F%2Fwww.missevan.cn%2Fmember%2Fauthqq%3Fbackurl=%2F">
-                        <img width="25px" height="25px" src="/images/index/authqq.png" style="vertical-align:top;">　　　QQ登陆
+                        <img width="25px" height="25px" src="/images/index/authqq.png" style="vertical-align:top;">　　　QQ登录
                       </a>
 
                       <a id="a_wb" href="https://api.weibo.com/oauth2/authorize?client_id=3599299778&amp;response_type=code&amp;redirect_uri=http%3A%2F%2Fwww.missevan.cn%2Fmember%2Fauthweibo%3Fbackurl=%2F">
-                        <img width="25px" height="25px" src="/images/index/authwb.png" style="vertical-align:top;">　　　微博登陆
+                        <img width="25px" height="25px" src="/images/index/authwb.png" style="vertical-align:top;">　　　微博登录
                       </a>
 
                       <div class="clear"></div>
                     </form>
-
 
 
                   </div>

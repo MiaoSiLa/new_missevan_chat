@@ -29,12 +29,12 @@
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
   <script type="text/javascript">
-    var chatSocketUrl = 'http://120.26.154.142';
+    var chatSocketUrl = '<%= chatSocketUrl %>';
   </script>
   <script type="text/javascript" src="/js/chat/client.js"></script>
   <script type="text/javascript" src="/js/chat/chat.js"></script>
   <script type="text/javascript">
-    $(document).ready(function() {
+    $(function() {
       index.js.loadChat();
     });
   </script>
