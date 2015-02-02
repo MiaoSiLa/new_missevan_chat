@@ -1,7 +1,4 @@
-//线下测试环境
-var socket = io('http://192.168.1.128:3000').connect();
-//线上真实环境
-//var socket = io('http://115.29.235.9:3000').connect();
+var socket = io(chatSocketUrl + '/chatRoom').connect();
 
 //监测函数初始化
 function NewGuyEnter(data){console.log(data)};
@@ -17,7 +14,7 @@ function sendMessage (message,callback) {
 }
 
 function socketDiscon(){console.log("链接断开")};
-function socketRecon(){console.log("正在重连")}
+function socketRecon(){console.log("正在重连")};
 
 $(function(){
 	//获取get参数数组
@@ -37,10 +34,13 @@ $(function(){
 			return {};
 		}
 	})();
-	
+
+	var userinfo = $.parseJSON($("#info").text());
+	//Object.freeze(userinfo);
 	//进入房间
 	socket.on("connect",function(data){
-		socket.emit("enter room",$.parseJSON($("#info").text()),function(data){
+
+		socket.emit("enter room",userinfo,function(data){
 			firstTimeEnter(data);
 		});
 	});
@@ -48,32 +48,32 @@ $(function(){
 	socket.on("get message",function (data){
 		getMessage(data);
 	});
-	
+
 	//收到新信息
 	socket.on("new message",function(data){
 		newMessage(data);
 	});
-	
+
 	//当有新成员加入房间
 	socket.on('add new member',function(data){
 		NewGuyEnter(data)
 	});
-	
+
 	//有成员离开房间
 	socket.on("leave room",function(data){
 		leavingRoom(data)
 	});
-	
+
 	//监听返回的错误信息
 	socket.on("errorinfo",function(data){
 		socketGetError(data);
 		socket.disconnect();
 	});
-	
+
 	socket.on("disconnect",function(data){
 		socketDiscon();
 	});
-	
+
 	socket.on("reconnecting",function(data){
 		socketRecon();
 	});

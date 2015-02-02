@@ -1,3 +1,29 @@
 <%- include('../common/header.html'); -%>
 
+  <div id="chatwrap">
+    <div id="chattop">
+      <!-- inputbox为输入内容窗口-->
+      <div id="inputbox">
+        <textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>
+        <div id="inputboxtextareapostbtn" class="pie"><span>P O S T</span></div>
+
+        <div id="soundmusic"><img src="/images/index/music.png" /></div>
+      </div>
+    </div>
+
+    <div id="chatmain" class="abp">
+      <div id="commentCanvas" class="container" style="overflow-y:auto;">
+        <div id="chatbox"></div>
+        <div id="infobox"></div>
+      </div>
+    </div>
+
+    <div id="chatmusic" style="display:none;"></div>
+
+    <div id='private'></div>
+  </div>
+
+<%- include('../common/loginform.html'); -%>
+  <script type="text/javascript" src="/js/chat/client.js"></script>
+  <script type="text/javascript" src="/js/chat/chat.js"></script>
 <%- include('../common/footer.html'); -%>
