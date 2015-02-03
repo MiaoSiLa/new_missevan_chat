@@ -41,7 +41,8 @@ var config = {
   },
 
   app: {
-    dev_mode: dev_mode
+    dev_mode: dev_mode,
+    session_key: 'NSESS'
   },
 
   security: {
