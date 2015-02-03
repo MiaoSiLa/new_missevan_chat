@@ -130,7 +130,7 @@ Room.prototype.leave = function *() {
 	var roomIdPerson = "room"+socket.roomId+"Person";
 	var memberIdInfo = "member"+socket.userId+"Info";
 
-	var num = yield yclient.ZINCRBY(roomIdPerson,-1,memberIdInfo);
+	var num = yield yclient.ZINCRBY(roomIdPerson,-1,socket.userId);
 
 	if (num <= 0) {
 		if (socket.ticket) {
@@ -138,7 +138,7 @@ Room.prototype.leave = function *() {
 		}
 		socket.leave(socket.broomId);
 		socket.leave(socket.buserId);
-		yield yclient.HDEL(roomIdPerson, memberIdInfo);
+		yield yclient.ZREM(roomIdPerson, socket.userId);
 		yield yclient.ZINCRBY('roomIdIndexType' + socket.roomType, -1, socket.roomId);
 		var exist = yield yclient.EXISTS(roomIdPerson);
 		if (!exist) {
