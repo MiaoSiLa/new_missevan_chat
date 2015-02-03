@@ -67,7 +67,7 @@ Room.prototype.enter = function *(user) {
 		var roomIdInfo = 'room' + roomId + 'Info';
 
 		var roomInfo = yield yclient.HGETALL(roomIdInfo);
-		if (!exists) throw new Error('没有找到该房间');
+		if (!roomInfo) throw new Error('没有找到该房间');
 
 		yield yclient.PERSIST(roomIdInfo);
 		yield yclient.HMSET(memberIdInfo,user);
