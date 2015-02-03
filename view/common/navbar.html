@@ -39,26 +39,32 @@
       </div>
     </div>
 
+    <% if (user) { %>
     <div id="t_p">
-      <a target="_blank" href="http://www.missevan.cn/10">
-        bless NO.10 <img src="/images/index/toppointer1.png">
+      <a target='_blank' href="/<%= user.user_id %>">
+        <%= user.username %> NO.<%= user.user_id %> <img src='/images/index/toppointer1.png'/>
       </a>
 
       <div class="t_h_l_b pie" style="display:none;">
         <div class="t_h">
-          <a target="_self" href="http://www.missevan.cn/10">个人主页</a>
+          <a target='_self' href="/<%= user.user_id %>">个人主页</a>
         </div>
         <div class="t_h">
-          <a target="_self" href="http://www.missevan.cn/person/msg?mtype=3&amp;userid=10">站内信</a>
+          <a target='_self' href="/person/msg?mtype=1&userid=<%= user.user_id %>">站内信</a>
         </div>
         <div class="t_h">
-          <a target="_self" href="http://www.missevan.cn/person/task?ttype=1&amp;userid=10">猫耳(622)</a>
+          <a target='_self' href="/person/task?ttype=1&userid=<%= user.user_id %>">猫耳</a>
         </div>
         <div class="t_h">
-          <a target="_self" href="http://www.missevan.cn/member/logout">退出</a>
+          <a target='_self' href="/member/logout">退出</a>
         </div>
       </div>
     </div>
+    <% } else { %>
+    <div class="t_h t_h_r">
+      <a href="/member/login?backurl=/chat/">登录/注册</a>
+    </div>
+    <% } %>
 
     <div id="t_s">
       <form action="http://www.missevan.cn/sound/search" method="get">

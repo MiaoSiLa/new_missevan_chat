@@ -35,6 +35,11 @@ var config = {
     tmp_dir: tmp_dir
   },
 
+  sso: {
+    url: 'http://192.168.1.10:3002/sso/',
+    secret_key: 'H1m60ntHOwKXniIXNxEBMxSSsk0Env1deAhJ'
+  },
+
   app: {
     dev_mode: dev_mode
   },
@@ -51,7 +56,7 @@ var config = {
     address: '0.0.0.0',
     port: 3000,
     locals: {
-      chatSocketUrl: 'http://127.0.0.1/chat',
+      chatSocketUrl: 'http://127.0.0.1:3000/chat',
       recommendedUsers: recommendedusers,
       resource: {
         assets: '3b488057',
