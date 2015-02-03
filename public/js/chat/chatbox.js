@@ -60,7 +60,7 @@ var chatBox = {
       id: user.id,
       name: user.username,
       iconColor: user.iconcolor,
-      icon: user.iconurl,
+      icon: 'http://static.missevan.cn/mimages/' + user.iconurl,
       subTitle: user.subtitle || ''
     };
   },

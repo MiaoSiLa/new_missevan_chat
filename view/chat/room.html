@@ -23,7 +23,7 @@
     <div id='private'></div>
   </div>
 
-  <div id="info" style="display:none">{"roomId":"<%= roomId %>", "userId":"<%= user ? user.id : 0 %>"}</div>
+  <div id="info" style="display:none">{"roomId":"<%= roomId %>","userId":<%= user ? user.id : 0 %>}</div>
   <div id="user" style="display:none"><%- JSON.stringify(user) %></div>
 
 <%- include('../common/loginform.html'); -%>
