@@ -41,19 +41,19 @@
 
     <% if (user) { %>
     <div id="t_p">
-      <a target='_blank' href="/<%= user.user_id %>">
-        <%= user.username %> NO.<%= user.user_id %> <img src='/images/index/toppointer1.png'/>
+      <a target='_blank' href="/<%= user.id %>">
+        <%= user.username %> NO.<%= user.id %> <img src='/images/index/toppointer1.png'/>
       </a>
 
       <div class="t_h_l_b pie" style="display:none;">
         <div class="t_h">
-          <a target='_self' href="/<%= user.user_id %>">个人主页</a>
+          <a target='_self' href="/<%= user.id %>">个人主页</a>
         </div>
         <div class="t_h">
-          <a target='_self' href="/person/msg?mtype=1&userid=<%= user.user_id %>">站内信</a>
+          <a target='_self' href="/person/msg?mtype=1&userid=<%= user.id %>">站内信</a>
         </div>
         <div class="t_h">
-          <a target='_self' href="/person/task?ttype=1&userid=<%= user.user_id %>">猫耳</a>
+          <a target='_self' href="/person/task?ttype=1&userid=<%= user.id %>">猫耳</a>
         </div>
         <div class="t_h">
           <a target='_self' href="/member/logout">退出</a>
