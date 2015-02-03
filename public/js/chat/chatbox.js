@@ -567,12 +567,12 @@ var chatBox = {
 
   loadLeavingMember: function(member) {
     var $chatBoxId = $('#chatbox');
-    $chatBoxId.prepend("<div class='clear'></div><div class='chatmessage'>►► " + member.name + " 离开了聊天室</div><div class='clear'></div>");
+    $chatBoxId.prepend("<div class='clear'></div><div class='chatmessage'>►► " + member.username + " 离开了聊天室</div><div class='clear'></div>");
   },
 
   loadNewMember: function(member) {
     var $chatBoxId = $('#chatbox');
-    $chatBoxId.prepend("<div class='clear'></div><div class='chatmessage'>►► " + member.name + " 加入聊天室</div><div class='clear'></div>");
+    $chatBoxId.prepend("<div class='clear'></div><div class='chatmessage'>►► " + member.username + " 加入聊天室</div><div class='clear'></div>");
   },
 
   loadNewMembers: function(members) {

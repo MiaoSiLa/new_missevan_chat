@@ -106,10 +106,11 @@ Room.prototype.enter = function *(user) {
 	}
 
 	// 获取所有在线人员信息
-	var keys = yield yclient.ZRANGE(roomIdPerson,0,-1);
+	var keys = yield yclient.ZRANGE(roomIdPerson, 0, -1);
 	var multi = yclient.multi();
 	for (var i = 0; i < keys.length; i++) {
-		multi.HGETALL(keys[i])();
+		var memberIdInfo = 'member' + keys[i] + 'Info';
+		multi.HGETALL(memberIdInfo)();
 	}
 	var userInfos = yield multi.exec();
 

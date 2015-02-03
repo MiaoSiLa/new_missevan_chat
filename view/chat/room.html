@@ -24,7 +24,7 @@
   </div>
 
   <div id="info" style="display:none">{"roomId":"<%= roomId %>", "userId":"<%= user ? user.id : 0 %>"}</div>
-  <div id="user" style="display:none"><%= JSON.stringify(user) %></div>
+  <div id="user" style="display:none"><%- JSON.stringify(user) %></div>
 
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
