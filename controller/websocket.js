@@ -36,7 +36,7 @@ function *connection() {
     }
 
     var room = new Room(data, this.socket, bridge);
-    var r = yield room.enter();
+    var r = yield room.enter(this.user);
     callback(r);
 
     var message = new Message(null, this.socket);

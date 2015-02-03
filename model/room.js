@@ -23,7 +23,6 @@ function Room(data, socket, bridge) {
 	if (data) {
 		this.ticket = data.ticket;
 		this.roomId = data.roomId.toString();
-		this.userId = data.userId ? data.userId : 0;
 	}
 }
 
@@ -44,7 +43,7 @@ Room.prototype.isLastingRoom = function () {
 };
 
 //进入房间
-Room.prototype.enter = function *() {
+Room.prototype.enter = function *(user) {
 	var socket = this.socket;
 	var yclient = this.yclient;
 
@@ -55,14 +54,8 @@ Room.prototype.enter = function *() {
 	var lastingRoom = this.isLastingRoom();
 
 	var roomId = this.roomId;
-	var memberId = this.userId;	///这里获取用户id
+	var memberId = user.id;	///这里获取用户id
 	var memberIdInfo = 'member' + memberId + 'Info';
-	if (memberId) {
-		var exist = yield yclient.EXISTS(memberIdInfo);
-		if (!exist) {
-			memberId = 0;
-		}
-	}
 
 	var roomIdPerson = 'room' + roomId + 'Person';
 
@@ -77,8 +70,8 @@ Room.prototype.enter = function *() {
 		if (!exists) throw new Error('没有找到该房间');
 
 		yield yclient.PERSIST(roomIdInfo);
-		yield yclient.PERSIST(memberIdInfo);	///这里塞入用户信息
-
+		yield yclient.HSET(memberIdInfo,user);
+		
 		if (!lastingRoom)
 			if(roomInfo)
 				yield yclient.HSET('roomNameIndexType' + roomInfo.type, roomName,roomInfo.id);
@@ -180,7 +173,7 @@ Room.prototype.leave = function *() {
 			if (exists.every(function (ex) {
 				return ex == null;
 			})) {
-				yield yclient.EXPIRE(memberIdInfo, config.redis.time);
+				yield yclient.DEL(memberIdInfo);
 			}
 		}
 };
@@ -256,7 +249,13 @@ Room.prototype.checkTicket = function *(ticket){
 
 //检查小组房间
 Room.prototype.checkTeamRoom = function *(user){
-		throw new Error('该房间不存在');
+	if(!user.teamid) throw new Exception('该房间不存在！');
+	var yclient = this.yclient;
+	var roomIdInfo = 'room'+ user.teamid+ 'Info';
+	$roomInfo = array('id' => user.teamid,'name' =>user.teamname);
+	yield yclient.HSET(roomIdInfo,$roomInfo);
+	yield yclient.EXPIRE(roomIdInfo,config.redis.time)
+	return true;
 }
 
 module.exports = Room;

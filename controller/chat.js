@@ -42,7 +42,10 @@ module.exports = function (app) {
 				roomId = roomInfo.id;
 				roomName = roomInfo.name;
 			}else{
-				roomInfo = roomModel.checkTeamRoom(this.user);
+				if(roomModel.checkTeamRoom(this.user)){
+					roomId = this.user.teamid;
+					roomName = this.user.teamname;
+				}
 			}
 		}else
 			throw new Error('不能进入私人房间');
