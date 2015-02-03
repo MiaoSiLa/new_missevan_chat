@@ -26,36 +26,41 @@ module.exports = function (app) {
   });
 
   chat.get('/room', function *() {
-	var roomId;
-	var roomName;
-	var roomInfo;
-	var ticket;
-	var roomModel = new Room();
-	if(this.query && this.query.roomId){
-		roomId = this.query.roomId;
-		if(!checkInt(roomId)) throw new Error('该房间不存在');
-		roomId = 't'+roomId;
-		if(!(yield roomModel.checkTempRoom(roomId,this.user)))
-			throw new Error('你没有资格进入该房间');
-	}else{
-		if(this.user){
-			if(this.query && this.query.ticket){
-				ticket = this.query.ticket;
-				roomInfo = yield roomModel.checkTicket(ticket);
-				roomId = roomInfo.id;
-				roomName = roomInfo.name;
-			}else{
-				if(yield roomModel.checkTeamRoom(this.user)){
-					roomId = this.user.teamid;
-					roomName = this.user.teamname;
-				}
-			}
-		}else
-			throw new Error('不能进入私人房间');
+  	var roomId;
+  	var roomName;
+  	var roomInfo;
+  	var ticket;
+  	var roomModel = new Room();
+  	if (this.query && this.query.roomId) {
+  		roomId = this.query.roomId;
+  		if(!checkInt(roomId)) throw new Error('该房间不存在');
+
+  		roomId = 't'+roomId;
+      roomInfo = yield roomModel.checkTempRoom(roomId, this.user);
+  		if (!roomInfo) {
+        throw new Error('你没有资格进入该房间');
+      }
+
+      roomName = roomInfo.name;
+  	} else {
+  		if (this.user) {
+  			if(this.query && this.query.ticket){
+  				ticket = this.query.ticket;
+  				roomInfo = yield roomModel.checkTicket(ticket);
+  				roomId = roomInfo.id;
+  				roomName = roomInfo.name;
+  			} else {
+  				if(yield roomModel.checkTeamRoom(this.user)){
+  					roomId = this.user.teamid;
+  					roomName = this.user.teamname;
+  				}
+  			}
+  		} else {
+  			throw new Error('不能进入私人房间');
+      }
 	}
 
-
-    var title = roomName+'_社区_聊天室_MissEvan';
+    var title = roomName + '_社区_聊天室_MissEvan';
     yield this.render('chat/room', {
       roomId: roomId,
       title: title,
@@ -64,8 +69,9 @@ module.exports = function (app) {
   });
 
   chat.post('/newroom', function *() {
-	if(!this.user)
-		throw new Error('需要登录后执行！');
+  	if(!this.user)
+  		throw new Error('请先登录！');
+
     var room = this.request.body;
     if(!checkInt(room.type))
     	room.type = 1;
@@ -83,7 +89,8 @@ module.exports = function (app) {
 
     var roomModel = new Room();
     var roomInfo = yield roomModel.newRoom(room, this.user);
-    roomInfo.id = roomInfo.id.replace('t', '');
+    roomInfo.id = parseInt(roomInfo.id.replace('t', ''));
+
     this.body = roomInfo;
   });
 

@@ -23,8 +23,8 @@
     <div id='private'></div>
   </div>
 
-  <div id="info" style="display:none">{"roomId":"t47","userId":"10"}</div>
-  <div id="user" style="display:none">{"id":"10","name":"bless","icon":"http://static.missevan.cn/mimages/201411/14/41ed513706d32907f991e7ba354cb174151442.png","iconColor":"#70A368m#D1E0D1m#70A368m#4D6F4Dm#70A368","subTitle":"\u685c","point":"622"}</div>
+  <div id="info" style="display:none">{"roomId":"<%= roomId %>", "userId":"<%= user ? user.id : 0 %>"}</div>
+  <div id="user" style="display:none"><%= JSON.stringify(user) %></div>
 
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
