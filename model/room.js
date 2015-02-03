@@ -71,7 +71,7 @@ Room.prototype.enter = function *(user) {
 
 		yield yclient.PERSIST(roomIdInfo);
 		yield yclient.HSET(memberIdInfo,user);
-		
+
 		if (!lastingRoom)
 			if(roomInfo)
 				yield yclient.HSET('roomNameIndexType' + roomInfo.type, roomName,roomInfo.id);
@@ -190,7 +190,7 @@ Room.prototype.newRoom = function *(room,user) {
 		if(roomInfo) return roomInfo;
 		yield yclient.DEL(TypeNumRnroomName);
 	}
-	
+
 	roomId = yield yclient.HGET(roomNameIndexTypeNum,room.name);
 	roomIdInfo = 'room'+roomId+'Info';
 	if(roomId){
@@ -198,7 +198,7 @@ Room.prototype.newRoom = function *(room,user) {
 		if(roomInfo) throw new Error('该房间已存在');
 		yield yclient.HDEL(roomNameIndexTypeNum,room.name);
 	}
-	
+
 	var roomIdType = 'room'+roomId+'Type';
 	var roomInfo = {};
 	roomId = yield yclient.INCR('roomId');
@@ -210,10 +210,12 @@ Room.prototype.newRoom = function *(room,user) {
 	roomInfo.userId = user.id;
 	roomInfo.userName = user.name;
 	roomIdInfo = 'room'+roomId+'Info';
+
 	var q = [ yclient.HSET(roomIdInfo,roomInfo),
 	          yclient.EXPIRE(roomIdInfo,config.redis.time),
 	          yclient.SETEX(TypeNumRnroomName,config.redis.time,roomId) ];
 	yield q;
+
 	return roomInfo;
 }
 
@@ -222,16 +224,16 @@ Room.prototype.checkTempRoom = function *(roomId,user) {
 	var yclient = this.yclient;
 	var roomIdInfo = 'room'+ roomId+ 'Info';
 	var roomIdPerson = 'room'+roomId+'Person';
-	
+
 	var roomInfo = yield yclient.HGETALL(roomIdInfo);
 	if(!roomInfo) throw new Error('该房间不存在');
-	
+
 	var exist = yield yclient.HEXISTS(roomIdPerson,user.id);
 	if(exist) return roomInfo.name;
-	
+
 	var maxNum = roomInfo.maxNum;
 	var nowNum = (yield yclient.HKEYS(roomIdPerson)).length;
-	
+
 	if(maxNum>nowNum) return roomInfo.name;
 	throw new Error('该房间人数已满');
 }

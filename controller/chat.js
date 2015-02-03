@@ -5,6 +5,9 @@ var Router = require('koa-router');
 
 var validator = require('validator');
 
+var model = require('./../model'),
+  Room = model.Room;
+
 var chat = new Router();
 
 function checkInt(data){
@@ -32,17 +35,17 @@ module.exports = function (app) {
 		roomId = this.query.roomId;
 		if(!checkInt(roomId)) throw new Error('该房间不存在');
 		roomId = 't'+roomId;
-		if(!roomModel.checkTempRoom(roomId,this.user))
+		if(!(yield roomModel.checkTempRoom(roomId,this.user)))
 			throw new Error('你没有资格进入该房间');
 	}else{
 		if(this.user){
-			if(this.query,this.query.ticket){
+			if(this.query && this.query.ticket){
 				ticket = this.query.ticket;
-				roomInfo = roomModel.checkTicket();
+				roomInfo = yield roomModel.checkTicket(ticket);
 				roomId = roomInfo.id;
 				roomName = roomInfo.name;
 			}else{
-				if(roomModel.checkTeamRoom(this.user)){
+				if(yield roomModel.checkTeamRoom(this.user)){
 					roomId = this.user.teamid;
 					roomName = this.user.teamname;
 				}
@@ -50,8 +53,8 @@ module.exports = function (app) {
 		}else
 			throw new Error('不能进入私人房间');
 	}
-	
-	
+
+
     var title = roomName+'_社区_聊天室_MissEvan';
     yield this.render('chat/room', {
       roomId: roomId,
@@ -70,14 +73,16 @@ module.exports = function (app) {
     	throw new Error('房间人数为数字');
     if(room.maxNum<2 || room.maxNum>30)
     	throw new Error('房间人数不能小于2或大于30');
-    if(!room.name)
+    if(!room.roomName)
     	throw new Error('房间名不可为空');
-    room.name = validator.trim(room.name);
+
+    //to room.name
+    room.name = validator.trim(room.roomName);
     if(!validator.isLength(room.name,2,25))
     	throw new Error('房间名必须有2～25个字');
-    
+
     var roomModel = new Room();
-    var roomInfo = roomModel.newRoom(room, this.user);
+    var roomInfo = yield roomModel.newRoom(room, this.user);
     roomInfo.id = roomInfo.id.replace('t', '');
     this.body = roomInfo;
   });
