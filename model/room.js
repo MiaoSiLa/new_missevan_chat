@@ -83,7 +83,7 @@ Room.prototype.enter = function *(user) {
 		}
 
 		socket.roomName = roomName;
-
+		socket.roomType = roomInfo.type;
 		socket.userId = memberId;
 		socket.buserId = 'room' + roomId + 'user' + memberId;
 		socket.join(socket.buserId);
@@ -118,94 +118,94 @@ Room.prototype.enter = function *(user) {
 
 //离开房间
 Room.prototype.leave = function *() {
-		var socket = this.socket;
-		var yclient = this.yclient;
+	var socket = this.socket;
+	var yclient = this.yclient;
 
-		if (!socket.userId) {
-			socket.leave(socket.broomId);
-			return;
+	if (!socket.userId) {
+		socket.leave(socket.broomId);
+		return;
+	}
+
+	var roomIdInfo = "room"+socket.roomId+"Info";
+	var roomIdPerson = "room"+socket.roomId+"Person";
+	var memberIdInfo = "member"+socket.userId+"Info";
+
+	var num = yield yclient.ZINCRBY(roomIdPerson,-1,memberIdInfo);
+
+	if (num <= 0) {
+		if (socket.ticket) {
+			yield yclient.SETEX('ticket' + socket.ticket, config.redis.time, socket.roomId);
 		}
-
-		var roomIdInfo = "room"+socket.roomId+"Info";
-		var roomIdPerson = "room"+socket.roomId+"Person";
-		var memberIdInfo = "member"+socket.userId+"Info";
-
-		var num = yield yclient.ZINCRBY(roomIdPerson,-1,memberIdInfo);
-
-		if (num <= 0) {
-			if (socket.ticket) {
-				yield yclient.SETEX('ticket' + socket.ticket, config.redis.time, socket.roomId);
+		socket.leave(socket.broomId);
+		socket.leave(socket.buserId);
+		yield yclient.HDEL(roomIdPerson, memberIdInfo);
+		yield yclient.ZINCRBY('roomIdIndexType' + socket.roomType, -1, socket.roomId);
+		var exist = yield yclient.EXISTS(roomIdPerson);
+		if (!exist) {
+			if (socket.roomId[0] == 't') {
+				var roomInfo = yield yclient.HGETALL(roomIdInfo);
+				yield yclient.SETEX('Type'+roomInfo.type+'Rn'+socket.roomName, config.redis.time, socket.roomId);
+				yield yclient.HDEL('roomNameIndexType'+roomInfo.type, socket.roomName);
+				yield yclient.ZREM('roomIdIndexType'+roomInfo.type, socket.roomId);
 			}
-			socket.leave(socket.broomId);
-			socket.leave(socket.buserId);
-			yield yclient.HDEL(roomIdPerson, memberIdInfo);
-			yield yclient.ZINCRBY('roomIdIndex'+TypeNum, -1, socket.roomId);
-			var exist = yield yclient.EXISTS(roomIdPerson);
-			if (!exist) {
-				if(socket.roomId[0] == 't'){
-					var roomInfo = yield yclient.HGETALL(roomIdInfo);
-					yield yclient.SETEX('Type'+roomInfo.type+'Rn'+socket.roomName, config.redis.time, socket.roomId);
-					yield yclient.HDEL('roomNameIndexType'+roomInfo.type, socket.roomName);
-					yield yclient.ZREM('roomIdIndexType'+roomInfo.type, socket.roomId);
-				}
-				yield yclient.EXPIRE(roomIdInfo, config.redis.time);
-				var messages = [];
-				[1,3,4].forEach(function(value){
-					var roomIdMessage = 'room' + socket.roomId + 'MessageType' + value;
-					messages.push(yclient.EXPIRE(roomIdMessage, config.redis.time));
-				});
-				yield messages;
-			}
-
-			//yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
-			var userInfo = yield yclient.HGETALL(memberIdInfo);
-			socket.broadcast.to(socket.broomId).emit('leave room', userInfo);
-			this.bridge.emit('leave room', {
-				room: socket.roomId,
-				number: "-1",
-				personInfo: userInfo
+			yield yclient.EXPIRE(roomIdInfo, config.redis.time);
+			var messages = [];
+			[1,3,4].forEach(function(value) {
+				var roomIdMessage = 'room' + socket.roomId + 'MessageType' + value;
+				messages.push(yclient.EXPIRE(roomIdMessage, config.redis.time));
 			});
-
-			var keys = yield yclient.KEYS("room*Person");
-			var multi = yclient.multi();
-			for (var i = 0; i < keys.length; i++) {
-				multi.ZSCORE(keys[i], memberIdInfo)();
-			};
-			var exists = yield multi.exec();
-			if (exists.every(function (ex) {
-				return ex == null;
-			})) {
-				yield yclient.DEL(memberIdInfo);
-			}
+			yield messages;
 		}
+
+		//yield yclient.HINCRBY(roomIdPerson, memberIdInfo, -1);
+		var userInfo = yield yclient.HGETALL(memberIdInfo);
+		socket.broadcast.to(socket.broomId).emit('leave room', userInfo);
+		this.bridge.emit('leave room', {
+			room: socket.roomId,
+			number: "-1",
+			personInfo: userInfo
+		});
+
+		var keys = yield yclient.KEYS("room*Person");
+		var multi = yclient.multi();
+		for (var i = 0; i < keys.length; i++) {
+			multi.ZSCORE(keys[i], memberIdInfo)();
+		};
+		var exists = yield multi.exec();
+		if (exists.every(function (ex) {
+			return ex == null;
+		})) {
+			yield yclient.DEL(memberIdInfo);
+		}
+	}
 };
 
 //创建房间
-Room.prototype.newRoom = function *(room,user) {
+Room.prototype.newRoom = function *(room, user) {
 	var TypeNumRnroomName = 'Type'+room.type+'Rn'+room.name;
 	var roomNameIndexTypeNum = 'roomNameIndexType' + room.type;
 	var yclient = this.yclient;
 	var roomId = yield yclient.GET(TypeNumRnroomName);
 	var roomIdInfo = 'room'+roomId+'Info';
-	if(roomId){
+	if (roomId) {
 		var roomInfo = yield yclient.HGETALL(roomIdInfo);
 		if (roomInfo) return roomInfo;
 		yield yclient.DEL(TypeNumRnroomName);
 	}
 
-	roomId = yield yclient.HGET(roomNameIndexTypeNum,room.name);
+	roomId = yield yclient.HGET(roomNameIndexTypeNum, room.name);
 	roomIdInfo = 'room'+roomId+'Info';
-	if(roomId){
+	if (roomId) {
 		var roomInfo = yield yclient.HGETALL(roomIdInfo);
 		if (roomInfo) throw new Error('该房间已存在');
-		yield yclient.HDEL(roomNameIndexTypeNum,room.name);
+		yield yclient.HDEL(roomNameIndexTypeNum, room.name);
 	}
 
 	var roomIdType = 'room'+roomId+'Type';
 	var roomInfo = {};
 	roomId = yield yclient.INCR('roomId');
 
-	roomId = 't'+ roomId;
+	roomId = 't' + roomId;
 	roomInfo.id = roomId;
 	roomInfo.name = room.name;
 	roomInfo.type = room.type;
@@ -215,13 +215,13 @@ Room.prototype.newRoom = function *(room,user) {
 
 	roomIdInfo = 'room'+roomId+'Info';
 
-	var q = [ yclient.HMSET(roomIdInfo,roomInfo),
-	          yclient.EXPIRE(roomIdInfo,config.redis.time),
-	          yclient.SETEX(TypeNumRnroomName,config.redis.time,roomId) ];
+	var q = [ yclient.HMSET(roomIdInfo, roomInfo),
+	          yclient.EXPIRE(roomIdInfo, config.redis.time),
+	          yclient.SETEX(TypeNumRnroomName, config.redis.time, roomId) ];
 	yield q;
 
 	return roomInfo;
-}
+};
 
 //检查临时房间
 Room.prototype.checkTempRoom = function *(roomId, user) {
@@ -233,40 +233,42 @@ Room.prototype.checkTempRoom = function *(roomId, user) {
 	var roomInfo = yield yclient.HGETALL(roomIdInfo);
 	if (!roomInfo) throw new Error('该房间不存在');
 
-	var exist = yield yclient.HEXISTS(roomIdPerson, user.id);
-	if (exist) return roomInfo;
+	var score = yield yclient.ZSCORE(roomIdPerson, user.id);
+	if (score) return roomInfo;
 
 	var maxNum = roomInfo.maxNum;
-	var nowNum = (yield yclient.HKEYS(roomIdPerson)).length;
+	var nowNum = yield yclient.ZCARD(roomIdPerson);
 
-	if(maxNum > nowNum) {
+	if (maxNum > nowNum) {
 		return roomInfo;
 	} else {
 		throw new Error('该房间人数已满');
 	}
-}
+};
 
 //检查私房凭证
-Room.prototype.checkTicket = function *(ticket){
+Room.prototype.checkTicket = function *(ticket) {
 	var yclient = this.yclient;
 	var roomId = yield yclient.GET('ticket'+ticket);
-	if(!roomId) throw new Error('无效的ticket！');
-	var roomIdInfo = 'room'+ $roomId+ 'Info';
+	if (!roomId) throw new Error('无效的ticket！');
+	var roomIdInfo = 'room' + roomId + 'Info';
 	var roomInfo = yield yclient.HGETALL(roomIdInfo);
-	if(!roomInfo) throw new Error('该房间已经没有成员在了！');
+	if (!roomInfo) throw new Error('该房间已经没有成员在了！');
 	return roomInfo;
-}
+};
 
 //检查小组房间
-Room.prototype.checkTeamRoom = function *(user){
-	if(!user.teamid) throw new Exception('该房间不存在！');
+Room.prototype.checkTeamRoom = function *(user) {
+	if (!user.teamid) throw new Exception('该房间不存在！');
+
 	var yclient = this.yclient;
-	var roomIdInfo = 'room'+ user.teamid+ 'Info';
-	var roomInfo = {id:user.teamid,name:user.teamname};
-	yield yclient.HMSET(roomIdInfo,roomInfo);
-	yield yclient.EXPIRE(roomIdInfo,config.redis.time)
+	var roomIdInfo = 'room'+ user.teamid + 'Info';
+	var roomInfo = { id: user.teamid, name: user.teamname };
+	yield yclient.HMSET(roomIdInfo, roomInfo);
+	yield yclient.EXPIRE(roomIdInfo, config.redis.time);
+
 	return true;
-}
+};
 
 module.exports = Room;
 
