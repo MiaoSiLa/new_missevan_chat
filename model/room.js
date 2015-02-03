@@ -72,7 +72,16 @@ Room.prototype.enter = function *(user) {
 		var roomName = roomInfo.name;
 
 		yield yclient.PERSIST(roomIdInfo);
-		yield yclient.HMSET(memberIdInfo, user);
+
+		var suser = {
+			id: user.id,
+			username: user.username,
+			iconid: user.iconid,
+			iconurl: user.iconurl,
+			iconcolor: user.iconcolor,
+			subtitle: user.subtitle || ''
+		};
+		yield yclient.HMSET(memberIdInfo, suser);
 
 		if (!lastingRoom && roomInfo) {
 			yield yclient.HSET('roomNameIndexType' + roomInfo.type, roomName, roomInfo.id);

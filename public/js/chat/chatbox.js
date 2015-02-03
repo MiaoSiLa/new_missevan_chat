@@ -55,18 +55,22 @@ var chatBox = {
     });
   },
 
+  sender: function(user) {
+    return {
+      id: user.id,
+      name: user.username,
+      iconColor: user.iconcolor,
+      icon: user.iconurl,
+      subTitle: user.subtitle || ''
+    };
+  },
+
   loadUser: function() {
 
     if($("#user").html() == '') return;
     var user = $.parseJSON($("#user").text());
 
-    index.mo.sender = {
-      id: user.id,
-      name: user.name,
-      iconColor: user.iconColor,
-      icon: user.icon,
-      subTitle: user.subTitle
-    };
+    index.mo.sender = chatBox.sender(user);
 
   },
 
@@ -99,9 +103,9 @@ var chatBox = {
     if(data.msg.length > 0) {
       $.each(data.msg,function(n,message) {
         chatBox.loadBubble({
-          msg:message.msg,
-          type:message.type,
-          sender:message.sender
+          msg: message.msg,
+          type: message.type,
+          sender: chatBox.sender(message.sender)
         });
       });
     }
@@ -262,7 +266,7 @@ var chatBox = {
 
       if(message.indexOf('/播放声音') == 0) {
         var cmdNum = getNumFromString('/播放声音', message),
-        msg;
+          msg;
 
         moTool.getAjax({
           url: "/sound/getsound?soundid=" + cmdNum,
