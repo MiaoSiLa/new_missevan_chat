@@ -70,10 +70,9 @@ Room.prototype.enter = function *(user) {
 		if (!exists) throw new Error('没有找到该房间');
 
 		yield yclient.PERSIST(roomIdInfo);
-		yield yclient.HSET(memberIdInfo,user);
+		yield yclient.HMSET(memberIdInfo,user);
 		
-		if (!lastingRoom)
-			if(roomInfo)
+		if (!lastingRoom && roomInfo)
 				yield yclient.HSET('roomNameIndexType' + roomInfo.type, roomName,roomInfo.id);
 
 		if (this.ticket) {
@@ -210,7 +209,7 @@ Room.prototype.newRoom = function *(room,user) {
 	roomInfo.userId = user.id;
 	roomInfo.userName = user.name;
 	roomIdInfo = 'room'+roomId+'Info';
-	var q = [ yclient.HSET(roomIdInfo,roomInfo),
+	var q = [ yclient.HMSET(roomIdInfo,roomInfo),
 	          yclient.EXPIRE(roomIdInfo,config.redis.time),
 	          yclient.SETEX(TypeNumRnroomName,config.redis.time,roomId) ];
 	yield q;
@@ -253,7 +252,7 @@ Room.prototype.checkTeamRoom = function *(user){
 	var yclient = this.yclient;
 	var roomIdInfo = 'room'+ user.teamid+ 'Info';
 	var roomInfo = {id:user.teamid,name:user.teamname};
-	yield yclient.HSET(roomIdInfo,roomInfo);
+	yield yclient.HMSET(roomIdInfo,roomInfo);
 	yield yclient.EXPIRE(roomIdInfo,config.redis.time)
 	return true;
 }
