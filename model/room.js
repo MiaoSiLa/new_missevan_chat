@@ -252,8 +252,8 @@ Room.prototype.checkTeamRoom = function *(user){
 	if(!user.teamid) throw new Exception('该房间不存在！');
 	var yclient = this.yclient;
 	var roomIdInfo = 'room'+ user.teamid+ 'Info';
-	$roomInfo = array('id' => user.teamid,'name' =>user.teamname);
-	yield yclient.HSET(roomIdInfo,$roomInfo);
+	var roomInfo = {id:user.teamid,name:user.teamname};
+	yield yclient.HSET(roomIdInfo,roomInfo);
 	yield yclient.EXPIRE(roomIdInfo,config.redis.time)
 	return true;
 }
