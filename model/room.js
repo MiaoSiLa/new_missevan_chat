@@ -142,7 +142,7 @@ Room.prototype.leave = function *() {
 			if (!exist) {
 				if(socket.roomId[0] == 't'){
 					var roomInfo = yield yclient.HGETALL(roomIdInfo);
-					yield yclient.SETEX('Type'+roomInfo.type+'Rn'+socket.roomName+, config.redis.time, socket.roomId);
+					yield yclient.SETEX('Type'+roomInfo.type+'Rn'+socket.roomName, config.redis.time, socket.roomId);
 					yield yclient.HDEL('roomNameIndexType'+roomInfo.type, socket.roomName);
 					yield yclient.ZREM('roomIdIndexType'+roomInfo.type, socket.roomId);
 				}
