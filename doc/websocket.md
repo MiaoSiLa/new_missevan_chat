@@ -32,13 +32,14 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 
 ## roomInfo
 
-```/chat/roomInfo```
+``` /chat/roomInfo ```
 
 可收到聊天室列表页面变化信息
 
 ### 有人进入房间
 
-```socket.on "enter room"
+```
+socket.on "enter room"
 {
   "room": <room id>,
   "number": "+1",
@@ -48,7 +49,8 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 
 ### 有人离开房间
 
-```socket.on "leave room"
+```
+socket.on "leave room"
 {
   "room": <room id>,
   "number": "-1",
@@ -58,11 +60,14 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 
 ## chatRoom
 
+``` /chat/chatRoom ```
+
 聊天室内信息
 
 ### 进入房间
 
-```socket.emit "enter room" <data> <callback>
+```
+socket.emit "enter room" <data> <callback>
 
 <data>:
 {
@@ -84,7 +89,8 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 
 ### 发送消息
 
-```socket.emit "send message" <message> <callback>
+```
+socket.emit "send message" <message> <callback>
 
 <message>:
 {
