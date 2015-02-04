@@ -11,7 +11,7 @@ var model = require('./../model'),
 var chat = new Router();
 
 function checkInt(data){
-	if(validator.isNumeric(data) && data!=0)
+	if (validator.isNumeric(data) && data != 0)
 		return true;
 	return false;
 }
@@ -19,17 +19,13 @@ function checkInt(data){
 module.exports = function (app) {
 
   chat.get('/', function *() {
-	var roomModel = new Room();
-	var type = this.query.type;
-    if(!type ||　!checkInt(type))
-    	type = 1;
-    if(this.user)
-    	var teamMemberList = yield roomModel.getTeamMemberList(this.user);
-	var roomList = yield roomModel.getRoomList(type);
-	var roomsMembers = yield roomModel.getMemberInTempRoom(roomList);
-	yield this.render('chat/index', {
+    var type = parseInt(this.query.type);
+    if(!type || !checkInt(type))
+      type = 1;
+    yield this.render('chat/index', {
       title: 'Dollars_社区_聊天室_MissEvan',
-      user: this.user
+      user: this.user,
+      roomType: type
     });
   });
 
@@ -40,10 +36,10 @@ module.exports = function (app) {
   	var ticket;
   	var roomModel = new Room();
   	if (this.query && this.query.roomId) {
-  		roomId = this.query.roomId;
+  		roomId = parseInt(this.query.roomId);
   		if(!checkInt(roomId)) throw new Error('该房间不存在');
 
-  		roomId = 't'+roomId;
+  		roomId = 't' + roomId;
       roomInfo = yield roomModel.checkTempRoom(roomId, this.user);
   		if (!roomInfo) {
         throw new Error('你没有资格进入该房间');
@@ -74,6 +70,27 @@ module.exports = function (app) {
       title: title,
       user: this.user
     });
+  });
+
+  chat.get('/roomlist', function *() {
+    var roomModel = new Room();
+
+    var type = parseInt(this.query.type);
+    if (!type || !checkInt(type)) {
+      type = 1;
+    }
+
+    var roomList = yield roomModel.getRoomList(type);
+    var r = {
+      roomlist: roomList,
+      members: yield roomModel.getMemberInTempRoom(roomList)
+    };
+
+    if (this.user && this.user.teamid) {
+      r.members[this.user.teamid] = yield roomModel.getTeamMemberList(this.user);
+    }
+
+    this.body = r;
   });
 
   chat.post('/newroom', function *() {

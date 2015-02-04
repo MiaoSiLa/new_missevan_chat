@@ -280,9 +280,9 @@ Room.prototype.checkTeamRoom = function *(user) {
 	return true;
 };
 
-Room.prototype.getPersonInRoom = function *(roomId){
+Room.prototype.getPersonInRoom = function *(roomId) {
 	var yclient = this.yclient;
-	var roomIdPerson = 'room'+user.teamid+'Person';
+	var roomIdPerson = 'room' + roomId + 'Person';
 	var memberIds = yield yclient.ZRANGE(roomIdPerson,0,-1);
 	var MemberList = [], memberId,memberIdInfo,memberInfo;
 	for(memberId of memberIds){
@@ -300,7 +300,7 @@ Room.prototype.getPersonInRoom = function *(roomId){
 
 //获取小组人员列表
 Room.prototype.getTeamMemberList = function *(user){
-	if(user.teamid){
+	if (user.teamid) {
 		return yield this.getPersonInRoom(user.teamid);
 	}
 }
@@ -314,17 +314,17 @@ Room.prototype.getRoomList = function *(type){
 	for(roomId of roomIds){
 		roomIdInfo = 'room'+roomId+'Info';
 		roomInfo = yield yclient.HGETALL(roomIdInfo);
-		if(roomInfo){
+		if (roomInfo) {
 			roomInfos.push(roomInfo);
-		}else{
-			yield yclient.ZREM(roomIdIndexTypeNum,roomId);
+		} else {
+			yield yclient.ZREM(roomIdIndexTypeNum, roomId);
 		}
 	}
 	return roomInfos;
 }
 
 //获取临时房间人员列表
-Room.prototype.getMemberInTempRoom = function *(roomList,yclient){
+Room.prototype.getMemberInTempRoom = function *(roomList) {
 	var yclient = this.yclient;
 	var roomsMembers = {};
 	for(roomInfo of roomList){
