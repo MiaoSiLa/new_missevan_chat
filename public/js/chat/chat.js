@@ -61,6 +61,7 @@ function getMessage(data) {
 function newMessage(data) {
   //console.log('接收');
   //console.log(data);
+  data.sender = chatBox.sender(data.sender);
   chatBox.loadBubble(data);
 };
 

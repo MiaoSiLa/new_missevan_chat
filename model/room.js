@@ -69,7 +69,7 @@ Room.prototype.enter = function *(user) {
 	var lastingRoom = this.isLastingRoom();
 
 	var roomId = this.roomId;
-	var memberId = user.id;	///这里获取用户id
+	var memberId = user ? user.id : 0;	///这里获取用户id
 	var memberIdInfo = 'member' + memberId + 'Info';
 
 	var roomIdPerson = 'room' + roomId + 'Person';
@@ -263,8 +263,14 @@ Room.prototype.checkTempRoom = function *(roomId, user) {
 
 	roomInfo = Room.RoomInfo(roomInfo);
 
+	if (!user) {
+		return roomInfo;
+	}
+
 	var score = yield yclient.ZSCORE(roomIdPerson, user.id);
-	if (score) return roomInfo;
+	if (score) {
+		return roomInfo;
+	}
 
 	var maxNum = roomInfo.maxNum;
 	var nowNum = yield yclient.ZCARD(roomIdPerson);
@@ -290,7 +296,9 @@ Room.prototype.checkTicket = function *(ticket) {
 
 //检查小组房间
 Room.prototype.checkTeamRoom = function *(user) {
-	if (!user.teamid) throw new Exception('该房间不存在！');
+	if (!user || !user.teamid) {
+		throw new Exception('该房间不存在！');
+	}
 
 	var yclient = this.yclient;
 	var roomIdInfo = 'room' + user.teamid + 'Info';
