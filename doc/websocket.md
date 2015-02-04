@@ -17,7 +17,7 @@
 ```
 {
   "id": <user id>,
-  "username": "<user username",
+  "username": "<user username>",
   "iconid": <user iconid>,
   "iconurl": "<user iconurl>",
   "iconcolor": "<user iconcolor>",
@@ -105,5 +105,17 @@ socket.emit "send message" <message> <callback>
   "info": "信息发送成功",
   "msg": "<message text>",
   "type": <message type>
+}
+```
+
+### 接收消息
+
+```
+socket.on "new message"
+{
+  "msg": "<message text>",
+  "type": <message type>,
+  "sender": <user info>,
+  "time": <timestamp>
 }
 ```
