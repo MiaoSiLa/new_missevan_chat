@@ -893,6 +893,35 @@ var chatRoomList = {
       //					$(this).attr('href', $(this).attr('href') + roomCode);
       //				}
     });
+  },
+
+  loadRoomList: function() {
+    var $newRoomType = $('#newroomtype');
+    var roomType = $newRoomType.val();
+
+    moTool.getAjax({
+      url: "/chat/room/list?type=" + roomType,
+      callBack: function (data) {
+        if (data) {
+          if (data.code == 0) {
+            //加载列表
+            for (var i = 0; i < data.roomlist.length; i++) {
+              chatRoomList.addNewRoom(data.roomlist[i]);
+            }
+            //加载成员
+            for (var roomId in data.members) {
+              
+            }
+          } else if (data.message) {
+            moTool.showError(data.message);
+          }
+        }
+      },
+      showLoad: false,
+      success: false,
+      error: false,
+      json: false
+    });
   }
 };
 
@@ -912,4 +941,5 @@ var loadChat = function() {
 var loadRoom = function() {
   chatRoomList.loadTeamRoom();
   chatRoomList.loadNewRoom();
+  chatRoomList.loadRoomList();
 };

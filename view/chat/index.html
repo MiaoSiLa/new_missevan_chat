@@ -23,20 +23,31 @@
       <input id="newroomtype" name="type" type="hidden" value="<%= roomType %>">
 
       <div class="roomnamewidth"><input id="newroomname" type="text" value="" placeholder="请输入房间名" maxlength="24"></div>
-
       <div class="usernamewidth"><input id="newroomnum" type="text" value="" placeholder="人数上限"></div>
-
       <div class="usernumwidth"><div id="newroombtn">确认</div></div>
-
 
       <div class="clear"></div>
 
       <div class="roombarcontainer">
         <div class="roombarmember">创建一个腹黑的房间_( :3」∠)_</div>
-
         <div class="clear"></div>
       </div>
     </div>
+    <% if (user && user.teamid) { %>
+    <div id="room<%= user.teamid %>" class="roombar pie">
+
+      <div class="roomnamewidth">小组「<%= user.teamname %>」专房</div>
+      <div class="usernamewidth"><div id="getticket">邀请地址</div></div>
+      <div class="usernumwidth">人数: 0/100</div>
+
+      <a target="_blank" class="go1 pie" href="/chat/room">加入</a>
+
+      <div class="clear"></div>
+      <div class="roombarcontainer">
+        <div class="clear"></div>
+      </div>
+    </div>
+    <% } %>
 
     <div class="clear"></div>
   </div>

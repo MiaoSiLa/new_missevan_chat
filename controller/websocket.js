@@ -83,11 +83,14 @@ function *connection() {
     if (!socket.userId)
       return;
 
-    if (typeof data.type !== 'number'
+    if (typeof data.type !== 'number' || typeof data.msg !== 'string'
       || (data.userId && typeof data.userId !== 'number'))
       throw new Error("非法参数");
 
     data.msg = data.msg.trim();
+    if (data.msg.length > 200) {
+      throw new Error("消息内容过长");
+    }
 
     var flag = [ 1, 2, 3, 4, 5, 6 ].indexOf(data.type);
     if (flag !== -1) {
