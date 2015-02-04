@@ -26,26 +26,21 @@
 
 可收到聊天室列表页面变化信息
 
-### 有人进入房间
+### 有人进入或离开房间
 
 ```
 socket.on "enter room"
 {
   "room": <room id>,
-  "number": "+1",
+  "number": "<+1|-1>",
   "personInfo": <user info>
 }
 ```
 
-### 有人离开房间
+### 新房间
 
 ```
-socket.on "leave room"
-{
-  "room": <room id>,
-  "number": "-1",
-  "personInfo": <user info>
-}
+socket.on "new room" <room info>
 ```
 
 ## chatRoom
