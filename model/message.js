@@ -15,6 +15,8 @@ var util = require('util'), _ = require('underscore'), validator = require('vali
 var ModelBase = require('./../lib/base');
 var ObjectID = require('mongodb').ObjectID;
 
+var Room = require('./room');
+
 // 信息处理
 function Message(data, socket) {
 	ModelBase.call(this);
@@ -67,6 +69,8 @@ Message.prototype.sendRoomMessage = function *() {
 	if (!userInfo) {
 		throw new Error('没有找到发信者');
 	}
+
+	userInfo = Room.MemberInfo(userInfo);
 	var newMessage = {
 		msg : this.msg,
 		type : this.type,
@@ -113,6 +117,8 @@ Message.prototype.sendPrivate = function *() {
 		if (!userInfo) {
 			throw new Error('没有找到发信者');
 		}
+		
+		userInfo = Room.MemberInfo(userInfo);
 		socket.broadcast.to(bToMember).emit("new message", {
 			msg : this.msg,
 			type : this.type,

@@ -29,6 +29,20 @@ function Room(data, socket, bridge) {
 
 util.inherits(Room, ModelBase);
 
+Room.RoomInfo = function (roomInfo) {
+	roomInfo.id = roomInfo.id.toString();
+	roomInfo.type = parseInt(roomInfo.type);
+	roomInfo.maxNum = parseInt(roomInfo.maxNum);
+	roomInfo.userId = parseInt(roomInfo.userId);
+	return roomInfo;
+};
+
+Room.MemberInfo = function (memberInfo) {
+	memberInfo.id = parseInt(memberInfo.id);
+	memberInfo.iconid = parseInt(memberInfo.iconid);
+	return memberInfo;
+};
+
 Room.prototype.isRoom = function () {
 	if (this.roomId) {
 		return /^t?[0-9]+$/.test(this.roomId);
@@ -200,7 +214,7 @@ Room.prototype.newRoom = function *(room, user) {
 	var roomIdInfo = 'room'+roomId+'Info';
 	if (roomId) {
 		var roomInfo = yield yclient.HGETALL(roomIdInfo);
-		if (roomInfo) return roomInfo;
+		if (roomInfo) return Room.RoomInfo(roomInfo);
 		yield yclient.DEL(TypeNumRnroomName);
 	}
 
@@ -231,7 +245,7 @@ Room.prototype.newRoom = function *(room, user) {
 	          yclient.SETEX(TypeNumRnroomName, config.redis.time, roomId) ];
 	yield q;
 
-	return roomInfo;
+	return Room.RoomInfo(roomInfo);
 };
 
 //检查临时房间
@@ -243,6 +257,8 @@ Room.prototype.checkTempRoom = function *(roomId, user) {
 
 	var roomInfo = yield yclient.HGETALL(roomIdInfo);
 	if (!roomInfo) throw new Error('该房间不存在');
+
+	roomInfo = Room.RoomInfo(roomInfo);
 
 	var score = yield yclient.ZSCORE(roomIdPerson, user.id);
 	if (score) return roomInfo;
@@ -265,7 +281,8 @@ Room.prototype.checkTicket = function *(ticket) {
 	var roomIdInfo = 'room' + roomId + 'Info';
 	var roomInfo = yield yclient.HGETALL(roomIdInfo);
 	if (!roomInfo) throw new Error('该房间已经没有成员在了！');
-	return roomInfo;
+
+	return Room.RoomInfo(roomInfo);
 };
 
 //检查小组房间
@@ -273,8 +290,13 @@ Room.prototype.checkTeamRoom = function *(user) {
 	if (!user.teamid) throw new Exception('该房间不存在！');
 
 	var yclient = this.yclient;
-	var roomIdInfo = 'room'+ user.teamid + 'Info';
-	var roomInfo = { id: user.teamid, name: user.teamname };
+	var roomIdInfo = 'room' + user.teamid + 'Info';
+	var roomInfo = {
+		id: user.teamid.toString(),
+		name: user.teamname,
+		maxNum: 100, type: 0
+	};
+
 	yield yclient.HMSET(roomIdInfo, roomInfo);
 	yield yclient.EXPIRE(roomIdInfo, config.redis.time);
 
@@ -290,7 +312,7 @@ Room.prototype.getPersonInRoom = function *(roomId) {
 		memberIdInfo = 'member'+memberId+'Info';
 		memberInfo = yield yclient.HGETALL(memberIdInfo);
 		if (memberInfo) {
-			memberList.push(memberInfo);
+			memberList.push(Room.MemberInfo(memberInfo));
 		} else {
 			yield yclient.ZREM(roomIdPerson,memberId);
 		}
@@ -316,7 +338,7 @@ Room.prototype.getRoomList = function *(type){
 		roomIdInfo = 'room'+roomId+'Info';
 		roomInfo = yield yclient.HGETALL(roomIdInfo);
 		if (roomInfo) {
-			roomInfos.push(roomInfo);
+			roomInfos.push(Room.RoomInfo(roomInfo));
 		} else {
 			yield yclient.ZREM(roomIdIndexTypeNum, roomId);
 		}

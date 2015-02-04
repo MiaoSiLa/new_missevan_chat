@@ -12,6 +12,14 @@
 
 ```socket.on "errorinfo" "<error message>"```
 
+```
+<callback>
+{
+  "state": false,
+  "info": "<error info>"
+}
+```
+
 ## Overall User Info
 
 ```
