@@ -89,6 +89,12 @@ module.exports = function (app) {
 
     if (this.user && this.user.teamid) {
       var teamRoomId = this.user.teamid.toString();
+      r.roomlist.unshift({
+        "id": teamRoomId,
+        "name": this.user.teamname,
+        "type": 0,
+        "maxNum": 100,
+      });
       r.members[teamRoomId] = yield roomModel.getTeamMemberList(this.user);
     }
 
