@@ -81,7 +81,7 @@ socket.emit "send message" <message> <callback>
 {
   "msg": "<message text>",
   "type": <message type>,
-  "userId": <send private message user id (optional)>
+  "userId": <? send private message user id>
 }
 
 <callback>:

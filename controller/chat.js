@@ -10,7 +10,7 @@ var model = require('./../model'),
 
 var chat = new Router();
 
-function checkInt(data){
+function checkInt(data) {
 	if (validator.isNumeric(data) && data != 0)
 		return true;
 	return false;
@@ -89,12 +89,14 @@ module.exports = function (app) {
 
     if (this.user && this.user.teamid) {
       var teamRoomId = this.user.teamid.toString();
+      //插入小组房间
       r.roomlist.unshift({
         "id": teamRoomId,
         "name": this.user.teamname,
         "type": 0,
         "maxNum": 100,
       });
+      //插入小组房间成员
       r.members[teamRoomId] = yield roomModel.getTeamMemberList(this.user);
     }
 
@@ -126,7 +128,6 @@ module.exports = function (app) {
 
     var roomModel = new Room();
     var roomInfo = yield roomModel.newRoom(room, this.user);
-    //roomInfo.id = parseInt(roomInfo.id.replace('t', ''));
 
     this.body = {
       code: 0,

@@ -14,12 +14,12 @@
 ```
 <room info>
 {
-  "id": <room id>,
+  "id": "<room id>",
   "name": "<room name>",
   "type": <room type>,
   "maxNum": <room members max number>,
-  "userId": <room creator user id>,
-  "userName": <room creator user name>
+  "userId": <? room creator user id>,
+  "userName": <? room creator user name>
 }
 ```
 
@@ -56,7 +56,7 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 
 ### 获取房间列表
 
-```GET /room/list```
+``` GET /room/list ```
 
 ```
 {
