@@ -169,10 +169,12 @@ Room.prototype.leave = function *() {
 			var keys = yield yclient.KEYS("room*Person");
 			var multi = yclient.multi();
 			for (var i = 0; i < keys.length; i++) {
-				multi.SISMEMBER(keys[i], memberIdInfo)();
+				multi.HEXISTS(keys[i], memberIdInfo)();
 			};
 			var exists = yield multi.exec();
-			if (exists.length === 0) {
+			if(exists.every(function(data){
+				return !data;
+			})){
 				yield yclient.EXPIRE(memberIdInfo, config.redis.time);
 			}
 		}
