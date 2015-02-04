@@ -55,12 +55,13 @@ var chatBox = {
     });
   },
 
-  sender: function(user) {
+  sender: function(user, small) {
+    var iconUrlPrefix = (small ? 'http://static.missevan.cn/mimagesmini/' : 'http://static.missevan.cn/mimages/');
     return {
       id: user.id,
       name: user.username,
       iconColor: user.iconcolor,
-      icon: 'http://static.missevan.cn/mimages/' + user.iconurl,
+      icon: iconUrlPrefix + user.iconurl,
       subTitle: user.subtitle || ''
     };
   },
@@ -476,11 +477,11 @@ var chatBox = {
       }
 
       message.$chatBoxId.prepend("<div class='clear'></div>"
-      + "<div id='chatline" + index.mo.chatLine + "' data-userid='" + message.userId + "' data-username='" + message.userName + "' class='target' style='display:none;'>"
-      + "<div class='chaticonbox'><img width='64px' height='64px' src='" + index.mo.iconPath + message.picture + "'></div>"
-      + "<div class='clear'></div>"
-      + "<div class='chatusername' style='color:" + userNameColor + ";'>" + message.userName + message.subTitle + "</div>"
-      + "</div>");
+        + "<div id='chatline" + index.mo.chatLine + "' data-userid='" + message.userId + "' data-username='" + message.userName + "' class='target' style='display:none;'>"
+        + "<div class='chaticonbox'><img width='64px' height='64px' src='" + index.mo.iconPath + message.picture + "'></div>"
+        + "<div class='clear'></div>"
+        + "<div class='chatusername' style='color:" + userNameColor + ";'>" + message.userName + message.subTitle + "</div>"
+        + "</div>");
 
       index.soundBox.playChat();
       index.soundBox.playChatStr(message.soundUrl);
@@ -502,11 +503,11 @@ var chatBox = {
 
       $('#privatechatbox' + targetId)
       .prepend("<div class='clear'></div>"
-      + "<div id='privatechatline" + index.mo.pChatLine + "' data-userid='" + message.userId + "' data-username='" + message.userName + "' class='target' style='display:none;'>"
-      + "<div class='chaticonbox'><img width='64px' height='64px' src='" + index.mo.iconPath + message.picture + "'></div>"
-      + "<div class='clear'></div>"
-      + "<div class='chatusername'>" + message.userName + message.subTitle + "</div>"
-      + "</div>");
+        + "<div id='privatechatline" + index.mo.pChatLine + "' data-userid='" + message.userId + "' data-username='" + message.userName + "' class='target' style='display:none;'>"
+        + "<div class='chaticonbox'><img width='64px' height='64px' src='" + index.mo.iconPath + message.picture + "'></div>"
+        + "<div class='clear'></div>"
+        + "<div class='chatusername'>" + message.userName + message.subTitle + "</div>"
+        + "</div>");
 
       index.soundBox.playChat();
       index.soundBox.playChatStr(message.soundUrl);
@@ -531,18 +532,18 @@ var chatBox = {
       var $roomId = $('#room' + person.room);
     }
 
-    if($roomId.length) {
-      if(person.number == '+1') {
+    if ($roomId.length) {
+      if (person.number == '+1') {
         var roomFloatStr = "<div class='roombarfloat'>，</div>";
         var roomMemberStr =
-        '<div class="roombarmember roombarmember' + person.personInfo.id + '" style="display:none;">'
-        + '<a target="_blank" href="/' + person.personInfo.id +'">'
-        + '<img src="' + person.personInfo.icon + '">'
-        + '</a>&nbsp;<a target="_blank" href="/' + person.personInfo.id + '">' + person.personInfo.name + '</a>'
-        +'</div>';
+          '<div class="roombarmember roombarmember' + person.personInfo.id + '" style="display:none;">'
+          + '<a target="_blank" href="/' + person.personInfo.id +'">'
+          + '<img src="' + person.personInfo.icon + '">'
+          + '</a>&nbsp;<a target="_blank" href="/' + person.personInfo.id + '">' + person.personInfo.name + '</a>'
+          +'</div>';
 
         if($roomId.find('.roombarmember').length == 0) {
-          $('#roombarcontainer').prepend(roomMemberStr);
+          $roomId.find('.roombarcontainer').prepend(roomMemberStr);
         } else {
           $roomId.find('.roombarmember:last').after(roomFloatStr + roomMemberStr);
         }
@@ -566,6 +567,9 @@ var chatBox = {
           }
         );
       }
+
+      var memberCount = $roomId.find('.roombarmember').length;
+      $roomId.find('.membercount').text(memberCount);
     }
   },
 
@@ -802,27 +806,32 @@ var chatRoomList = {
     });
   },
 
-  addNewRoom: function(roomInfo) {
-    var str = "",
-      $boxId = $('#room0');
+  addNewRoom: function(roomInfo, last) {
+    var str = "";
 
-    var roomId = roomInfo.id.toString().replace('t', '');
+    var roomNumId = roomInfo.id.toString().replace('t', '');
 
     str = str
-      + "<div id='room' class='roombar pie'>"
+      + "<div id='room" + roomInfo.id + "' class='roombar pie'>"
       + "<div class='roomnamewidth'>" + roomInfo.name + "</div>"
       + "<div class='usernamewidth'>"
       + "<a target='_blank' href='/" + roomInfo.userId + "'>" + roomInfo.userName  + "</a>"
       + "</div>"
-      + "<div class='usernumwidth'>人数: 0/" + roomInfo.maxNum + "</div>"
-      + "<a target='_blank' class='go1 pie' href='/chat/room?roomId=" + roomId + "'>加入</a>"
+      + "<div class='usernumwidth'>人数: <span class=\"membercount\">0</span>/" + roomInfo.maxNum + "</div>"
+      + "<a target='_blank' class='go1 pie' href='/chat/room?roomId=" + roomNumId + "'>加入</a>"
       + "<div class='clear'></div>"
       + "<div class='roombarcontainer'>"
       + "<div class='clear'></div>"
       + "</div>"
       + "</div>";
 
-    $boxId.after(str);
+    if (last) {
+      var $roombar = $('.roombar:last');
+      $roombar.after(str);
+    } else {
+      var $boxId = $('#room0');
+      $boxId.after(str);
+    }
   },
 
   loadNewRoom: function() {
@@ -906,11 +915,19 @@ var chatRoomList = {
           if (data.code == 0) {
             //加载列表
             for (var i = 0; i < data.roomlist.length; i++) {
-              chatRoomList.addNewRoom(data.roomlist[i]);
+              chatRoomList.addNewRoom(data.roomlist[i], true);
             }
             //加载成员
             for (var roomId in data.members) {
-              
+              var members = data.members[roomId];
+              for (var i = 0; i < members.length; i++) {
+                var p = {
+                  room: roomId,
+                  number: '+1',
+                  personInfo: chatBox.sender(members[i], true)
+                };
+                chatBox.loadRoomList(p);
+              }
             }
           } else if (data.message) {
             moTool.showError(data.message);
