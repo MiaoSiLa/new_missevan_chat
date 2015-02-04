@@ -19,7 +19,14 @@ function checkInt(data){
 module.exports = function (app) {
 
   chat.get('/', function *() {
-    yield this.render('chat/index', {
+	var roomModel = new Room();
+	var type = this.query.type;
+    if(!type ||　!checkInt(type))
+    	type = 1;
+	var teamMemberList = yield roomModel.getTeamMemberList(this.user);
+	var roomList = yield roomModel.getRoomInfo(type);
+	var roomsMembers = yield roomModel.getMemberInTempRoom(roomList);
+	yield this.render('chat/index', {
       title: 'Dollars_社区_聊天室_MissEvan',
       user: this.user
     });
@@ -73,7 +80,7 @@ module.exports = function (app) {
   		throw new Error('请先登录！');
 
     var room = this.request.body;
-    if(!checkInt(room.type))
+    if(!room.type ||　!checkInt(room.type))
     	room.type = 1;
     if(!checkInt(room.maxNum))
     	throw new Error('房间人数为数字');
@@ -82,7 +89,7 @@ module.exports = function (app) {
     if(!room.roomName)
     	throw new Error('房间名不可为空');
 
-    //to room.name
+    // to room.name
     room.name = validator.trim(room.roomName);
     if(!validator.isLength(room.name,2,25))
     	throw new Error('房间名必须有2～25个字');

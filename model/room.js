@@ -280,6 +280,60 @@ Room.prototype.checkTeamRoom = function *(user) {
 	return true;
 };
 
+Room.prototype.getPersonInRoom = function *(roomId){
+	var yclient = this.yclient;
+	var roomIdPerson = 'room'+user.teamid+'Person';
+	var memberIds = yield yclient.ZRANGE(roomIdPerson,0,-1);
+	var MemberList = [], memberId,memberIdInfo,memberInfo;
+	for(memberId in memberIds){
+		memberIdInfo = 'member'+memberId+'Info';
+		memberInfo = yield yclient.HGETALL(memberIdInfo);
+		if(memberInfo){
+			MemberList.push(memberInfo);
+		}else{
+			yield yclient.ZREM(roomIdPerson,memberId);
+		}
+	}
+	return MemberList;
+}
+
+
+//获取小组人员列表
+Room.prototype.getTeamMemberList = function *(user){
+	if(user.teamid){
+		return yield this.getPersonInRoom(user.teamid);
+	}
+}
+
+//获取临时房间列表
+Room.prototype.getRoomList = function *(type){
+	var yclient = this.yclient;
+	var roomIdIndexTypeNum = 'roomIdIndexType'+type;
+	var roomIds = yield yclient.ZRANGE(roomIdIndexTypeNum,0,-1);
+	var roomInfos = [],roomId,roomIdInfo,roomInfo;
+	for(roomId in roomIds){
+		roomIdInfo = 'room'+roomId+'Info';
+		roomInfo = yield yclient.HGETALL(roomIdInfo);
+		if(roomInfo){
+			roomInfos.push(roomInfo);
+		}else{
+			yield yclient.ZREM(roomIdIndexTypeNum,roomId);
+		}
+	}
+	return roomInfos;
+}
+
+//获取临时房间人员列表
+Room.prototype.getMemberInTempRoom = function *(roomList,yclient){
+	var yclient = this.yclient;
+	var roomsMembers = {};
+	for(roomInfo in roomList){
+		if(roomInfo && roomInfo.id)
+			roomsMembers[roomInfo.id] = yield this.getPersonInRoom(roomInfo.id);
+	}
+	return roomsMembers;
+}
+
 module.exports = Room;
 
 ModelBase.register('room', Room);
