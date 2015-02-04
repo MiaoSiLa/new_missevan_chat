@@ -45,7 +45,7 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 
 ## 创建房间
 
-``` POST /room/new ```
+``` POST /chat/room/new ```
 
 ```
 {
@@ -56,7 +56,7 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 
 ### 获取房间列表
 
-``` GET /room/list ```
+``` GET /chat/room/list ```
 
 ```
 {
