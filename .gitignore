@@ -76,4 +76,7 @@ $RECYCLE.BIN/
 
 # config
 conf.js
-
+.settings
+.project
+.jshintrc
+.tern-project
