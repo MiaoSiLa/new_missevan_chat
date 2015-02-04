@@ -285,7 +285,7 @@ Room.prototype.getPersonInRoom = function *(roomId){
 	var roomIdPerson = 'room'+user.teamid+'Person';
 	var memberIds = yield yclient.ZRANGE(roomIdPerson,0,-1);
 	var MemberList = [], memberId,memberIdInfo,memberInfo;
-	for(memberId in memberIds){
+	for(memberId of memberIds){
 		memberIdInfo = 'member'+memberId+'Info';
 		memberInfo = yield yclient.HGETALL(memberIdInfo);
 		if(memberInfo){
@@ -311,7 +311,7 @@ Room.prototype.getRoomList = function *(type){
 	var roomIdIndexTypeNum = 'roomIdIndexType'+type;
 	var roomIds = yield yclient.ZRANGE(roomIdIndexTypeNum,0,-1);
 	var roomInfos = [],roomId,roomIdInfo,roomInfo;
-	for(roomId in roomIds){
+	for(roomId of roomIds){
 		roomIdInfo = 'room'+roomId+'Info';
 		roomInfo = yield yclient.HGETALL(roomIdInfo);
 		if(roomInfo){
@@ -327,7 +327,7 @@ Room.prototype.getRoomList = function *(type){
 Room.prototype.getMemberInTempRoom = function *(roomList,yclient){
 	var yclient = this.yclient;
 	var roomsMembers = {};
-	for(roomInfo in roomList){
+	for(roomInfo of roomList){
 		if(roomInfo && roomInfo.id)
 			roomsMembers[roomInfo.id] = yield this.getPersonInRoom(roomInfo.id);
 	}

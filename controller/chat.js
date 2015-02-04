@@ -23,8 +23,9 @@ module.exports = function (app) {
 	var type = this.query.type;
     if(!type ||　!checkInt(type))
     	type = 1;
-	var teamMemberList = yield roomModel.getTeamMemberList(this.user);
-	var roomList = yield roomModel.getRoomInfo(type);
+    if(this.user)
+    	var teamMemberList = yield roomModel.getTeamMemberList(this.user);
+	var roomList = yield roomModel.getRoomList(type);
 	var roomsMembers = yield roomModel.getMemberInTempRoom(roomList);
 	yield this.render('chat/index', {
       title: 'Dollars_社区_聊天室_MissEvan',
