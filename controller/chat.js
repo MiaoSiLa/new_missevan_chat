@@ -19,7 +19,7 @@ function checkInt(data){
 module.exports = function (app) {
 
   chat.get('/', function *() {
-    var type = this.query.type;
+    var type = parseInt(this.query.type);
     if(!type || !checkInt(type))
       type = 1;
     yield this.render('chat/index', {
@@ -36,7 +36,7 @@ module.exports = function (app) {
   	var ticket;
   	var roomModel = new Room();
   	if (this.query && this.query.roomId) {
-  		roomId = this.query.roomId;
+  		roomId = parseInt(this.query.roomId);
   		if(!checkInt(roomId)) throw new Error('该房间不存在');
 
   		roomId = 't' + roomId;
@@ -75,7 +75,7 @@ module.exports = function (app) {
   chat.get('/roomlist', function *() {
     var roomModel = new Room();
 
-    var type = this.query.type;
+    var type = parseInt(this.query.type);
     if (!type || !checkInt(type)) {
       type = 1;
     }
