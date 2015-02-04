@@ -2,6 +2,9 @@
 var socket;
 
 $(function() {
+	var $newRoomType = $('#newroomtype');
+	var roomType = parseInt($newRoomType.val());
+
 	socket = io(chatSocketUrl + '/roomInfo').connect();
 
 	socket.on("enter room",function(data){
@@ -13,7 +16,9 @@ $(function() {
 	});
 
 	socket.on("new room",function(data){
-		newroom(data);
+		if (data && data.type == roomType) {
+			newroom(data);
+		}
 	});
 
 });
