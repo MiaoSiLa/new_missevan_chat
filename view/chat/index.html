@@ -11,6 +11,7 @@
 
     <div id="chatbarmain"></div>
 
+    <% if (user) { %>
     <div id="newroombar">
       <div class="clear"></div>
 
@@ -18,7 +19,7 @@
 
       <div class="clear"></div>
     </div>
-
+    <% } %>
     <div id="room0" class="roombar pie" style="display:none;">
       <input id="newroomtype" name="type" type="hidden" value="<%= roomType %>">
 
