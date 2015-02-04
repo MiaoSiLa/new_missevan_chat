@@ -86,7 +86,10 @@ Room.prototype.enter = function *(user) {
 
 		var roomName = roomInfo.name;
 
-		yield yclient.PERSIST(roomIdInfo);
+		var persist = yield yclient.PERSIST(roomIdInfo);
+		if (persist) {
+			this.bridge.emit('new room', roomInfo);
+		}
 
 		var suser = {
 			id: user.id,

@@ -79,11 +79,15 @@ function socketGetError(data) {
 /*========== 聊天室列表 ==========*/
 
 function enter(data) {
-  console.log(data);
+  data.personInfo = chatBox.sender(data.personInfo);
   chatBox.loadRoomList(data);
 }
 
 function leave(data) {
-  console.log(data);
+  data.personInfo = chatBox.sender(data.personInfo);
   chatBox.loadRoomList(data);
+}
+
+function newroom(data) {
+  chatRoomList.addNewRoom(data, 'begin');
 }

@@ -118,6 +118,10 @@ bridge.on('leave room', function(data){
   roomInfo.emit('leave room', data);
 });
 
+bridge.on('new room', function(data){
+  roomInfo.emit('new room', data);
+});
+
 }
 
 module.exports = websocket;

@@ -11,4 +11,9 @@ $(function() {
 	socket.on("leave room",function(data){
 		leave(data);
 	});
+
+	socket.on("new room",function(data){
+		newroom(data);
+	});
+
 });
