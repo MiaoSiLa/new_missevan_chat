@@ -4,16 +4,22 @@
 
 ```
 {
-  "code": <error code>,
+  "code": <error code (< 0)>,
   "message": "<error message>"
 }
 ```
 
 ## 创建房间
 
-``` POST /newroom ```
+``` POST /room/new ```
 
 ```
+{
+  "code": 0,
+  "roominfo": <room info>
+}
+
+<room info>
 {
   "id": <room id>,
   "name": "<room name>",
@@ -26,10 +32,18 @@
 
 ### 获取房间列表
 
-```GET /roomlist```
+```GET /room/list```
 
 ```
 {
-  
+  "code": 0,
+  "roomlist": [
+    <room info>, ...
+  ],
+  "members": {
+    "<room id>": [
+      <user info>
+    ], ...
+  }
 }
 ```

@@ -802,10 +802,34 @@ var chatRoomList = {
     });
   },
 
+  addNewRoom: function(roomInfo) {
+    var str = "",
+      $boxId = $('#room0');
+
+    var roomId = roomInfo.id.toString().replace('t', '');
+
+    str = str
+      + "<div id='room' class='roombar pie'>"
+      + "<div class='roomnamewidth'>" + roomInfo.name + "</div>"
+      + "<div class='usernamewidth'>"
+      + "<a target='_blank' href='/" + roomInfo.userId + "'>" + roomInfo.userName  + "</a>"
+      + "</div>"
+      + "<div class='usernumwidth'>人数: 0/" + roomInfo.maxNum + "</div>"
+      + "<a target='_blank' class='go1 pie' href='/chat/room?roomId=" + roomId + "'>加入</a>"
+      + "<div class='clear'></div>"
+      + "<div class='roombarcontainer'>"
+      + "<div class='clear'></div>"
+      + "</div>"
+      + "</div>";
+
+    $boxId.after(str);
+  },
+
   loadNewRoom: function() {
     var $newRoomBtnId = $('#newroombtn'),
       $newRoomNameId = $('#newroomname'),
-      $newRoomNumId = $('#newroomnum'),
+      $newRoomNum = $('#newroomnum'),
+      $newRoomType = $('#newroomtype'),
       $addRoomId = $('#addroom');
 
     $addRoomId.click(function() {
@@ -814,10 +838,11 @@ var chatRoomList = {
 
     $newRoomBtnId.click(function(event) {
       var $errorBoxTextId = $('#errorboxtext'),
-      $errorBoxContentId = $("#errorboxcontent");
+        $errorBoxContentId = $("#errorboxcontent");
 
       var roomName = $newRoomNameId.val();
-      var roomNum = $newRoomNumId.val();
+      var roomNum = $newRoomNum.val();
+      var roomType = $newRoomType.val();
 
       if(roomName == '') {
         moTool.showError('房间名不能为空');
@@ -837,13 +862,21 @@ var chatRoomList = {
       }
 
       moTool.postAjax({
-        url:"/chat/newroom",
-        value: {roomName:roomName, maxNum:roomNum},
-        callBack:function(data) {
-          index.boxStrLoad.loadNewRoom(data.successVal);
+        url: "/chat/room/new",
+        value: { roomName: roomName, maxNum: roomNum, type: roomType },
+        callBack: function (data) {
+          if (data) {
+            if (data.code == 0) {
+              chatRoomList.addNewRoom(data.roominfo);
+            } else if (data.message) {
+              moTool.showError(data.message);
+            }
+          }
         },
         showLoad: false,
-        success: false
+        success: false,
+        error: false,
+        json: false
       });
 
       //				if($(this).parent().find('.go3').length) {

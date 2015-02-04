@@ -72,7 +72,7 @@ module.exports = function (app) {
     });
   });
 
-  chat.get('/roomlist', function *() {
+  chat.get('/room/list', function *() {
     var roomModel = new Room();
 
     var type = parseInt(this.query.type);
@@ -82,41 +82,50 @@ module.exports = function (app) {
 
     var roomList = yield roomModel.getRoomList(type);
     var r = {
+      code: 0,
       roomlist: roomList,
       members: yield roomModel.getMemberInTempRoom(roomList)
     };
 
     if (this.user && this.user.teamid) {
-      r.members[this.user.teamid] = yield roomModel.getTeamMemberList(this.user);
+      var teamRoomId = this.user.teamid.toString();
+      r.members[teamRoomId] = yield roomModel.getTeamMemberList(this.user);
     }
 
     this.body = r;
   });
 
-  chat.post('/newroom', function *() {
+  chat.post('/room/new', function *() {
   	if(!this.user)
   		throw new Error('请先登录！');
 
     var room = this.request.body;
-    if(!room.type ||　!checkInt(room.type))
+
+    room.type = parseInt(room.type);
+    if (!room.type || !checkInt(room.type))
     	room.type = 1;
-    if(!checkInt(room.maxNum))
-    	throw new Error('房间人数为数字');
-    if(room.maxNum<2 || room.maxNum>30)
+
+    room.maxNum = parseInt(room.maxNum);
+    if (!checkInt(room.maxNum))
+    	throw new Error('房间人数必须为数字');
+    if (room.maxNum<2 || room.maxNum>30)
     	throw new Error('房间人数不能小于2或大于30');
-    if(!room.roomName)
+    if (!room.roomName)
     	throw new Error('房间名不可为空');
 
     // to room.name
     room.name = validator.trim(room.roomName);
-    if(!validator.isLength(room.name,2,25))
+    if (!validator.isLength(room.name, 2, 25))
     	throw new Error('房间名必须有2～25个字');
 
     var roomModel = new Room();
     var roomInfo = yield roomModel.newRoom(room, this.user);
-    roomInfo.id = parseInt(roomInfo.id.replace('t', ''));
+    //roomInfo.id = parseInt(roomInfo.id.replace('t', ''));
 
-    this.body = roomInfo;
+    this.body = {
+      code: 0,
+      roominfo: roomInfo
+    };
   });
 
   app.use(mount('/chat', chat.middleware()));
