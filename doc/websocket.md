@@ -104,3 +104,12 @@ socket.on "new message"
   "time": <timestamp>
 }
 ```
+
+### 消息Type
+
+```
+1: 公共消息
+2: 私人消息
+
+7: 图片
+```

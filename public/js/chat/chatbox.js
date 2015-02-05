@@ -102,13 +102,20 @@ var chatBox = {
     if(index.mo.firstLoad == 1) return;
 
     if(data.msg.length > 0) {
-      $.each(data.msg,function(n,message) {
+      var rload = function (i) {
+        if (i >= data.msg.length) {
+          return;
+        }
+        var message = data.msg[i];
         chatBox.loadBubble({
           msg: message.msg,
           type: message.type,
           sender: chatBox.sender(message.sender)
+        }, function () {
+          rload(i + 1);
         });
-      });
+      };
+      rload(0);
     }
 
     index.mo.firstLoad = 1;
@@ -333,7 +340,70 @@ var chatBox = {
     return data;
   },
 
-  loadBubble: function(data) {
+  showBt: function(btid,color,scolor,ccolor,dr) {
+    var randomCenterPointY = parseInt(Math.random()*(8+1)+1)/10;
+
+    $(btid).bt({
+      showTip: function(box) {
+        var $content = $('.bt-content', box).hide(),
+          $canvas = $('canvas', box).hide(),
+          origWidth = $canvas[0].width,
+          origHeight = $canvas[0].height,
+          messageHeight = $canvas[0].height,
+          adder = $canvas[0].height - 70;
+
+        var btb = $(btid);
+        if (messageHeight > 100) {
+          btb.find('.chatusername').css('position', 'absolute');
+          btb.css('padding-top', adder/2)
+            .css('margin-bottom', adder/2).fadeIn(200);
+        } else {
+          btb.css('padding-top', 6)
+            .css('margin-bottom', 0).fadeIn(200);
+        }
+
+        $(box).show();
+        $canvas
+          .css({width: origWidth * .25, height: origHeight * .25, left: origWidth * .01, top: origHeight * .3, opacity: .1})
+          .show()
+          .animate({width: origWidth, height: origHeight, left: 0, top: 0, opacity: 1}, 450, 'easeOutBounce',
+            function() {
+              $content.show();
+            });
+      },
+      /* when using hideTip, do NOT forget 'callback' at end of animation */
+      hideTip: function(box, callback) {
+        var $content = $('.bt-content', box).hide(),
+        $canvas = $('canvas', box),
+        origWidth = $canvas[0].width,
+        origHeight = $canvas[0].height;
+
+        $canvas
+          .animate({width: origWidth * .5, height: origHeight * .5, left: origWidth * .25, top: origHeight * .25, opacity: 0}, 0, 'swing', callback); /* callback */
+      },
+      position: ['right'],
+      padding: 20,
+      width: 600,
+      shrinkToFit: true,
+      spikeLength: 22,
+      spikeGirth: 12,
+      centerPointY: randomCenterPointY,
+      cornerRadius: 15,
+      fill: 'rgba(255, 255, 255, .8)',
+      strokeWidth: 4,
+      strokeStyle: scolor,
+      mowangsk_colors: color,
+      addType:1,
+      shadow: true,
+      shadowOffsetX: 3,
+      shadowOffsetY: 3,
+      shadowBlur: 8,
+      shadowColor: 'rgba(0,0,0,.9)',
+      cssStyles: {color: ccolor,fontSize: 24,fontFamily: 'Microsoft YaHei,Verdana',letterSpacing: 6, wordBreak: 'break-all',  wordWrap: 'break-word'}
+    }).btOn();
+  },
+
+  loadBubble: function(data, cb) {
     var subTitle = "";
     if(data.sender.subTitle != "") {
       var subTitleColor = (data.sender.iconColor.split('m')[0] == '#000000')? "#A3A3A3":data.sender.iconColor.split('m')[0];
@@ -344,42 +414,83 @@ var chatBox = {
     var iconColor = data.sender.iconColor == ''?'#91c0edm#cde1edm#709cc9m#5079c9m#709cc9':data.sender.iconColor;
 
     switch(data.type) {
-      case 1:
-        //公聊
+      case 1: //公聊
+      case 7: //图片
         var $chatBoxId = $('#chatbox'),
         userNameColor = index.mo.bgType != 1?'#000000':'#ffffff';
 
         data.sender.icon == ''?(data.sender.icon = index.mo.defaultIcon):'';
 
-        if(index.mo.bubbleType == 2) {
+        if (index.mo.bubbleType == 2) {
           iconColor =
-          data.sender.iconColor.split('m')[0] + 'm' +
-          data.sender.iconColor.split('m')[0] + 'm' +
-          data.sender.iconColor.split('m')[0] + 'm' +
-          data.sender.iconColor.split('m')[0] + 'm' +
-          data.sender.iconColor.split('m')[0];
+            data.sender.iconColor.split('m')[0] + 'm' +
+            data.sender.iconColor.split('m')[0] + 'm' +
+            data.sender.iconColor.split('m')[0] + 'm' +
+            data.sender.iconColor.split('m')[0] + 'm' +
+            data.sender.iconColor.split('m')[0];
         }
+
         $chatBoxId.prepend("<div class='clear'></div>"
-        + "<div id='chatline" + index.mo.chatLine + "' data-userid='" + data.sender.id + "' data-username='" + data.sender.name + "' class='target' style='display:none;'>"
-        + "<div class='chaticonbox'><img src='" + data.sender.icon + "'></div>"
-        + "<div class='clear'></div>"
-        + "<div class='chatusername' style='color:" + userNameColor + ";'>" + data.sender.name + subTitle + "</div>"
-        + "</div>");
+          + "<div id='chatline" + index.mo.chatLine + "' data-userid='" + data.sender.id + "' data-username='" + data.sender.name + "' class='target' style='display:none;'>"
+          + "<div class='chaticonbox'><img src='" + data.sender.icon + "'></div>"
+          + "<div class='clear'></div>"
+          + "<div class='chatusername' style='color:" + userNameColor + ";'>" + data.sender.name + subTitle + "</div>"
+          + "</div>");
 
         index.soundBox.playChat();
 
-        $('#chatline' + index.mo.chatLine).data('bubble',moTool.boardReplaceTxt(data.msg));
-        index.showBt('#chatline' + index.mo.chatLine,iconColor.split('m'),"#ffffff","#ffffff");
-        chatBox.addIconOpen("#chatline" + index.mo.chatLine);
-        chatBox.addNameAt("#chatline" + index.mo.chatLine);
+        var text;
 
-        index.mo.chatLine ++;
+        var fnshowbt = function (dr) {
+          $('#chatline' + index.mo.chatLine).data('bubble', text);
+          chatBox.showBt('#chatline' + index.mo.chatLine, iconColor.split('m'), "#ffffff", "#ffffff", dr);
+          chatBox.addIconOpen("#chatline" + index.mo.chatLine);
+          chatBox.addNameAt("#chatline" + index.mo.chatLine);
+
+          index.mo.chatLine++;
+
+          chatBox.delChats();
+          if (cb) cb();
+        };
+
+        if (data.type == 1) {
+          //文字
+          text = moTool.boardReplaceTxt(data.msg);
+          fnshowbt();
+        } else if (data.type == 7) {
+          //图片
+          var img = new Image();
+          img.onload = function () {
+            var h = this.height;
+            var w = this.width;
+            if (w > 600) {
+              w = 600;
+              h = Math.floor(600 * this.height / this.width);
+            }
+            if (h > 600) {
+              w = Math.floor(600 * this.width / this.height);
+              h = 600;
+            }
+
+            text = '<div class="bt-image"><a target="_blank" href="' + data.msg + '">' +
+              '<img style="width:' + w + 'px;height:' + h + 'px" src="' + data.msg + '" />' +
+              '</a></div>';
+
+            fnshowbt(true);
+          };
+          img.src = data.msg;
+
+        } else {
+          text = '';
+        }
+
+        return;
         break;
 
-      case 2:
-        //私聊
-        var targetId = data.sender.id == index.mo.sender.id?data.userId:data.sender.id,
-        targetName = data.sender.id == index.mo.sender.id?'':data.sender.name;
+      case 2: //私聊
+      case 8: //图片
+        var targetId = data.sender.id == index.mo.sender.id ? data.userId:data.sender.id,
+          targetName = data.sender.id == index.mo.sender.id?'':data.sender.name;
 
         if(!$('#privatechatbox' + targetId).length) {
           chatBox.insertPrivateBox(targetId);
@@ -387,26 +498,62 @@ var chatBox = {
         }
 
         $('#privatechatbox' + targetId)
-        .prepend("<div class='clear'></div>"
-        + "<div id='privatechatline" + index.mo.pChatLine + "' data-userid='" + data.sender.id + "' data-username='" + data.sender.name + "' class='target' style='display:none;'>"
-        + "<div class='chaticonbox'><img width='64px' height='64px' src='" + data.sender.icon + "'></div>"
-        + "<div class='clear'></div>"
-        + "<div class='chatusername'>" + data.sender.name + subTitle + "</div>"
-        + "</div>");
+          .prepend("<div class='clear'></div>"
+          + "<div id='privatechatline" + index.mo.pChatLine + "' data-userid='" + data.sender.id + "' data-username='" + data.sender.name + "' class='target' style='display:none;'>"
+          + "<div class='chaticonbox'><img width='64px' height='64px' src='" + data.sender.icon + "'></div>"
+          + "<div class='clear'></div>"
+          + "<div class='chatusername'>" + data.sender.name + subTitle + "</div>"
+          + "</div>");
 
         index.soundBox.playChat();
         //index.soundBox.playChatStr(message.soundUrl);
 
-        $('#privatechatline' + index.mo.pChatLine).data('bubble',moTool.boardReplaceTxt(data.msg));
-        index.showBt('#privatechatline' + index.mo.pChatLine, '#ffffffm#ffffffm#ffffffm#ffffffm#ffffff'.split('m'), iconColor.split('m')[0], '#000000');
-        chatBox.addIconOpen('#privatechatline' + index.mo.pChatLine);
+        var text;
+        var fnshowbt = function (dr) {
+          $('#privatechatline' + index.mo.pChatLine).data('bubble', text);
+          chatBox.showBt('#privatechatline' + index.mo.pChatLine, '#ffffffm#ffffffm#ffffffm#ffffffm#ffffff'.split('m'), iconColor.split('m')[0], '#000000');
+          chatBox.addIconOpen('#privatechatline' + index.mo.pChatLine);
+
+          index.mo.pChatLine++;
+          //chatBox.delChats();
+          if (cb) cb();
+        };
+
+        if (data.type == 2) {
+          //文字
+          text = moTool.boardReplaceTxt(data.msg);
+          fnshowbt();
+        } else if (data.type == 8) {
+          //图片
+          var img = new Image();
+          img.onload = function () {
+            var h = this.height;
+            var w = this.width;
+            if (w > 400) {
+              w = 400;
+              h = Math.floor(400 * this.height / this.width);
+            }
+            if (h > 400) {
+              w = Math.floor(400 * this.width / this.height);
+              h = 400;
+            }
+
+            text = '<div class="bt-image"><a target="_blank" href="' + data.msg + '">' +
+              '<img style="width:' + w + 'px;height:' + h + 'px" src="' + data.msg + '" />' +
+              '</a></div>';
+
+            fnshowbt(true);
+          };
+          img.src = data.msg;
+
+        }
 
         //接收私聊信息自动显示
         var $privateBoxUserIdId = $('#privatebox' + targetId);
 
         $privateBoxUserIdId.addClass('privateboxshow');
 
-        index.mo.pChatLine ++;
+        return;
         break;
 
       case 3:
@@ -469,11 +616,11 @@ var chatBox = {
 
       if(index.mo.bubbleType != 1) {
         message.colors =
-        message.colors.split('m')[0] + 'm' +
-        message.colors.split('m')[0] + 'm' +
-        message.colors.split('m')[0] + 'm' +
-        message.colors.split('m')[0] + 'm' +
-        message.colors.split('m')[0];
+          message.colors.split('m')[0] + 'm' +
+          message.colors.split('m')[0] + 'm' +
+          message.colors.split('m')[0] + 'm' +
+          message.colors.split('m')[0] + 'm' +
+          message.colors.split('m')[0];
       }
 
       message.$chatBoxId.prepend("<div class='clear'></div>"
@@ -487,7 +634,7 @@ var chatBox = {
       index.soundBox.playChatStr(message.soundUrl);
 
       $('#chatline' + index.mo.chatLine).data('bubble',moTool.boardReplaceTxt(message.value));
-      index.showBt('#chatline' + index.mo.chatLine,message.colors.split('m'),message.spikeColor,message.charColor);
+      chatBox.showBt('#chatline' + index.mo.chatLine,message.colors.split('m'),message.spikeColor,message.charColor);
       chatBox.addIconOpen("#chatline" + index.mo.chatLine);
       chatBox.addNameAt("#chatline" + index.mo.chatLine);
 
@@ -502,18 +649,18 @@ var chatBox = {
       }
 
       $('#privatechatbox' + targetId)
-      .prepend("<div class='clear'></div>"
-        + "<div id='privatechatline" + index.mo.pChatLine + "' data-userid='" + message.userId + "' data-username='" + message.userName + "' class='target' style='display:none;'>"
-        + "<div class='chaticonbox'><img width='64px' height='64px' src='" + index.mo.iconPath + message.picture + "'></div>"
-        + "<div class='clear'></div>"
-        + "<div class='chatusername'>" + message.userName + message.subTitle + "</div>"
-        + "</div>");
+        .prepend("<div class='clear'></div>"
+          + "<div id='privatechatline" + index.mo.pChatLine + "' data-userid='" + message.userId + "' data-username='" + message.userName + "' class='target' style='display:none;'>"
+          + "<div class='chaticonbox'><img width='64px' height='64px' src='" + index.mo.iconPath + message.picture + "'></div>"
+          + "<div class='clear'></div>"
+          + "<div class='chatusername'>" + message.userName + message.subTitle + "</div>"
+          + "</div>");
 
       index.soundBox.playChat();
       index.soundBox.playChatStr(message.soundUrl);
 
       $('#privatechatline' + index.mo.pChatLine).data('bubble',moTool.boardReplaceTxt(message.value));
-      index.showBt('#privatechatline' + index.mo.pChatLine, message.colors.split('m'), message.spikeColor, message.charColor);
+      chatBox.showBt('#privatechatline' + index.mo.pChatLine, message.colors.split('m'), message.spikeColor, message.charColor);
       chatBox.addIconOpen('#privatechatline' + index.mo.pChatLine);
 
       //接收私聊信息自动显示
@@ -521,7 +668,7 @@ var chatBox = {
 
       $privateBoxUserIdId.addClass('privateboxshow');
 
-      index.mo.pChatLine ++;
+      index.mo.pChatLine++;
     }
   },
 
@@ -703,24 +850,26 @@ var chatBox = {
     $privateId = $('#private');
 
     insertPrivateBoxValue = insertPrivateBoxValue
-    + "<div id='privatebox" + userId + "' class='privatebox'>"
-    + "<div id='privateclose" + userId + "' class='privateclose'>×</div>"
-    + "<div class='privatetitlebox'>Secret Mode "
-    + "<span id='privatesubtitlebox" + userId + "' class='privatesubtitlebox'>Nobody</span>"
-    + "</div>"
-    + "<div class='privateinputbox'>"
-    + "<div class='privateinputboxtextareaouter'>"
-    + "<textarea id='privateinputboxtextarea" + userId + "' class='privateinputboxtextarea'></textarea>	"
-    + "</div>"
-    + "<div class='privateinputboxtextareapostbox'>"
-    + "<div id='privateinputboxtextareapostbtn" + userId + "' class='privateinputboxtextareapostbtn'>POST</div>"
-    + "</div>"
-    + "</div>"
-    + "<div id='privatechatbox" + userId + "' class='privatechatbox'>"
-    + "</div>"
-    + "</div>";
+      + "<div id='privatebox" + userId + "' class='privatebox'>"
+      + "<div id='privateclose" + userId + "' class='privateclose'>×</div>"
+      + "<div class='privatetitlebox'>Secret Mode "
+      + "<span id='privatesubtitlebox" + userId + "' class='privatesubtitlebox'>Nobody</span>"
+      + "</div>"
+      + "<div class='privateinputbox'>"
+      + "<div class='privateinputboxtextareaouter'>"
+      + "<textarea id='privateinputboxtextarea" + userId + "' class='privateinputboxtextarea'></textarea>	"
+      + '<div id="imagefile"><img id="fileuploadbtn" src="/images/backend/insert.png" /><input type="file" id="image" name="image" style="display:none" /></div>'
+      + "</div>"
+      + "<div class='privateinputboxtextareapostbox'>"
+      + "<div id='privateinputboxtextareapostbtn" + userId + "' class='privateinputboxtextareapostbtn'>POST</div>"
+      + "</div>"
+      + "</div>"
+      + "<div id='privatechatbox" + userId + "' class='privatechatbox'>"
+      + "</div>"
+      + "</div>";
 
     $privateId.prepend(insertPrivateBoxValue);
+    initImageUpload(userId, $('#privatebox' + userId));
   },
 
   loadPrivateBox: function(userId,userName) {

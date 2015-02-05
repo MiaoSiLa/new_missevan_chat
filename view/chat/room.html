@@ -1,5 +1,28 @@
 <%- include('../common/header.html'); -%>
-
+  <style>
+    #chattop, .privateinputbox {
+    }
+    #chattop.in, .privateinputbox.in {
+    }
+    #chattop.hover, .privateinputbox.hover {
+      background: #0266C8;
+    }
+    #chattop.fade, .privateinputbox.fade {
+      -webkit-transition: all 0.3s ease-out;
+      -moz-transition: all 0.3s ease-out;
+      -ms-transition: all 0.3s ease-out;
+      -o-transition: all 0.3s ease-out;
+      transition: all 0.3s ease-out;
+      opacity: 1;
+    }
+    #imagefile {
+      position:absolute;top:25px;right:36px;cursor:pointer;padding:3px;
+    }
+    .privateinputbox #imagefile {
+      top: 60px;
+      right: 60px;
+    }
+  </style>
   <div id="chatwrap">
     <div id="chattop">
       <!-- inputbox为输入内容窗口-->
@@ -8,6 +31,7 @@
         <div id="inputboxtextareapostbtn" class="pie"><span>P O S T</span></div>
 
         <div id="soundmusic"><img src="/images/index/music.png" /></div>
+        <div id="imagefile"><img id="fileuploadbtn" src="/images/backend/insert.png" /><input type="file" id="image" name="image" style="display:none" /></div>
       </div>
     </div>
 
@@ -28,6 +52,8 @@
 
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="/js/chat/jquery.fileupload.js"></script>
+  <script type="text/javascript" src="/js/chat/jquery.iframe-transport.js"></script>
   <script type="text/javascript">
     var chatSocketUrl = '<%= chatSocketUrl %>';
   </script>

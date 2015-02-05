@@ -39,6 +39,7 @@ function sendMessage(message,callback) {
   //console.log('发送');
   socket.emit('send message',message,callback);
 }
+
 //第一次加载消息
 function getMessage(data) {
   //console.log(data);

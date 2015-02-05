@@ -92,10 +92,9 @@ function *connection() {
       throw new Error("消息内容过长");
     }
 
-    var flag = [ 1, 2, 3, 4, 5, 6 ].indexOf(data.type);
+    var flag = [ 1, 2, 3, 4, 5, 6, 7, 8 ].indexOf(data.type);
     if (flag !== -1) {
-      data.type = data.type;
-      if (!data.userId && data.type == 2) {
+      if (!data.userId && (data.type == 2 || data.type == 8)) {
         data.type = 1;
       }
     } else {
