@@ -1,6 +1,4 @@
 
-var mount = require('koa-mount');
-
 var Router = require('koa-router');
 
 var validator = require('validator');
@@ -16,124 +14,121 @@ function checkInt(data) {
 	return false;
 }
 
-module.exports = function (app) {
-
-  chat.get('/', function *() {
-    var type = parseInt(this.query.type);
-    if(!type || !checkInt(type))
-      type = 1;
-    yield this.render('chat/index', {
-      title: 'Dollars_社区_聊天室_MissEvan',
-      user: this.user,
-      roomType: type
-    });
+chat.get('/', function *() {
+  var type = parseInt(this.query.type);
+  if(!type || !checkInt(type))
+    type = 1;
+  yield this.render('chat/index', {
+    title: 'Dollars_社区_聊天室_MissEvan',
+    user: this.user,
+    roomType: type
   });
+});
 
-  chat.get('/room', function *() {
-  	var roomId;
-  	var roomName;
-  	var roomInfo;
-  	var ticket;
-  	var roomModel = new Room();
-  	if (this.query && this.query.roomId) {
-  		roomId = parseInt(this.query.roomId);
-  		if(!checkInt(roomId)) throw new Error('该房间不存在');
+chat.get('/room', function *() {
+	var roomId;
+	var roomName;
+	var roomInfo;
+	var ticket;
+	var roomModel = new Room();
+	if (this.query && this.query.roomId) {
+		roomId = parseInt(this.query.roomId);
+		if(!checkInt(roomId)) throw new Error('该房间不存在');
 
-  		roomId = 't' + roomId;
-      roomInfo = yield roomModel.checkTempRoom(roomId, this.user);
-  		if (!roomInfo) {
-        throw new Error('你没有资格进入该房间');
-      }
-
-      roomName = roomInfo.name;
-  	} else {
-  		if (this.user) {
-  			if(this.query && this.query.ticket){
-  				ticket = this.query.ticket;
-  				roomInfo = yield roomModel.checkTicket(ticket);
-  				roomId = roomInfo.id;
-  				roomName = roomInfo.name;
-  			} else {
-  				if(yield roomModel.checkTeamRoom(this.user)){
-  					roomId = this.user.teamid;
-  					roomName = this.user.teamname;
-  				}
-  			}
-  		} else {
-  			throw new Error('不能进入私人房间');
-      }
-	}
-
-    var title = roomName + '_社区_聊天室_MissEvan';
-    yield this.render('chat/room', {
-      roomId: roomId,
-      title: title,
-      user: this.user
-    });
-  });
-
-  chat.get('/room/list', function *() {
-    var roomModel = new Room();
-
-    var type = parseInt(this.query.type);
-    if (!type || !checkInt(type)) {
-      type = 1;
+		roomId = 't' + roomId;
+    roomInfo = yield roomModel.checkTempRoom(roomId, this.user);
+		if (!roomInfo) {
+      throw new Error('你没有资格进入该房间');
     }
 
-    var roomList = yield roomModel.getRoomList(type);
-    var r = {
-      code: 0,
-      roomlist: roomList,
-      members: yield roomModel.getMemberInTempRoom(roomList)
-    };
-
-    if (this.user && this.user.teamid) {
-      var teamRoomId = this.user.teamid.toString();
-      //插入小组房间
-      r.roomlist.unshift({
-        "id": teamRoomId,
-        "name": this.user.teamname,
-        "type": 0,
-        "maxNum": 100,
-      });
-      //插入小组房间成员
-      r.members[teamRoomId] = yield roomModel.getTeamMemberList(this.user);
+    roomName = roomInfo.name;
+	} else {
+		if (this.user) {
+			if(this.query && this.query.ticket){
+				ticket = this.query.ticket;
+				roomInfo = yield roomModel.checkTicket(ticket);
+				roomId = roomInfo.id;
+				roomName = roomInfo.name;
+			} else {
+				if(yield roomModel.checkTeamRoom(this.user)){
+					roomId = this.user.teamid;
+					roomName = this.user.teamname;
+				}
+			}
+		} else {
+			throw new Error('不能进入私人房间');
     }
+}
 
-    this.body = r;
+  var title = roomName + '_社区_聊天室_MissEvan';
+  yield this.render('chat/room', {
+    roomId: roomId,
+    title: title,
+    user: this.user
   });
+});
 
-  chat.post('/room/new', function *() {
-  	if(!this.user)
-  		throw new Error('请先登录！');
+chat.get('/room/list', function *() {
+  var roomModel = new Room();
 
-    var room = this.request.body;
+  var type = parseInt(this.query.type);
+  if (!type || !checkInt(type)) {
+    type = 1;
+  }
 
-    room.type = parseInt(room.type);
-    if (!room.type || !checkInt(room.type))
-    	room.type = 1;
+  var roomList = yield roomModel.getRoomList(type);
+  var r = {
+    code: 0,
+    roomlist: roomList,
+    members: yield roomModel.getMemberInTempRoom(roomList)
+  };
 
-    room.maxNum = parseInt(room.maxNum);
-    if (!checkInt(room.maxNum))
-    	throw new Error('房间人数必须为数字');
-    if (room.maxNum<2 || room.maxNum>30)
-    	throw new Error('房间人数不能小于2或大于30');
-    if (!room.roomName)
-    	throw new Error('房间名不可为空');
+  if (this.user && this.user.teamid) {
+    var teamRoomId = this.user.teamid.toString();
+    //插入小组房间
+    r.roomlist.unshift({
+      "id": teamRoomId,
+      "name": this.user.teamname,
+      "type": 0,
+      "maxNum": 100,
+    });
+    //插入小组房间成员
+    r.members[teamRoomId] = yield roomModel.getTeamMemberList(this.user);
+  }
 
-    // to room.name
-    room.name = validator.trim(room.roomName);
-    if (!validator.isLength(room.name, 2, 25))
-    	throw new Error('房间名必须有2～25个字');
+  this.body = r;
+});
 
-    var roomModel = new Room();
-    var roomInfo = yield roomModel.newRoom(room, this.user);
+chat.post('/room/new', function *() {
+	if(!this.user)
+		throw new Error('请先登录！');
 
-    this.body = {
-      code: 0,
-      roominfo: roomInfo
-    };
-  });
+  var room = this.request.body;
 
-  app.use(mount('/chat', chat.middleware()));
-};
+  room.type = parseInt(room.type);
+  if (!room.type || !checkInt(room.type))
+  	room.type = 1;
+
+  room.maxNum = parseInt(room.maxNum);
+  if (!checkInt(room.maxNum))
+  	throw new Error('房间人数必须为数字');
+  if (room.maxNum<2 || room.maxNum>30)
+  	throw new Error('房间人数不能小于2或大于30');
+  if (!room.roomName)
+  	throw new Error('房间名不可为空');
+
+  // to room.name
+  room.name = validator.trim(room.roomName);
+  if (!validator.isLength(room.name, 2, 25))
+  	throw new Error('房间名必须有2～25个字');
+
+  var roomModel = new Room();
+  var roomInfo = yield roomModel.newRoom(room, this.user);
+
+  this.body = {
+    code: 0,
+    roominfo: roomInfo
+  };
+});
+
+module.exports = chat;
