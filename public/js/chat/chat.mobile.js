@@ -1,6 +1,10 @@
 
 chatBox.isMobile = true;
 
+$(function() {
+  index.soundBox.init();
+});
+
 chatBox.loadRoomBarDown = function(el) {
   var $roomBarDownClass = el ? $(el) : $('.roombardown');
 

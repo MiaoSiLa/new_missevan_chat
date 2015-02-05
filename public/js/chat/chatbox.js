@@ -977,16 +977,17 @@ var chatRoomList = {
 };
 
 var loadChat = function() {
-
   chatBox.loadChatOption();
 
   chatBox.loadChatBox();
 
   chatBox.loadUser();
 
-  index.js.loadChatDm();
+  if (!chatBox.isMobile) {
+    index.js.loadChatDm();
 
-  chatBox.addInfo('我是M娘', '有问题请输入“/帮助”');
+    chatBox.addInfo('我是M娘', '有问题请输入“/帮助”');
+  }
 };
 
 var loadRoom = function() {
