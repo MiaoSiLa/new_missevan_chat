@@ -1,0 +1,68 @@
+
+<div id="gLoginPanel" class="g-panel g-login m_c" data-width="300" data-height="210" style="display:none;">
+  <form method="post" id="gLoginForm">
+    <div class="g-panel-head">
+      <div class="g-panel-title" data-role="title">用户登录</div>
+      <!-- <div class="g-panel-action-l"><a href="#" id="btnLoginCancel" data-action="close">取消</a></div> -->
+      <!-- <div class="g-panel-action-r"><input type="submit" id="btnLoginAction" value="登录"></div> -->
+    </div>
+    <div class="g-panel-main" data-role="content">
+      <div class="g-login-form">
+        <input type="text" name="LoginForm[email]" class="loginname" id="gLoginUser" placeholder="此处应有邮箱" style="background-attachment: scroll; background-position: 100% 50%; background-repeat: no-repeat;">
+        <input type="password" name="LoginForm[password]" class="password" id="gLoginPass" placeholder="此处应有密码" style="background-attachment: scroll; background-position: 100% 50%; background-repeat: no-repeat;margin-top:10px;">
+        <input type="hidden" name="remember" checked="checked" value="true">
+
+        <!-- <p class="help"><a href="/member/regist" target="_blank" id="gLoginReg">免费注册</a><a href="#" target="_blank" id="gLoginForgot">忘记密码</a></p> -->
+      </div>
+      <div class="g-login-third">
+        <span><a class="weibo" id="btnLoginAction" data-type="2" href="javascript:void(0)"><i></i>登录M站</a></span>
+        <!--<span><a class="qq" data-type="3" href="#"><i></i>QQ登录</a></span>-->
+      </div>
+
+      <div class="g-notice g-notice-ltr"><div class="g-notice-msg"></div></div>
+    </div>
+  </form>
+</div>
+
+<div class="g-panel-mask" style="display:none;"></div>
+
+<script>
+Zepto(function($){
+  $("#nav_login").click(function(){
+    moTool.showModalBox($('#gLoginPanel'));
+  });
+
+  $("#btnLoginAction").click(function(){
+
+    moTool.postAjax({
+      url: "/member/mobilelogin",
+      value:$('#gLoginForm').serialize(),
+      callBack: function (data) {
+        if(data.type==1){
+          location.reload();
+        }else{
+          moTool.showError(data.msg);
+        }
+      },
+      error: function (data) {
+        //salert(data.msg);
+      }
+    });
+  });
+
+  $('#nav_left').click(function() {
+    $('#nl_d').toggleClass('nl_d');
+    $('#nl_d').toggleClass('nl_u');
+    $('#nav_left_down').toggle();
+  });
+
+  $(document).on('ajaxComplete', function(event, request, options){
+    if (request.responseText == "YII_LOGIN_REQUIRED") {
+      //moTool.showError('<a style="color:#ff0000" target="_self" href="/member/login?backurl=' + encodeURIComponent(window.location.pathname + window.location.search) + '">登录</a>后才能执行此操作');
+      moTool.showModalBox($('#gLoginPanel'));
+    }
+  });
+
+  moTool.createModalBox();
+});
+</script>

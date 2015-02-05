@@ -1,0 +1,65 @@
+<%- include('../common/header.html'); -%>
+
+<%- include('../common/navbar.html'); -%>
+
+<%- include('../common/loginform.html'); -%>
+
+<div id="mainbody">
+  <% if (user) { %>
+  <div id="newroombar">
+    <div class="clear"></div>
+
+    <div id="addroom">创建房间</div>
+
+    <div class="clear"></div>
+  </div>
+  <% } %>
+  <div id="room0" class="roombar pie" style="display:none;">
+    <input id="newroomtype" name="type" type="hidden" value="<%= roomType %>">
+    <div class="usernamewidth"><input id="newroomnum" type="text" value="" placeholder="人数上限"></div>
+
+    <div class="roomnamewidth"><input id="newroomname" type="text" value="" placeholder="请输入房间名" maxlength="24"></div>
+
+    <div class="usernumwidth"><div id="newroombtn">确认</div></div>
+
+
+    <div class="clear"></div>
+
+    <div class="roombarcontainer">
+      <div class="roombarmember">创建一个腹黑的房间_( :3」∠)_</div>
+
+      <div class="clear"></div>
+    </div>
+  </div>
+  <% if (user && user.teamid) { %>
+  <a target="_blank" href="/chat/room" id="room<%= user.teamid %>" class="roombar grouproom pie">
+    <div class="usernumwidth"><span class="membercount">0</span>/100</div>
+    <div class="roomnamewidth">小组「<%= user.teamname %>」专房</div>
+    <div class="usernamewidth"><div id="getticket">邀请地址</div></div>
+
+    <div class="clear"></div>
+    <div class="roombarcontainer">
+      <div class="clear"></div>
+    </div>
+    <div class="roombardown"></div>
+  </a>
+  <% } %>
+
+  <div class="clear"></div>
+
+</div>
+
+<script type="text/javascript">
+  var chatSocketUrl = '<%= chatSocketUrl %>';
+</script>
+<script type="text/javascript" src="/js/chat/chatbox.js"></script>
+<script type="text/javascript" src="/js/chat/numberRoom.js"></script>
+<script type="text/javascript" src="/js/chat/chat.js"></script>
+<script type="text/javascript" src="/js/chat/chat.mobile.js"></script>
+<script type="text/javascript">
+  $(function() {
+    chatBox.loadRoomBarDown();
+    loadRoom();
+  });
+</script>
+<%- include('../common/footer.html'); -%>

@@ -821,19 +821,33 @@ var chatRoomList = {
       return;
     }
 
+    if (chatBox.isMobile) {
+      str = str
+        + '<a target="_blank" href="/chat/room?roomId=' + roomNumId + '" id="room' + roomInfo.id + '" class="roombar roombarheight">'
+        + '<div class="usernumwidth"><span class="membercount">0</span>/' + roomInfo.maxNum + '</div>'
+        + '<div class="roomnamewidth">' + roomInfo.name + '</div>';
+    } else {
+      str = str
+        + "<div id='room" + roomInfo.id + "' class='roombar pie'>"
+        + "<div class='roomnamewidth'>" + roomInfo.name + "</div>"
+        + "<div class='usernamewidth'>"
+        + "<a target='_blank' href='/" + roomInfo.userId + "'>" + roomInfo.userName  + "</a>"
+        + "</div>"
+        + "<div class='usernumwidth'>人数: <span class=\"membercount\">0</span>/" + roomInfo.maxNum + "</div>"
+        + "<a target='_blank' class='go1 pie' href='/chat/room?roomId=" + roomNumId + "'>加入</a>"
+    }
+
     str = str
-      + "<div id='room" + roomInfo.id + "' class='roombar pie'>"
-      + "<div class='roomnamewidth'>" + roomInfo.name + "</div>"
-      + "<div class='usernamewidth'>"
-      + "<a target='_blank' href='/" + roomInfo.userId + "'>" + roomInfo.userName  + "</a>"
-      + "</div>"
-      + "<div class='usernumwidth'>人数: <span class=\"membercount\">0</span>/" + roomInfo.maxNum + "</div>"
-      + "<a target='_blank' class='go1 pie' href='/chat/room?roomId=" + roomNumId + "'>加入</a>"
       + "<div class='clear'></div>"
       + "<div class='roombarcontainer'>"
       + "<div class='clear'></div>"
-      + "</div>"
       + "</div>";
+
+    if (chatBox.isMobile) {
+      str += '<div class="roombardown"></div></a>';
+    } else {
+      str += "</div>";
+    }
 
     if (pos == 'last') {
       var $roombar = $('.roombar:last');
@@ -847,6 +861,10 @@ var chatRoomList = {
     } else {
       var $boxId = $('#room0');
       $boxId.after(str);
+    }
+
+    if (chatBox.isMobile) {
+      chatBox.loadRoomBarDown($('.roombardown:last'));
     }
   },
 

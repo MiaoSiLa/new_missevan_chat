@@ -1,88 +1,69 @@
-<div id="b_b" style="display: none;">
-  <div id="b_b_p"></div>
-  <div id="b_b_b"></div>
-  <div id="b_f">
-    <div id="loginmodal" class="m_c pie" data-width="845" data-height="380" style="display: none; color: rgb(0, 0, 0); width: 845px; height: 380px; margin-left: -422.5px; background: rgb(255, 255, 255);">
-      <div id="l_m" class="pie" style="margin-top:0px;">
-        <div id="l" style="margin-top:0px;">
-          <div id="l_h_t" class="pie"></div>
-          <div id="l_h_b" class="pie"></div>
+<!-- 登录弹框开始 -->
+<div id="loginmodal" class='m_c' data-width="845" data-height="380" style="display:none;background:#fff;color:#000;">
+  <div id="l_m" class="pie" style="margin-top:0px;">
+    <div id="l" style="margin-top:0px;">
+      <div id="l_h_t" class="pie"></div>
+      <div id="l_h_b" class="pie"></div>
 
-          <div id="mr"></div>
-          <div id="ml"></div>
+      <div id="mr"></div>
+      <div id="ml"></div>
 
-          <div id="l_b" class="pie" style="margin-top:0px;">
+      <div id="l_b" class="pie" style="margin-top:0px;">
 
-            <div id="l_c">
-              <div id="l_i_s">
-                <% for (var i = 0; i < recommendedUsers.length; i++) {
-                      var u = recommendedUsers[i]; %>
-                <div class="l_i_b pie" data-soundurl="<%= u.soundurl %>" data-soundid="<%= u.soundid %>" data-name="<%= u.name %>" data-str="<%= u.str %>">
-                  <div class="l_w w_<%= u.popup %>" style="display:none;">
-                  </div>
-                  <a target="_blank" hidefocus="true" href="/sound/<%= u.soundid %>"><img src="<%= u.avatar %>"></a>
-                </div><% } %>
-              </div>
-
-              <div id="l_r_b" class="pie">
-                <div id="l_1">
-                  <div id="textbox">
-
-                    <form id="login-form" action="/member/login?backurl=%2Fchat" method="post">									<br>
-                      <label class="label pie" for="LoginForm_email">邮箱</label>									<input class="label_input pie" name="LoginForm[email]" id="LoginForm_email" type="text" style="background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=);">									<div class="errorMessage" id="LoginForm_email_em_" style="display:none"></div>									<br><br>
-
-                      <label class="label pie" for="LoginForm_password">密码</label>									<input class="label_input pie" name="LoginForm[password]" id="LoginForm_password" type="password" maxlength="64" style="background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=);">									<div class="errorMessage" id="LoginForm_password_em_" style="display:none"></div>									<br><br>
-
-
-                      <label id="LoginForm_rememberMe_label" for="LoginForm_rememberMe">记住我</label>									<input id="ytLoginForm_rememberMe" type="hidden" value="0" name="LoginForm[rememberMe]"><input name="LoginForm[rememberMe]" id="LoginForm_rememberMe" value="1" type="checkbox">
-                      <a id="f_pw" href="/member/forgetpw">忘记密码</a>
-                      <input id="i_g" class="pie" type="submit" name="yt0" value="登录">
-                      <div id="i_t">登录M站</div>
-                      <a id="i_r_g" href="/member/regist">注册→</a>
-                      <a id="l_wx" target="_blank" href="http://weibo.com/missacg"><img width="100px" height="100px" src="/images/index/qrcode.jpg"></a>
-                      <a id="l_wx_s" target="_blank" href="http://weibo.com/missacg" style="color:#fff;">M站微信</a>
-
-                      <a id="l_wb" target="_blank" href="http://weibo.com/missacg"><img width="100px" height="100px" src="/images/index/weiboqrcode.png"></a>
-                      <a id="l_wb_s" target="_blank" href="http://weibo.com/missacg" style="color:#fff;">M站微博</a>
-
-                      <a id="a_qq" href="https://graph.qq.com/oauth2.0/authorize?response_type=code&amp;client_id=101117657&amp;redirect_uri=http%3A%2F%2Fwww.missevan.cn%2Fmember%2Fauthqq%3Fbackurl=%2F">
-                        <img width="25px" height="25px" src="/images/index/authqq.png" style="vertical-align:top;">　　　QQ登录
-                      </a>
-
-                      <a id="a_wb" href="https://api.weibo.com/oauth2/authorize?client_id=3599299778&amp;response_type=code&amp;redirect_uri=http%3A%2F%2Fwww.missevan.cn%2Fmember%2Fauthweibo%3Fbackurl=%2F">
-                        <img width="25px" height="25px" src="/images/index/authwb.png" style="vertical-align:top;">　　　微博登录
-                      </a>
-
-                      <div class="clear"></div>
-                    </form>
-
-
-                  </div>
-
-                  <div class="clear"></div>
+        <div id="l_c">
+          <div id="l_i_s">
+            <% for (var i = 0; i < recommendedUsers.length; i++) {
+              var u = recommendedUsers[i]; %>
+              <div class="l_i_b pie" data-soundurl="<%= u.soundurl %>" data-soundid="<%= u.soundid %>" data-name="<%= u.name %>" data-str="<%= u.str %>">
+                <div class="l_w w_<%= u.popup %>" style="display:none;">
                 </div>
+                <a target="_blank" hidefocus="true" href="/sound/<%= u.soundid %>"><img src="<%= u.avatar %>"></a>
+              </div><% } %>
+          </div>
+
+          <div id="l_r_b" class="pie">
+            <div id="l_1">
+              <div id='textbox'>
+
+                <form id="login-form" action="/member/login?backurl=%2Fchat" method="post">									<br />
+                  <label class="label pie" for="LoginForm_email">邮箱</label>									<input class="label_input pie" name="LoginForm[email]" id="LoginForm_email" type="text" />									<div class="errorMessage" id="LoginForm_email_em_" style="display:none"></div>									<br /><br />
+
+                  <label class="label pie" for="LoginForm_password">密码</label>									<input class="label_input pie" name="LoginForm[password]" id="LoginForm_password" type="password" maxlength="64" />									<div class="errorMessage" id="LoginForm_password_em_" style="display:none"></div>									<br /><br />
+
+
+                  <label id="LoginForm_rememberMe_label" for="LoginForm_rememberMe">记住我</label>									<input id="ytLoginForm_rememberMe" type="hidden" value="0" name="LoginForm[rememberMe]" /><input name="LoginForm[rememberMe]" id="LoginForm_rememberMe" value="1" type="checkbox" />
+                  <a id="f_pw" href="/member/forgetpw">忘记密码</a>
+                  <input id="i_g" class="pie" type="submit" name="yt0" value="登录" />
+                  <div id="i_t">登录M站</div>
+                  <a id="i_r_g" href="/member/regist">注册→</a>
+                  <a id='l_wx' target="_blank" href="http://weibo.com/missacg"><img width="100px" height="100px" src="/images/index/qrcode.jpg"></a>
+                  <a id='l_wx_s' target="_blank" href="http://weibo.com/missacg" style="color:#fff;">M站微信</a>
+
+                  <a id='l_wb' target="_blank" href="http://weibo.com/missacg"><img width="100px" height="100px" src="/images/index/weiboqrcode.png"></a>
+                  <a id='l_wb_s' target="_blank" href="http://weibo.com/missacg" style="color:#fff;">M站微博</a>
+
+                  <a id='a_qq' href="https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101117657&redirect_uri=http%3A%2F%2Fwww.missevan.cn%2Fmember%2Fauthqq%3Fbackurl=%2F">
+                    <img width="25px" height="25px" src="/images/index/authqq.png" style="vertical-align:top;">　　　QQ登录
+                  </a>
+
+                  <a id='a_wb' href="https://api.weibo.com/oauth2/authorize?client_id=3599299778&response_type=code&redirect_uri=http%3A%2F%2Fwww.missevan.cn%2Fmember%2Fauthweibo%3Fbackurl=%2F">
+                    <img width="25px" height="25px" src="/images/index/authwb.png" style="vertical-align:top;">　　　微博登录
+                  </a>
+
+                  <div class='clear'></div>
+                </form>
+
               </div>
 
-              <div class="clear"></div>
+              <div class='clear'></div>
             </div>
-            <div class="clear"></div>
           </div>
+
+          <div class="clear"></div>
         </div>
+        <div class="clear"></div>
       </div>
     </div>
-    <div id="errorboxcontent" class="pie m_c" style="width: 800px; height: 320px; margin-left: -400px; display: none;">
-      <div id="e_t">错误提示</div>
-      <input id="errorbtn" type="button" class="boxbtn pie" value="返回">
-    </div>
-    <div id="loadboxcontent" class="pie m_c" style="width: 800px; height: 320px; margin-left: -400px; display: none;">
-      <div class="loading">
-        <div class="l1"></div>
-        <div class="l2"></div>
-        <div class="l3"></div>
-        <div class="l4"></div>
-        <div class="l5"></div>
-        <div class="l6"></div>
-      </div>
-    </div>
+
   </div>
-</div>
+</div><!-- 登录弹框结束 -->

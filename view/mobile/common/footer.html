@@ -1,0 +1,26 @@
+  <!-- 返回widget开始 -->
+  <div id="appfooter">
+    <a id="appdownload" href="app/download"></a>
+  </div>
+  <script type="text/javascript" src="/js/mobile.min.js"></script>
+  <script type="text/javascript" src="/js/socket.io.js"></script>
+  <script>
+    $(function() {
+      // is this an IOS device ?
+      var isIOS = /(iphone|ipad)/i.test(navigator.userAgent);
+      if (isIOS) {
+        $("#appfooter a").click(function (e) {
+          e.preventDefault();
+          alert("IOS正在审核中~敬请期待");
+        });
+      }
+    });
+  </script>
+  <!-- 返回widget结束 -->
+  <!-- 手机底部 -->
+  <div id="mainfooter">
+    Copyright © 2015 missevan.cn
+  </div>
+  <!-- 手机底部 -->
+</body>
+</html>

@@ -1,10 +1,3 @@
-
-$(function() {
-  index.soundBox.init();
-  index.js.loadLeftIcon();
-  index.js.loadLeftM();
-});
-
 /*========== 聊天室内 ==========*/
 
 //当新人加入时触发
