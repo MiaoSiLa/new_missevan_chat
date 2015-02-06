@@ -545,7 +545,6 @@ var chatBox = {
             fnshowbt(true);
           };
           img.src = data.msg;
-
         }
 
         //接收私聊信息自动显示
@@ -869,7 +868,7 @@ var chatBox = {
       + "</div>";
 
     $privateId.prepend(insertPrivateBoxValue);
-    initImageUpload(userId, $('#privatebox' + userId));
+    initImageUpload(userId, '#privatebox' + userId);
   },
 
   loadPrivateBox: function(userId,userName) {
@@ -904,6 +903,7 @@ var chatBox = {
 
     //支持关闭
     $privateCloseUserIdId.click(function() {
+      console.log($privateBoxUserIdId.css('left'));
       $privateBoxUserIdId.removeClass('privateboxshow');
       $privateInputBoxUserIdId.hide();
     });

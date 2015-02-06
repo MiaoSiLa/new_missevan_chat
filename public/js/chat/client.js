@@ -74,9 +74,11 @@ $(function(){
 
 var initImageUpload = function (userId, el) {
 	var type = userId ? 8 : 7;
+	var dz = el ? $(el) : $('#chattop');
+
 	$('#imagefile input', el).fileupload({
 		url: 'http://backend1.missevan.cn/mimage/chatimage',
-		dropZone: $('#chattop'),
+		dropZone: dz,
 		dataType: 'json',
 		multipart: true,
 		done: function (e, data) {
@@ -106,7 +108,7 @@ var initImageUpload = function (userId, el) {
 	});
 
 	$(document).bind('dragover', function (e) {
-		var dropZone = $('#chattop'),
+		var dropZone = dz,
 			timeout = window.dropZoneTimeout;
 		if (!timeout) {
 			dropZone.addClass('in');
