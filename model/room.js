@@ -16,6 +16,16 @@ var config = require('./../config');
 var util = require('util');
 var _ = require('underscore');
 var ModelBase = require('./../lib/base');
+var crypto = require('crypto');
+
+function md5(str) {
+  var hash = crypto
+    .createHash('md5')
+    .update(str)
+    .digest('hex');
+
+  return hash;
+}
 
 function Room(data, socket, bridge) {
 	this.socket = socket;
@@ -366,6 +376,15 @@ Room.prototype.getMemberInTempRoom = function *(roomList) {
 			roomsMembers[roomInfo.id] = yield this.getPersonInRoom(roomInfo.id);
 	}
 	return roomsMembers;
+}
+
+Room.prototype.getTicket = function *(user){
+	var yclient = this.yclient;
+	var time = new Date();
+	var ticket = md5(md5(user.id+time)+time+'missevan!');
+	var tticket = 'ticket'+ticket;
+	yield yclient.SETEX(tticket,300,user.teamid);
+	return ticket;
 }
 
 module.exports = Room;
