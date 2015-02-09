@@ -54,7 +54,7 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 }
 ```
 
-### 获取房间列表
+## 获取房间列表
 
 ``` GET /chat/room/list ```
 
@@ -69,5 +69,16 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
       <user info>
     ], ...
   }
+}
+```
+
+## 获取小组房间Ticket
+
+``` GET /chat/room/ticket ```
+
+```
+{
+  "code": 0,
+  "ticket": "<room ticket>"
 }
 ```
