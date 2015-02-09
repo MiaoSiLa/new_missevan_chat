@@ -3,6 +3,7 @@ chatBox.isMobile = true;
 
 $(function() {
   index.soundBox.init();
+  $('#addroom').addClass('roombar pie');
 });
 
 chatBox.loadRoomBarDown = function(el) {

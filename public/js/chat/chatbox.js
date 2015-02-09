@@ -949,7 +949,8 @@ var chatRoomList = {
   loadTeamRoom: function() {
     var $getTicketId = $('#getticket');
 
-    $getTicketId.click(function() {
+    $getTicketId.click(function(e) {
+      e.preventDefault();
       moTool.getAjax({
         url:"/chat/room/ticket",
         callBack: function (data) {
