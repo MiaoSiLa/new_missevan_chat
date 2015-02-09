@@ -25,12 +25,15 @@ chat.get('/', function *() {
   });
 });
 
-chat.get('/ticket',function *(){
-	if(this.user && this.user.teamid){
-		var user = this.user;
+chat.get('/room/ticket',function *() {
+	if (this.user && this.user.teamid) {
 		var roomModel = new Room();
-		var ticket = yield roomModel.getTicket(user);
-	}else{
+		var ticket = yield roomModel.getTicket(this.user);
+    this.body = {
+      code: 0,
+      ticket: ticket
+    };
+	} else {
 		throw new Error('你没有加入任何小组');
 	}
 });

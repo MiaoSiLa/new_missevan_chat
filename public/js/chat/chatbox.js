@@ -951,12 +951,21 @@ var chatRoomList = {
 
     $getTicketId.click(function() {
       moTool.getAjax({
-        url:"/chat/getticket",
-        callBack:function(data) {
-
+        url:"/chat/room/ticket",
+        callBack: function (data) {
+          if (data) {
+            if (data.code == 0) {
+              var url = 'http://www.missevan.cn/chat/room?ticket=' + data.ticket;
+              moTool.showSuccess(url);
+            } else if (data.message) {
+              moTool.showError(data.message);
+            }
+          }
         },
         showLoad: true,
-        success: true
+        success: false,
+        error: false,
+        json: false
       });
     });
   },
