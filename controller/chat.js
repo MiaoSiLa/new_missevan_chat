@@ -127,11 +127,11 @@ chat.post('/room/new', function *() {
   	throw new Error('房间人数必须为数字');
   if (room.maxNum<2 || room.maxNum>30)
   	throw new Error('房间人数不能小于2或大于30');
-  if (!room.roomName)
-  	throw new Error('房间名不可为空');
 
-  // to room.name
-  room.name = validator.trim(room.roomName);
+  //check room name
+  if (!room.name)
+  	throw new Error('房间名不可为空');
+  room.name = validator.trim(room.name);
   if (!validator.isLength(room.name, 2, 25))
   	throw new Error('房间名必须有2～25个字');
 

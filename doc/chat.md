@@ -49,7 +49,7 @@ iconurl 只包含了基本图片路径，请加上URL前缀：
 
 ```
 {
-  "roomName": "<room name>",
+  "name": "<room name>",
   "type": <room type>,
   "maxNum": <room members max number (2~30)>
 }

@@ -1065,7 +1065,7 @@ var chatRoomList = {
 
       moTool.postAjax({
         url: "/chat/room/new",
-        value: { roomName: roomName, maxNum: roomNum, type: roomType },
+        value: { name: roomName, maxNum: roomNum, type: roomType },
         callBack: function (data) {
           if (data) {
             if (data.code == 0) {
