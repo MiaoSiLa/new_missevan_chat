@@ -9,25 +9,22 @@
   <div id="newroombar">
     <div class="clear"></div>
 
-    <div id="addroom">创建房间</div>
+    <div class="roombar pie" id="addroom">创建房间</div>
 
     <div class="clear"></div>
   </div>
   <% } %>
   <div id="room0" class="roombar pie" style="display:none;">
     <input id="newroomtype" name="type" type="hidden" value="<%= roomType %>">
-    <div class="usernamewidth"><input id="newroomnum" type="text" value="" placeholder="人数上限"></div>
+    <div class="usernumwidth"><input id="newroomnum" type="text" value="" placeholder="人数上限"></div>
 
     <div class="roomnamewidth"><input id="newroomname" type="text" value="" placeholder="请输入房间名" maxlength="24"></div>
-
-    <div class="usernumwidth"><div id="newroombtn">确认</div></div>
-
 
     <div class="clear"></div>
 
     <div class="roombarcontainer">
       <div class="roombarmember">创建一个腹黑的房间_( :3」∠)_</div>
-
+      <div id="newroombtn" style="float:right">确认</div>
       <div class="clear"></div>
     </div>
   </div>
