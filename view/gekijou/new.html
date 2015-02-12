@@ -29,12 +29,16 @@
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
   <script type="text/javascript" src="/js/chat/chatbox.js"></script>
-
+  <script type="text/javascript" src="/js/chat/chat.desktop.js"></script>
+<% if (dev_mode) { %>
   <script type="text/javascript" src="/js/gekijou/build/util.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/event.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/gekijou.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/editor.js"></script>
-
+<% } else { %>
+  <script type="text/javascript" src="/js/gekijou/gekijou.min.js"></script>
+  <script type="text/javascript" src="/js/gekijou/editor.min.js"></script>
+<% } %>
   <script type="text/javascript">
     $(function () {
       var gekijou = new Gekijou();

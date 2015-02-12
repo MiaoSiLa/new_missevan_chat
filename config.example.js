@@ -60,6 +60,7 @@ var config = {
     domain_prefix: base_url,
 
     locals: {
+      dev_mode: dev_mode,
       domain_prefix: base_url,
       chatSocketUrl: 'http://127.0.0.1:3000/chat',
       recommendedUsers: recommendedusers,

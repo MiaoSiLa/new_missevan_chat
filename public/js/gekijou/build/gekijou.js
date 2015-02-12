@@ -30,7 +30,7 @@ Gekijou = (function() {
     }
     this.pb.bind();
     this.tb.bind();
-    return cb();
+    cb();
   };
 
   Gekijou.prototype.parse = function(scripts) {};

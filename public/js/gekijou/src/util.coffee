@@ -1,4 +1,14 @@
 
+# base session
+
+class Util
+
+  init: ->
+
+
+
+# Control bar session
+
 class ControlBar
   constructor: (@el) ->
 

@@ -28,6 +28,7 @@ class Gekijou
     @tb.bind()
 
     cb()
+    return
 
   # parse
   parse: (scripts) ->
