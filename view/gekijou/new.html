@@ -1,4 +1,5 @@
 <%- include('../common/header.html'); -%>
+<%- include('./sidebar.html'); -%>
 
   <div id="chatwrap">
     <div id="chattop">
@@ -28,9 +29,17 @@
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
   <script type="text/javascript" src="/js/chat/chatbox.js"></script>
+
+  <script type="text/javascript" src="/js/gekijou/build/util.js"></script>
+  <script type="text/javascript" src="/js/gekijou/build/event.js"></script>
+  <script type="text/javascript" src="/js/gekijou/build/gekijou.js"></script>
+  <script type="text/javascript" src="/js/gekijou/build/editor.js"></script>
+
   <script type="text/javascript">
     $(function () {
-      loadChat();
+      var gekijou = new Gekijou();
+      var editor = new GekijouEditor(gekijou);
+      editor.init();
     });
   </script>
 <%- include('../common/footer.html'); -%>

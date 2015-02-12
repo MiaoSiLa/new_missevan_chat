@@ -21,6 +21,7 @@ var public_dir = root_dir + 'public/';
 var upload_dir = public_dir + 'data/';
 var tmp_dir = public_dir + 'data/tmp/';
 
+var base_url = 'http://127.0.0.1';
 var dev_mode = true;
 
 //线上数据
@@ -56,7 +57,10 @@ var config = {
   web: {
     address: '0.0.0.0',
     port: 3000,
+    domain_prefix: base_url,
+
     locals: {
+      domain_prefix: base_url,
       chatSocketUrl: 'http://127.0.0.1:3000/chat',
       recommendedUsers: recommendedusers,
       resource: {
@@ -67,13 +71,13 @@ var config = {
   },
 
   redis: {
-    url: '192.168.1.138',
+    url: '192.168.1.10',
     port: 6379,
     password: "missevan_chat_password_tom",
     time: 180
   },
   db: {
-    host: '192.168.1.138',
+    host: '192.168.1.10',
     port: 27017,
     name: 'missevan',
     username: '',
