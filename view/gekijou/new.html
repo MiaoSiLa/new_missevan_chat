@@ -1,4 +1,12 @@
-<%- include('../common/header.html'); -%>
+<%
+pageStyles = dev_mode ? [
+  '/css/gekijou/build/gekijou.css',
+  '/css/gekijou/build/editor.css'
+] : [
+  '/css/gekijou/gekijou.min.css',
+  '/css/gekijou/editor.min.css'
+];
+%><%- include('../common/header.html'); -%>
 <%- include('./sidebar.html'); -%>
 
   <div id="chatwrap">
@@ -36,8 +44,8 @@
   <script type="text/javascript" src="/js/gekijou/build/gekijou.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/editor.js"></script>
 <% } else { %>
-  <script type="text/javascript" src="/js/gekijou/gekijou.min.js"></script>
-  <script type="text/javascript" src="/js/gekijou/editor.min.js"></script>
+  <script type="text/javascript" src="/js/gekijou/gekijou.min.js?v=<%= resource.version %>"></script>
+  <script type="text/javascript" src="/js/gekijou/editor.min.js?v=<%= resource.version %>"></script>
 <% } %>
   <script type="text/javascript">
     $(function () {
