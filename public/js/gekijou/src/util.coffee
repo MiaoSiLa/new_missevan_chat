@@ -113,11 +113,15 @@ class Editorbar extends ControlBar
 
     @gekijou = @editor.gekijou
     @em = @editor.gekijou.em
+    @pb = @editor.gekijou.pb
 
   bind: ->
     self = @
 
-    @$('#inputboxneweventbtn').click ->
+    $newevbtn = @pb.$('#mpiloop')
+    $newevbtn.addClass 'mpiloopa newevent'
+    $newevbtn.text '+'
+    $newevbtn.click ->
       modal = $ '#neweventmodal'
       newid = self.em.lastid() + 1
       modal.find('#newevent_name').val "新事件 #{newid}"
@@ -134,5 +138,25 @@ class Editorbar extends ControlBar
         self.gekijou.rearrange()
 
         moTool.hideModalBox modal
+
+    @$('#inputboxtextarea').keypress (event) ->
+      if event.which isnt 13
+        if @value.length >= index.mo.maxLength
+          event.preventDefault()
+      else if event.which is 13
+        event.preventDefault()
+        self.$('#inputboxtextareapostbtn').click()
+
+    @$('#inputboxtextareapostbtn').click ->
+      curev = self.em.current()
+      if curev
+        $textbox = self.$('#inputboxtextarea')
+        text = $textbox.val()
+        if text
+          curev.parseAction text
+          $textbox.val ''
+      else
+        moTool.showError '请先新建一个事件！'
+
 
     return

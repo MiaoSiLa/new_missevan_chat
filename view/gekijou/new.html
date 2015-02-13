@@ -14,8 +14,8 @@ pageStyles = dev_mode ? [
       <!-- inputbox为输入内容窗口-->
       <div id="inputbox">
         <textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>
-        <div id="inputboxneweventbtn" class="bbtn pie"><span>新 事 件</span></div>
-        <!-- <div id="inputboxtextareapostbtn" class="pie"><span>P O S T</span></div> -->
+        <!-- <div id="inputboxneweventbtn" class="bbtn pie"><span>新 事 件</span></div> -->
+        <div id="inputboxtextareapostbtn" class="pie"><span>P O S T</span></div>
 
         <div id="soundmusic"><img src="/images/index/music.png" /></div>
       </div>
@@ -61,6 +61,7 @@ pageStyles = dev_mode ? [
 <% if (dev_mode) { %>
   <script type="text/javascript" src="/js/gekijou/build/util.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/event.js"></script>
+  <script type="text/javascript" src="/js/gekijou/build/chara.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/gekijou.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/editor.js"></script>
 <% } else { %>

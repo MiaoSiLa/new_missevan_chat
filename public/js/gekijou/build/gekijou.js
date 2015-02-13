@@ -10,8 +10,9 @@ Gekijou = (function() {
   function Gekijou(opts) {
     this.opts = opts != null ? opts : {};
     this.pb = new Playbar($('#m'));
-    this.tb = new Toolbar($('#toolbar'));
-    this.em = new EventManager();
+    this.tb = new Toolbar($('#common-toolbar'));
+    this.chara = new Chara($('#chara-toolbar'));
+    this.em = new GEventManager();
   }
 
   Gekijou.prototype.setOptions = function(opts) {
@@ -31,7 +32,9 @@ Gekijou = (function() {
     }
     this.pb.bind();
     this.tb.bind();
-    cb();
+    this.chara.init(function() {
+      return cb();
+    });
   };
 
   Gekijou.prototype.rearrange = function() {

@@ -139,12 +139,16 @@ Editorbar = (function(_super) {
     Editorbar.__super__.constructor.call(this, this.el);
     this.gekijou = this.editor.gekijou;
     this.em = this.editor.gekijou.em;
+    this.pb = this.editor.gekijou.pb;
   }
 
   Editorbar.prototype.bind = function() {
-    var self;
+    var $newevbtn, self;
     self = this;
-    this.$('#inputboxneweventbtn').click(function() {
+    $newevbtn = this.pb.$('#mpiloop');
+    $newevbtn.addClass('mpiloopa newevent');
+    $newevbtn.text('+');
+    $newevbtn.click(function() {
       var modal, newid;
       modal = $('#neweventmodal');
       newid = self.em.lastid() + 1;
@@ -160,6 +164,30 @@ Editorbar = (function(_super) {
         self.em.add(name, parseInt(time));
         self.gekijou.rearrange();
         return moTool.hideModalBox(modal);
+      }
+    });
+    this.$('#inputboxtextarea').keypress(function(event) {
+      if (event.which !== 13) {
+        if (this.value.length >= index.mo.maxLength) {
+          return event.preventDefault();
+        }
+      } else if (event.which === 13) {
+        event.preventDefault();
+        return self.$('#inputboxtextareapostbtn').click();
+      }
+    });
+    this.$('#inputboxtextareapostbtn').click(function() {
+      var $textbox, curev, text;
+      curev = self.em.current();
+      if (curev) {
+        $textbox = self.$('#inputboxtextarea');
+        text = $textbox.val();
+        if (text) {
+          curev.parseAction(text);
+          return $textbox.val('');
+        }
+      } else {
+        return moTool.showError('请先新建一个事件！');
       }
     });
   };

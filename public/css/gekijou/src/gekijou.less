@@ -82,7 +82,7 @@
   }
 }
 
-#toolbar {
+.toolbar {
   position: fixed;
   bottom: 20px;
   right: 0;
@@ -149,5 +149,92 @@
   .mpsvblr {
     top: -4px;
     right: 100%;
+  }
+
+  .sidetext {
+
+    position: absolute;
+    display: block;
+
+    color: white;
+
+    padding: 0 3px;
+    width: 19px;
+    font-size: 18px;
+    /* font-weight: 700; */
+    line-height: 22px;
+
+    text-align: center;
+
+    cursor: pointer;
+  }
+}
+
+.toolbar#chara-toolbar {
+  top: 210px;
+  bottom: initial;
+}
+
+#charamodal {
+  /* display: none; */
+  width: 500px;
+  height: 300px;
+  margin-left: 35px;
+  margin-right: -510px;
+  max-height: 60px;
+
+  transition: all .3s ease;
+}
+
+.charabox {
+  display: inline-block;
+  text-align: center;
+
+  padding: 5px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+
+  transition: background .3s ease;
+
+  &:hover {
+    background: #aaa;
+  }
+
+  .chaticonbox {
+    margin: 0;
+  }
+  .chatusername {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+.charabox.selected {
+  border: 1px solid white;
+}
+
+.expandqube {
+
+  display: inline-block;
+  border: 6px solid transparent;
+  border-right-color: #fff;
+  width: 0;
+  height: 0;
+  margin-right: 5px;
+
+  transition: all .3s ease;
+}
+
+.showmodal {
+  #charamodal {
+    display: block;
+    margin-right: 0;
+    max-height: 300px;
+  }
+  .sidetext {
+  }
+  .expandqube {
+    transform: rotate(-180deg);
+    margin-right: -8px;
   }
 }

@@ -8,8 +8,9 @@ class Gekijou
 
   constructor: (@opts = {}) ->
     @pb = new Playbar $ '#m'
-    @tb = new Toolbar $ '#toolbar'
-    @em = new EventManager()
+    @tb = new Toolbar $ '#common-toolbar'
+    @chara = new Chara $ '#chara-toolbar'
+    @em = new GEventManager()
 
   setOptions: (opts) ->
     for k, v of opts
@@ -28,9 +29,10 @@ class Gekijou
     @pb.bind()
     @tb.bind()
 
-    cb()
+    @chara.init -> cb()
     return
 
+  # 重新排布播放条
   rearrange: ->
     @pb.clear()
 
