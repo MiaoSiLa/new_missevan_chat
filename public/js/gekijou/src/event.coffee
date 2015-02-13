@@ -4,15 +4,22 @@ class GEvent
     @actions = []
 
   action: (type, val) ->
+    an = type: type, val: val
+
     switch type
       when 'text'
+        an.line = index.mo.chatLine
         chatBox.loadBubble
           msg: val,
           type: 1,
           sender: index.mo.sender
+      when 'image'
+        chatBox.loadBubble { msg: val, type: 7, sender: index.mo.sender }, ->
+          an.line = index.mo.chatLine - 1
+          #image do some thing here
       else return
 
-    @actions.push type: type, val: val
+    @actions.push an
     return
 
   # parse action text

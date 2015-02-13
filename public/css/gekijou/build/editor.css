@@ -36,7 +36,8 @@
   width: 210px;
   height: 24px;
 }
-#neweventform label {
+#neweventform label,
+#newcharaform label {
   color: white;
 }
 .inputgroup label {
@@ -70,4 +71,46 @@
   line-height: 18px;
   font-size: 18px;
   font-weight: 700;
+}
+#charamodal #selecticon {
+  margin-top: 30px;
+}
+#charamodal #selecticonlist {
+  margin-top: 15px;
+}
+#charamodal .pagelist {
+  float: left;
+  display: none;
+}
+#charamodal .pagelist > li {
+  width: auto;
+}
+#charamodal .pagelist > li a:hover {
+  color: red;
+}
+#charamodal #soundsearchinput {
+  width: 220px;
+  height: 35px;
+}
+#charamodal #searchbtn {
+  height: 35px;
+}
+#charamodal .s_m_t_r {
+  float: left;
+  top: 0px;
+  margin-top: 15px;
+  width: 340px;
+}
+#charamodal .s_m_t_r_b {
+  color: white;
+  background: none;
+}
+#charamodal .s_m_t_r_b a {
+  padding: 5px 10px;
+}
+#charamodal .s_m_t_r_b:hover {
+  color: red;
+}
+#charamodal .s_m_t_r_b.s_m_t_r_b_a {
+  background-color: #444;
 }

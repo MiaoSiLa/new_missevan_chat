@@ -9,21 +9,33 @@ GEvent = (function() {
   }
 
   GEvent.prototype.action = function(type, val) {
+    var an;
+    an = {
+      type: type,
+      val: val
+    };
     switch (type) {
       case 'text':
+        an.line = index.mo.chatLine;
         chatBox.loadBubble({
           msg: val,
           type: 1,
           sender: index.mo.sender
         });
         break;
+      case 'image':
+        chatBox.loadBubble({
+          msg: val,
+          type: 7,
+          sender: index.mo.sender
+        }, function() {
+          return an.line = index.mo.chatLine - 1;
+        });
+        break;
       default:
         return;
     }
-    this.actions.push({
-      type: type,
-      val: val
-    });
+    this.actions.push(an);
   };
 
   GEvent.prototype.parseAction = function(text) {

@@ -30,10 +30,10 @@ Chara = (function() {
 
   Chara.prototype.select = function(i) {
     if (i !== this._sel) {
-      if (this._sel > 0) {
+      if (this._sel >= 0) {
         this.el.find(".charabox:eq(" + this._sel + ")").removeClass('selected');
       }
-      if (i > 0) {
+      if (i >= 0) {
         this.el.find(".charabox:eq(" + i + ")").addClass('selected');
         index.mo.sender = chatBox.sender(this.charas[i]);
       } else {
@@ -46,7 +46,7 @@ Chara = (function() {
   Chara.prototype.refresh = function() {
     var $modal, c, html, i, name, self, sender, subtitle, _i, _len, _ref;
     html = '';
-    $modal = this.el.find('#charamodal');
+    $modal = this.el.find('#charamodal #charauserlist');
     $modal.html('');
     if (this.charas.length <= 0) {
       return;
@@ -73,6 +73,89 @@ Chara = (function() {
     });
   };
 
+  Chara.prototype.searchIcon = function() {
+    var b, bs, i, self, title, type, url, _i, _len;
+    self = this;
+    url = '/person/iconlist?pagesize=6';
+    title = this.el.find('#soundsearchinput').val();
+    if (title) {
+      url += '&title=' + encodeURIComponent(title);
+    }
+    bs = this.el.find('.s_m_t_r_b');
+    type = 0;
+    for (i = _i = 0, _len = bs.length; _i < _len; i = ++_i) {
+      b = bs[i];
+      if ($(b).hasClass('s_m_t_r_b_a')) {
+        type = i;
+        break;
+      }
+    }
+    if (type > 0) {
+      if (type > 2) {
+        type = 4;
+      }
+      url += "&profiletype=" + type;
+    }
+    moTool.getAjax({
+      url: url,
+      callBack: function(data) {
+        var c, iconusers;
+        iconusers = [];
+        if (data.state === 'success' && data.info) {
+          iconusers = (function() {
+            var _j, _len1, _ref, _results;
+            _ref = data.info;
+            _results = [];
+            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+              c = _ref[_j];
+              _results.push({
+                id: parseInt(c.user_id),
+                username: c.username,
+                subtitle: c.title,
+                iconid: parseInt(c.id),
+                iconurl: c.save_name,
+                iconcolor: ''
+              });
+            }
+            return _results;
+          })();
+        }
+        self.showIcons(iconusers);
+      }
+    });
+  };
+
+  Chara.prototype.showIcons = function(iconusers) {
+    var $modal, c, html, self, sender, strc, _i, _len;
+    html = '';
+    $modal = this.el.find('#charamodal #selecticonlist');
+    $modal.html('');
+    if (iconusers.length <= 0) {
+      return;
+    }
+    for (_i = 0, _len = iconusers.length; _i < _len; _i++) {
+      c = iconusers[_i];
+      sender = chatBox.sender(c);
+      strc = JSON.stringify(c);
+      html += "<div data-user='" + strc + "' class=\"charaicon\">\n  <div class=\"chaticonbox\">\n    <img src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n</div>";
+    }
+    $modal.html(html);
+    self = this;
+    $modal.find('.charaicon').click(function() {
+      self.showCreateModal($(this).data('user'));
+    });
+    this.el.find('.pagelist').show();
+  };
+
+  Chara.prototype.showCreateModal = function(user) {
+    var $modal;
+    $modal = $('#newcharamodal');
+    $modal.find('#newchara_user').data('user', user);
+    $modal.find('#newchara_username').val(user.username);
+    $modal.find('#newchara_subtitle').val('');
+    moTool.showModalBox($modal);
+  };
+
   Chara.prototype.bind = function() {
     var $mpc, self;
     self = this;
@@ -84,6 +167,26 @@ Chara = (function() {
         $mpc.addClass('showmodal');
       }
       self._showmodal = !self._showmodal;
+    });
+    this.el.find('.s_m_t_r_b').click(function() {
+      self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass('s_m_t_r_b_a');
+      return $(this).addClass('s_m_t_r_b_a');
+    });
+    this.el.find('#searchbtn').click(function() {
+      self.searchIcon();
+    });
+    $('#newcharaokbtn').click(function() {
+      var $modal, name, user;
+      $modal = $('#newcharamodal');
+      name = $modal.find('#newchara_username').val();
+      if (name) {
+        user = $modal.find('#newchara_user').data('user');
+        user.username = name;
+        user.subtitle = $modal.find('#newchara_subtitle').val();
+        self.add(user);
+        self.refresh();
+        moTool.hideModalBox($modal);
+      }
     });
   };
 
@@ -97,6 +200,7 @@ Chara = (function() {
         this.refresh();
       } catch (_error) {}
     }
+    this.searchIcon();
     cb();
   };
 

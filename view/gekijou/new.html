@@ -54,6 +54,25 @@ pageStyles = dev_mode ? [
     </div>
   </div>
 
+  <div id="newcharamodal" class='m_c' data-width="600" style="display:none;">
+    <div class="e_t">
+      <form id="newcharaform">
+        <div id="newchara_user" style="display:none"></div>
+        <div class="inputgroup">
+          <label class="label pie" for="newchara_username">用户名</label>
+          <input class="label_input pie" name="newchara[username]" id="newchara_username" type="text">
+        </div>
+        <div class="inputgroup">
+          <label class="label pie" for="newchara_subtitle">称号</label>
+          <input class="label_input pie" name="newchara[subtitle]" id="newchara_subtitle" type="text" placeholder="可选">
+        </div>
+        <div class="formactions">
+          <input id="newcharaokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+        </div>
+      </form>
+    </div>
+  </div>
+
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
   <script type="text/javascript" src="/js/chat/chatbox.js"></script>

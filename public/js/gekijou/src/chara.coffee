@@ -24,10 +24,10 @@ class Chara
 
   select: (i) ->
     if i isnt @_sel
-      if @_sel > 0
+      if @_sel >= 0
         @el.find(".charabox:eq(#{@_sel})").removeClass 'selected'
 
-      if i > 0
+      if i >= 0
         @el.find(".charabox:eq(#{i})").addClass 'selected'
         index.mo.sender = chatBox.sender @charas[i]
       else
@@ -40,7 +40,7 @@ class Chara
   refresh: ->
     html = ''
 
-    $modal = @el.find '#charamodal'
+    $modal = @el.find '#charamodal #charauserlist'
     $modal.html ''
 
     if @charas.length <= 0
@@ -79,6 +79,83 @@ class Chara
 
     return
 
+  searchIcon: () ->
+    self = @
+    url = '/person/iconlist?pagesize=6'
+
+    # title
+    title = @el.find('#soundsearchinput').val()
+    url += '&title=' + encodeURIComponent(title) if title
+
+    # profiletype
+    bs = @el.find '.s_m_t_r_b'
+    type = 0
+    for b, i in bs
+      if $(b).hasClass 's_m_t_r_b_a'
+        type = i
+        break
+    if type > 0
+      type = 4 if type > 2
+      url += "&profiletype=#{type}"
+
+    moTool.getAjax
+      url: url,
+      callBack: (data) ->
+        iconusers = []
+        if data.state is 'success' and data.info
+          iconusers = for c in data.info
+            id: parseInt(c.user_id),
+            username: c.username,
+            subtitle: c.title,
+            iconid: parseInt(c.id),
+            iconurl: c.save_name,
+            iconcolor: ''
+
+        self.showIcons iconusers
+        return
+
+    return
+
+  showIcons: (iconusers) ->
+    html = ''
+
+    $modal = @el.find '#charamodal #selecticonlist'
+    $modal.html ''
+
+    if iconusers.length <= 0
+      return
+
+    for c in iconusers
+      sender = chatBox.sender c
+      strc = JSON.stringify(c)
+      html += """
+              <div data-user='#{strc}' class="charaicon">
+                <div class="chaticonbox">
+                  <img src="#{sender.icon}">
+                </div>
+                <div class="clear"></div>
+              </div>
+              """
+
+    $modal.html html
+
+    self = @
+    $modal.find('.charaicon').click ->
+      self.showCreateModal $(this).data 'user'
+      return
+
+    @el.find('.pagelist').show()
+
+    return
+
+  showCreateModal: (user) ->
+    $modal = $ '#newcharamodal'
+    $modal.find('#newchara_user').data 'user', user
+    $modal.find('#newchara_username').val user.username
+    $modal.find('#newchara_subtitle').val ''
+    moTool.showModalBox $modal
+    return
+
   bind: ->
     self = @
     $mpc = @el.find '.mpc'
@@ -89,6 +166,30 @@ class Chara
       else
         $mpc.addClass 'showmodal'
       self._showmodal = not self._showmodal
+      return
+
+    # TODO: check env:dev
+    @el.find('.s_m_t_r_b').click ->
+      self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'
+      $(this).addClass 's_m_t_r_b_a'
+
+    @el.find('#searchbtn').click ->
+      self.searchIcon()
+      return
+
+    $('#newcharaokbtn').click ->
+      $modal = $ '#newcharamodal'
+      name = $modal.find('#newchara_username').val()
+      if name
+        user = $modal.find('#newchara_user').data 'user'
+        user.username = name
+        user.subtitle = $modal.find('#newchara_subtitle').val()
+
+        self.add user
+        self.refresh()
+
+        moTool.hideModalBox $modal
+
       return
 
     return
@@ -103,5 +204,6 @@ class Chara
         @select @add JSON.parse suser
         @refresh()
 
+    @searchIcon()
     cb()
     return

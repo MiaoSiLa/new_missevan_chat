@@ -91,11 +91,11 @@
   border-radius: 8px 0 0 8px;
   background: #000;
 }
-.toolbar .mpc li {
+.toolbar .mpc > li {
   float: none;
   margin: 15px 0 0 0;
 }
-.toolbar .mpc li:first-child {
+.toolbar .mpc > li:first-child {
   margin-top: 0;
 }
 .toolbar .mpcfu,
@@ -148,13 +148,14 @@
 #charamodal {
   /* display: none; */
   width: 500px;
-  height: 300px;
+  height: auto;
   margin-left: 35px;
   margin-right: -510px;
   max-height: 60px;
   transition: all .3s ease;
 }
-.charabox {
+.charabox,
+.charaicon {
   display: inline-block;
   text-align: center;
   padding: 5px;
@@ -162,11 +163,18 @@
   border-radius: 5px;
   transition: background .3s ease;
 }
-.charabox:hover {
+.charabox:hover,
+.charaicon:hover {
   background: #aaa;
 }
-.charabox .chaticonbox {
+.charabox .chaticonbox,
+.charaicon .chaticonbox {
   margin: 0;
+}
+.charabox {
+  width: 69px;
+  height: 105px;
+  margin-right: 10px;
 }
 .charabox .chatusername {
   display: inline-block;
@@ -187,7 +195,7 @@
 .showmodal #charamodal {
   display: block;
   margin-right: 0;
-  max-height: 300px;
+  max-height: 550px;
 }
 .showmodal .expandqube {
   transform: rotate(-180deg);

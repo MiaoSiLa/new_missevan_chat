@@ -42,7 +42,7 @@
   height: 24px;
 }
 
-#neweventform {
+#neweventform, #newcharaform {
   label {
     color: white;
   }
@@ -87,4 +87,52 @@
   line-height: 18px;
   font-size: 18px;
   font-weight: 700;
+}
+
+#charamodal {
+  #selecticon {
+    margin-top: 30px;
+  }
+  #selecticonlist {
+    margin-top: 15px;
+  }
+  .pagelist {
+    float: left;
+    display: none;
+
+    > li {
+      width: auto;
+
+      a:hover {
+        color: red;
+      }
+    }
+  }
+  #soundsearchinput {
+    width: 220px;
+    height: 35px;
+  }
+  #searchbtn {
+    height: 35px;
+  }
+  .s_m_t_r {
+    float:left;
+    top:0px;
+    margin-top:15px;
+    width:340px;
+  }
+  .s_m_t_r_b {
+    color: white;
+    background: none;
+    a {
+      padding: 5px 10px;
+    }
+
+    &:hover {
+      color: red;
+    }
+  }
+  .s_m_t_r_b.s_m_t_r_b_a {
+    background-color: #444;
+  }
 }
