@@ -2,7 +2,7 @@
 /*
   Author: tengattack
   Version: 0.1.0
-  Update: 2014/02/12
+  Update: 2014/02/13
  */
 var Gekijou;
 
@@ -11,6 +11,7 @@ Gekijou = (function() {
     this.opts = opts != null ? opts : {};
     this.pb = new Playbar($('#m'));
     this.tb = new Toolbar($('#toolbar'));
+    this.em = new EventManager();
   }
 
   Gekijou.prototype.setOptions = function(opts) {
@@ -31,6 +32,34 @@ Gekijou = (function() {
     this.pb.bind();
     this.tb.bind();
     cb();
+  };
+
+  Gekijou.prototype.rearrange = function() {
+    var cur, e, pns, timecount, _i, _j, _len, _len1, _ref, _ref1;
+    this.pb.clear();
+    timecount = 0;
+    _ref = this.em.events;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      e = _ref[_i];
+      timecount += e.time;
+    }
+    pns = [];
+    cur = 0;
+    _ref1 = this.em.events;
+    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+      e = _ref1[_j];
+      pns.push({
+        id: e.id,
+        pos: cur / timecount,
+        name: e.name
+      });
+      cur += e.time;
+    }
+    if (pns.length === 1) {
+      pns[0].pos = 0.5;
+    }
+    this.pb.data(pns);
+    this.pb.moveToLast();
   };
 
   Gekijou.prototype.parse = function(scripts) {};

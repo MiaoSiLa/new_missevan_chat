@@ -17,7 +17,7 @@
     height: 500px;
   }
 
-  .mppl, .mpl, .mpo {
+  .mppl, .mpl, .mpo, .mpfo {
     width: 3px;
 
     /* position */
@@ -29,13 +29,45 @@
     right: -6px;
   }
 
-  .mpo {
+  .mpo, .mpfo {
     height: 100%;
   }
 
+  /* 事件列表 */
   .mpfo {
-    top: initial;
-    bottom: 0;
+    padding: 0;
+    top: -6px;
+
+    .mpf {
+      top: initial;
+      margin-left: 0;
+      border: none;
+    }
+
+    .mpfl {
+      margin-left: -10px;
+      border: 6px solid transparent;
+      border-left-color: white;
+    }
+
+    .mpfi {
+      top: -8px;
+      left: 18px;
+      padding: 5px;
+      line-height: 18px;
+      /* width: 80px; */
+      width: auto;
+      max-width: 80px;
+      height: 18px;
+      overflow: hidden;
+
+      span {
+        text-align: center;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 80px;
+      }
+    }
   }
 
   /* 播放暂停按钮 */

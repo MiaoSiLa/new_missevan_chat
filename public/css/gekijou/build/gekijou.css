@@ -2,6 +2,7 @@
   background: none;
   box-shadow: none;
   height: auto;
+  /* 事件列表 */
   /* 播放暂停按钮 */
 }
 #m #mp {
@@ -15,7 +16,8 @@
 }
 #m .mppl,
 #m .mpl,
-#m .mpo {
+#m .mpo,
+#m .mpfo {
   width: 3px;
   /* position */
   top: initial;
@@ -24,12 +26,40 @@
 #m .mplr {
   right: -6px;
 }
-#m .mpo {
+#m .mpo,
+#m .mpfo {
   height: 100%;
 }
 #m .mpfo {
+  padding: 0;
+  top: -6px;
+}
+#m .mpfo .mpf {
   top: initial;
-  bottom: 0;
+  margin-left: 0;
+  border: none;
+}
+#m .mpfo .mpfl {
+  margin-left: -10px;
+  border: 6px solid transparent;
+  border-left-color: white;
+}
+#m .mpfo .mpfi {
+  top: -8px;
+  left: 18px;
+  padding: 5px;
+  line-height: 18px;
+  /* width: 80px; */
+  width: auto;
+  max-width: 80px;
+  height: 18px;
+  overflow: hidden;
+}
+#m .mpfo .mpfi span {
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 80px;
 }
 #m #mpi {
   top: initial;

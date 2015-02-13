@@ -14,7 +14,8 @@ pageStyles = dev_mode ? [
       <!-- inputbox为输入内容窗口-->
       <div id="inputbox">
         <textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>
-        <div id="inputboxtextareapostbtn" class="pie"><span>P O S T</span></div>
+        <div id="inputboxneweventbtn" class="bbtn pie"><span>新 事 件</span></div>
+        <!-- <div id="inputboxtextareapostbtn" class="pie"><span>P O S T</span></div> -->
 
         <div id="soundmusic"><img src="/images/index/music.png" /></div>
       </div>
@@ -33,6 +34,25 @@ pageStyles = dev_mode ? [
   </div>
 
   <div id="user" style="display:none"><%- JSON.stringify(user) %></div>
+
+  <!-- 对话框 -->
+  <div id="neweventmodal" class='m_c' data-width="600" style="display:none;">
+    <div class="e_t">
+      <form id="neweventform">
+        <div class="inputgroup">
+          <label class="label pie" for="newevent_name">事件名</label>
+          <input class="label_input pie" name="newevent[name]" id="newevent_name" type="text">
+        </div>
+        <div class="inputgroup">
+          <label class="label pie" for="newevent_time">事件持续</label>
+          <input class="label_input pie" name="newevent[time]" id="newevent_time" type="text" placeholder="毫秒" value="2000">
+        </div>
+        <div class="formactions">
+          <input id="neweventokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+        </div>
+      </form>
+    </div>
+  </div>
 
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>

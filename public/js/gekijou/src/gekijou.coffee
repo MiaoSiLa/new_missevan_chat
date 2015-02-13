@@ -1,7 +1,7 @@
 ###
   Author: tengattack
   Version: 0.1.0
-  Update: 2014/02/12
+  Update: 2014/02/13
 ###
 
 class Gekijou
@@ -9,6 +9,7 @@ class Gekijou
   constructor: (@opts = {}) ->
     @pb = new Playbar $ '#m'
     @tb = new Toolbar $ '#toolbar'
+    @em = new EventManager()
 
   setOptions: (opts) ->
     for k, v of opts
@@ -28,6 +29,27 @@ class Gekijou
     @tb.bind()
 
     cb()
+    return
+
+  rearrange: ->
+    @pb.clear()
+
+    timecount = 0
+    for e in @em.events
+      timecount += e.time
+
+    pns = []
+    cur = 0
+    for e in @em.events
+      pns.push id: e.id, pos: cur / timecount, name: e.name
+      cur += e.time
+
+    if pns.length is 1
+      pns[0].pos = 0.5
+
+    @pb.data pns
+    @pb.moveToLast()
+
     return
 
   # parse
