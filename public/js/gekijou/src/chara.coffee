@@ -11,6 +11,7 @@ class Chara
     @_lastid = 0
     @_showmodal = no
     @_sel = -1
+    @pagination = new Paginationbar @el.find('.pagelist')
 
   add: (c) ->
     id = @_lastid++
@@ -21,6 +22,11 @@ class Chara
       iconurl: c.iconurl,
       iconcolor: c.iconcolor
     id
+
+  current: ->
+    if @_sel >= 0
+      return @charas[@_sel].id
+    -1
 
   select: (i) ->
     if i isnt @_sel
@@ -98,10 +104,16 @@ class Chara
       type = 4 if type > 2
       url += "&profiletype=#{type}"
 
+    # page
+    p = @pagination.page()
+    url += '&p=' + p if p
+
     moTool.getAjax
       url: url,
       callBack: (data) ->
         iconusers = []
+        page = 1
+        pagecount = 0
         if data.state is 'success' and data.info
           iconusers = for c in data.info
             id: parseInt(c.user_id),
@@ -111,10 +123,17 @@ class Chara
             iconurl: c.save_name,
             iconcolor: ''
 
+          if p then page = p
+          pagecount = 6
+
+        self.updatePagination page, pagecount
         self.showIcons iconusers
         return
 
     return
+
+  updatePagination: (page, pagecount) ->
+    @pagination.update page, pagecount
 
   showIcons: (iconusers) ->
     html = ''
@@ -143,8 +162,6 @@ class Chara
     $modal.find('.charaicon').click ->
       self.showCreateModal $(this).data 'user'
       return
-
-    @el.find('.pagelist').show()
 
     return
 
@@ -190,6 +207,10 @@ class Chara
 
         moTool.hideModalBox $modal
 
+      return
+
+    @pagination.change ->
+      self.searchIcon()
       return
 
     return

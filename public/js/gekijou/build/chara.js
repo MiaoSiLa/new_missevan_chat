@@ -13,6 +13,7 @@ Chara = (function() {
     this._lastid = 0;
     this._showmodal = false;
     this._sel = -1;
+    this.pagination = new Paginationbar(this.el.find('.pagelist'));
   }
 
   Chara.prototype.add = function(c) {
@@ -26,6 +27,13 @@ Chara = (function() {
       iconcolor: c.iconcolor
     });
     return id;
+  };
+
+  Chara.prototype.current = function() {
+    if (this._sel >= 0) {
+      return this.charas[this._sel].id;
+    }
+    return -1;
   };
 
   Chara.prototype.select = function(i) {
@@ -74,7 +82,7 @@ Chara = (function() {
   };
 
   Chara.prototype.searchIcon = function() {
-    var b, bs, i, self, title, type, url, _i, _len;
+    var b, bs, i, p, self, title, type, url, _i, _len;
     self = this;
     url = '/person/iconlist?pagesize=6';
     title = this.el.find('#soundsearchinput').val();
@@ -96,11 +104,17 @@ Chara = (function() {
       }
       url += "&profiletype=" + type;
     }
+    p = this.pagination.page();
+    if (p) {
+      url += '&p=' + p;
+    }
     moTool.getAjax({
       url: url,
       callBack: function(data) {
-        var c, iconusers;
+        var c, iconusers, page, pagecount;
         iconusers = [];
+        page = 1;
+        pagecount = 0;
         if (data.state === 'success' && data.info) {
           iconusers = (function() {
             var _j, _len1, _ref, _results;
@@ -119,10 +133,19 @@ Chara = (function() {
             }
             return _results;
           })();
+          if (p) {
+            page = p;
+          }
+          pagecount = 6;
         }
+        self.updatePagination(page, pagecount);
         self.showIcons(iconusers);
       }
     });
+  };
+
+  Chara.prototype.updatePagination = function(page, pagecount) {
+    return this.pagination.update(page, pagecount);
   };
 
   Chara.prototype.showIcons = function(iconusers) {
@@ -144,7 +167,6 @@ Chara = (function() {
     $modal.find('.charaicon').click(function() {
       self.showCreateModal($(this).data('user'));
     });
-    this.el.find('.pagelist').show();
   };
 
   Chara.prototype.showCreateModal = function(user) {
@@ -187,6 +209,9 @@ Chara = (function() {
         self.refresh();
         moTool.hideModalBox($modal);
       }
+    });
+    this.pagination.change(function() {
+      self.searchIcon();
     });
   };
 

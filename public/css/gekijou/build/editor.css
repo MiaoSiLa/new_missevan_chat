@@ -88,6 +88,9 @@
 #charamodal .pagelist > li a:hover {
   color: red;
 }
+#charamodal .pagelist > li.hidden {
+  display: none;
+}
 #charamodal #soundsearchinput {
   width: 220px;
   height: 35px;

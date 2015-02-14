@@ -13,6 +13,10 @@ Gekijou = (function() {
     this.tb = new Toolbar($('#common-toolbar'));
     this.chara = new Chara($('#chara-toolbar'));
     this.em = new GEventManager();
+    window.GG = new GGManager();
+    GG.gekijou = this;
+    GG.chara = this.chara;
+    GG.em = this.em;
   }
 
   Gekijou.prototype.setOptions = function(opts) {

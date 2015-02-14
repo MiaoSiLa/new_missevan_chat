@@ -17,6 +17,7 @@ GEvent = (function() {
     switch (type) {
       case 'text':
         an.line = index.mo.chatLine;
+        an.chara = GG.chara.current();
         chatBox.loadBubble({
           msg: val,
           type: 1,
@@ -24,6 +25,7 @@ GEvent = (function() {
         });
         break;
       case 'image':
+        an.chara = GG.chara.current();
         chatBox.loadBubble({
           msg: val,
           type: 7,

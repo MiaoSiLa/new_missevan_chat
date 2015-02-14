@@ -175,10 +175,12 @@
   width: 69px;
   height: 105px;
   margin-right: 10px;
+  overflow: hidden;
 }
-.charabox .chatusername {
-  display: inline-block;
+.charabox .chatusername,
+.charabox .chatsubtitle {
   width: auto;
+  height: 18px;
 }
 .charabox.selected {
   border: 1px solid white;

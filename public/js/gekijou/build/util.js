@@ -1,4 +1,4 @@
-var ControlBar, Editorbar, Playbar, Toolbar, Util,
+var ControlBar, Editorbar, GGManager, Paginationbar, Playbar, Toolbar, Util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -8,6 +8,13 @@ Util = (function() {
   Util.prototype.init = function() {};
 
   return Util;
+
+})();
+
+GGManager = (function() {
+  function GGManager() {}
+
+  return GGManager;
 
 })();
 
@@ -25,6 +32,103 @@ ControlBar = (function() {
   return ControlBar;
 
 })();
+
+Paginationbar = (function(_super) {
+  __extends(Paginationbar, _super);
+
+  function Paginationbar(el) {
+    this.el = el;
+    Paginationbar.__super__.constructor.call(this, this.el);
+  }
+
+  Paginationbar.prototype.update = function(page, pagecount) {
+    var $pagelist, $pages, i, pa, pagenum, _i, _j, _k, _l, _len, _len1, _ref, _ref1, _ref2, _results, _results1;
+    $pagelist = this.el;
+    if (page && pagecount) {
+      if (page === 1) {
+        $pagelist.find('.first, .previous').addClass('hidden');
+      } else {
+        $pagelist.find('.first').data('page', 1);
+        $pagelist.find('.previous').data('page', page - 1);
+        $pagelist.find('.first, .previous').removeClass('hidden');
+      }
+      if (page >= pagecount) {
+        $pagelist.find('.next, .last').addClass('hidden');
+      } else {
+        $pagelist.find('.next').data('page', page + 1);
+        $pagelist.find('.last').data('page', pagecount);
+        $pagelist.find('.next, .last').removeClass('hidden');
+      }
+      $pagelist.find('> li').removeClass('selected');
+      $pages = $pagelist.find('.page');
+      if (pagecount <= 5) {
+        for (i = _i = 0, _len = $pages.length; _i < _len; i = ++_i) {
+          pa = $pages[i];
+          $(pa).data('page', i + 1);
+          if (i === page) {
+            $(pa).addClass('selected');
+          }
+          if (i >= pagecount) {
+            $(pa).addClass('hidden');
+          } else {
+            $(pa).removeClass('hidden');
+          }
+        }
+      } else {
+        $pages.removeClass('hidden');
+        pagenum = [];
+        if (page < 3) {
+          pagenum = [1, 2, 3, 4, 5];
+        } else if ((pagecount - 2 <= page && page <= pagecount)) {
+          pagenum = (function() {
+            _results = [];
+            for (var _j = _ref = pagecount - 4; _ref <= pagecount ? _j <= pagecount : _j >= pagecount; _ref <= pagecount ? _j++ : _j--){ _results.push(_j); }
+            return _results;
+          }).apply(this);
+        } else {
+          pagenum = (function() {
+            _results1 = [];
+            for (var _k = _ref1 = page - 2, _ref2 = page + 2; _ref1 <= _ref2 ? _k <= _ref2 : _k >= _ref2; _ref1 <= _ref2 ? _k++ : _k--){ _results1.push(_k); }
+            return _results1;
+          }).apply(this);
+        }
+        for (i = _l = 0, _len1 = $pages.length; _l < _len1; i = ++_l) {
+          pa = $pages[i];
+          if (pagenum[i] === page) {
+            $(pa).addClass('selected');
+          }
+          $(pa).data('page', pagenum[i]).find('a').text(pagenum[i]);
+        }
+      }
+      $pagelist.show();
+    } else {
+      $pagelist.hide();
+    }
+  };
+
+  Paginationbar.prototype.change = function(cb) {
+    var self;
+    self = this;
+    this.$('> li').click(function() {
+      var $this;
+      $this = $(this);
+      if (!$this.hasClass('selected')) {
+        self.$('> li.selected').removeClass('selected');
+        $this.addClass('selected');
+        cb();
+      }
+    });
+  };
+
+  Paginationbar.prototype.page = function() {
+    var p;
+    p = this.$('.selected').data('page');
+    return parseInt(p);
+  };
+
+  return Paginationbar;
+
+})(ControlBar);
 
 Playbar = (function(_super) {
   __extends(Playbar, _super);

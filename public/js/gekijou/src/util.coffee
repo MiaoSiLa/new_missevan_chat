@@ -5,7 +5,10 @@ class Util
 
   init: ->
 
+class GGManager
 
+  constructor: ->
+    
 
 # Control bar session
 
@@ -17,6 +20,79 @@ class ControlBar
 
   bind: ->
 
+# 分页工具
+class Paginationbar extends ControlBar
+
+  constructor: (@el) ->
+    super @el
+
+  update: (page, pagecount) ->
+    $pagelist = @el
+    if page and pagecount
+      # first, previous
+      if page is 1
+        $pagelist.find('.first, .previous').addClass('hidden')
+      else
+        $pagelist.find('.first').data 'page', 1
+        $pagelist.find('.previous').data 'page', page - 1
+        $pagelist.find('.first, .previous').removeClass('hidden')
+
+      # next, last
+      if page >= pagecount
+        $pagelist.find('.next, .last').addClass('hidden')
+      else
+        $pagelist.find('.next').data 'page', page + 1
+        $pagelist.find('.last').data 'page', pagecount
+        $pagelist.find('.next, .last').removeClass('hidden')
+
+      $pagelist.find('> li').removeClass 'selected'
+
+      $pages = $pagelist.find '.page'
+      if pagecount <= 5
+        for pa, i in $pages
+          $(pa).data 'page', i + 1
+          if i is page
+            $(pa).addClass 'selected'
+          if i >= pagecount
+            $(pa).addClass 'hidden'
+          else
+            $(pa).removeClass 'hidden'
+      else
+        $pages.removeClass 'hidden'
+        pagenum = []
+        if page < 3
+          pagenum = [1..5]
+        else if pagecount - 2 <= page <= pagecount
+          pagenum = [pagecount - 4 .. pagecount]
+        else
+          pagenum = [page - 2 .. page + 2]
+
+        for pa, i in $pages
+          if pagenum[i] is page
+            $(pa).addClass 'selected'
+          $(pa).data('page', pagenum[i]).find('a').text(pagenum[i])
+
+
+      $pagelist.show()
+    else
+      $pagelist.hide()
+
+    return
+
+  change: (cb) ->
+    self = @
+    @$('> li').click ->
+      $this = $(this)
+      if not $this.hasClass 'selected'
+        self.$('> li.selected').removeClass 'selected'
+        $this.addClass 'selected'
+        cb()
+      return
+    return
+
+  page: ->
+    p = @$('.selected').data 'page'
+    parseInt p
 
 class Playbar extends ControlBar
 

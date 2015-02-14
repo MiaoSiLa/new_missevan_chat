@@ -12,6 +12,12 @@ class Gekijou
     @chara = new Chara $ '#chara-toolbar'
     @em = new GEventManager()
 
+    # 全局管理器
+    window.GG = new GGManager()
+    GG.gekijou = @
+    GG.chara = @chara
+    GG.em = @em
+
   setOptions: (opts) ->
     for k, v of opts
       @opts[k] = v

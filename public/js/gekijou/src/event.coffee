@@ -9,11 +9,13 @@ class GEvent
     switch type
       when 'text'
         an.line = index.mo.chatLine
+        an.chara = GG.chara.current()
         chatBox.loadBubble
           msg: val,
           type: 1,
           sender: index.mo.sender
       when 'image'
+        an.chara = GG.chara.current()
         chatBox.loadBubble { msg: val, type: 7, sender: index.mo.sender }, ->
           an.line = index.mo.chatLine - 1
           #image do some thing here
