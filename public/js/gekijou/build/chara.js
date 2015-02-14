@@ -23,6 +23,7 @@ Chara = (function() {
       id: id,
       username: c.username,
       subtitle: c.subtitle,
+      iconid: c.iconid,
       iconurl: c.iconurl,
       iconcolor: c.iconcolor
     });
@@ -84,7 +85,7 @@ Chara = (function() {
   Chara.prototype.searchIcon = function() {
     var b, bs, i, p, self, title, type, url, _i, _len;
     self = this;
-    url = '/person/iconlist?pagesize=6';
+    url = '/person/iconlist?pagesize=12';
     title = this.el.find('#soundsearchinput').val();
     if (title) {
       url += '&title=' + encodeURIComponent(title);
@@ -136,7 +137,7 @@ Chara = (function() {
           if (p) {
             page = p;
           }
-          pagecount = 6;
+          pagecount = data.page;
         }
         self.updatePagination(page, pagecount);
         self.showIcons(iconusers);
@@ -197,11 +198,16 @@ Chara = (function() {
     self = this;
     this.el.find('#selecticon').show();
     this.el.find('.s_m_t_r_b').click(function() {
-      self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass('s_m_t_r_b_a');
-      $(this).addClass('s_m_t_r_b_a');
+      if (!$(this).hasClass('s_m_t_r_b_a')) {
+        self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass('s_m_t_r_b_a');
+        $(this).addClass('s_m_t_r_b_a');
+      }
+      self.el.find('#soundsearchinput').val('');
+      self.pagination.page(1);
       self.searchIcon();
     });
     this.el.find('#searchbtn').click(function() {
+      self.pagination.page(1);
       self.searchIcon();
     });
     $('#newcharaokbtn').click(function() {

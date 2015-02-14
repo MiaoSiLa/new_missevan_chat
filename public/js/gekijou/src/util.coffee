@@ -28,6 +28,12 @@ class Paginationbar extends ControlBar
 
   update: (page, pagecount) ->
     $pagelist = @el
+    @p = page
+    if pagecount?
+      @pagecount = pagecount
+    else
+      pagecount = @pagecount
+
     if page and pagecount
       # first, previous
       if page is 1
@@ -51,7 +57,7 @@ class Paginationbar extends ControlBar
       if pagecount <= 5
         for pa, i in $pages
           $(pa).data 'page', i + 1
-          if i is page
+          if i + 1 is page
             $(pa).addClass 'selected'
           if i >= pagecount
             $(pa).addClass 'hidden'
@@ -90,7 +96,11 @@ class Paginationbar extends ControlBar
       return
     return
 
-  page: ->
+  page: (p) ->
+    if p?
+      if p isnt @page
+        @update p, @pagecount
+      return
     p = @$('.selected').data 'page'
     parseInt p
 

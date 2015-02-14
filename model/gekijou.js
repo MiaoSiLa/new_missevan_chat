@@ -21,28 +21,50 @@ var ObjectID = require('mongodb').ObjectID;
 function Gekijou(data) {
   ModelBase.call(this);
 
-  if (data) {
-    this.user_id = data.user_id;
-    this.title = data.title;
-    this.intro = data.intro;
-    this.script = data.script;
-  }
+  this.set(data);
 }
 
 util.inherits(Gekijou, ModelBase);
 
+Gekijou.fields = ['_id', 'user_id', 'title', 'intro', 'script'];
+
+Gekijou.prototype.set = function (data) {
+  if (data) {
+    for (let field of Gekijou.fields) {
+      this[field] = data[field];
+    }
+  } else {
+    for (let field of Gekijou.fields) {
+      delete this[field];
+    }
+  }
+};
+
+Gekijou.prototype.valueOf = function () {
+  var value = {};
+  for (let field of Gekijou.fields) {
+    value[field] = this[field];
+  }
+  return value;
+};
+
 Gekijou.prototype.checkScript = function () {
+  if (!this.script) {
+    return false;
+  }
   return true;
 };
 
 Gekijou.prototype.save = function *() {
-  let newGekijou = {
-    user_id: this.user_id,
-    title: this.title,
-    intro: this.intro,
-    script: this.script
-  };
-  return yield this.collection.save(newMessage);
+  let g = this.valueOf();
+  delete g._id;
+  return yield this.collection.save(g);
+};
+
+Gekijou.prototype.update = function *() {
+  let g = this.valueOf();
+  delete g._id;
+  return yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: g });
 };
 
 

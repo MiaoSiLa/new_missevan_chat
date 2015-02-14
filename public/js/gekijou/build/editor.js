@@ -10,6 +10,7 @@ GekijouEditor = (function() {
   function GekijouEditor(gekijou) {
     this.gekijou = gekijou;
     this.eb = new Editorbar($('#inputbox'), this);
+    GG.editor = this;
   }
 
   GekijouEditor.prototype.init = function(cb) {
@@ -26,7 +27,40 @@ GekijouEditor = (function() {
     });
   };
 
-  GekijouEditor.prototype.generate = function() {};
+  GekijouEditor.prototype.generate = function() {
+    var a, c, chara, e, em, script, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+    chara = this.gekijou.chara;
+    em = this.gekijou.em;
+    script = '';
+    script += 'chara {\n';
+    _ref = chara.charas;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      c = _ref[_i];
+      script += "  define " + c.id + " " + (JSON.stringify(c.username)) + " " + (JSON.stringify(c.subtitle)) + " {\n";
+      script += "    icon " + c.iconid + " " + (JSON.stringify(c.iconurl)) + " " + (JSON.stringify(c.iconcolor)) + "\n";
+      script += "  }\n";
+    }
+    script += '}\n\n';
+    script += 'event {\n';
+    _ref1 = em.events;
+    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+      e = _ref1[_j];
+      script += "  define " + e.id + " " + (JSON.stringify(e.name)) + " " + (JSON.stringify(e.time)) + " {\n";
+      _ref2 = e.actions;
+      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+        a = _ref2[_k];
+        script += "    " + a.type + " ";
+        switch (a.type) {
+          case 'text' || 'image':
+            script += "chara:" + a.chara + " " + (JSON.stringify(a.val));
+        }
+        script += "\n";
+      }
+      script += "  }\n";
+    }
+    script += '}\n';
+    return script;
+  };
 
   GekijouEditor.prototype.setId = function(_id) {
     this._id = _id;
@@ -42,7 +76,7 @@ GekijouEditor = (function() {
       script: this.generate()
     };
     if (this._id) {
-      vgeki._id = this.id;
+      vgeki._id = this._id;
     }
     moTool.postAjax({
       url: '/gekijou/save',

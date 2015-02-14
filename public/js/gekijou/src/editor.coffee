@@ -7,6 +7,7 @@
 class GekijouEditor
   constructor: (@gekijou) ->
     @eb = new Editorbar $('#inputbox'), @
+    GG.editor = @
 
   # stage & element init
   init: (cb) ->
@@ -24,7 +25,40 @@ class GekijouEditor
     return
 
   generate: () ->
-    return
+    chara = @gekijou.chara
+    em = @gekijou.em
+
+    script = ''
+    script += 'chara {\n'
+
+    # chara
+    for c in chara.charas
+      script += "  define #{c.id} #{JSON.stringify(c.username)} #{JSON.stringify(c.subtitle)} {\n"
+      script += "    icon #{c.iconid} #{JSON.stringify(c.iconurl)} #{JSON.stringify(c.iconcolor)}\n"
+      script += "  }\n"
+
+    script += '}\n\n'
+    script += 'event {\n'
+
+    # TODO: effect
+    # add effect define
+
+    # event
+    for e in em.events
+      script += "  define #{e.id} #{JSON.stringify(e.name)} #{JSON.stringify(e.time)} {\n"
+      for a in e.actions
+        script += "    #{a.type} "
+
+        switch a.type
+          when 'text' or 'image'
+            script += "chara:#{a.chara} #{JSON.stringify(a.val)}"
+
+        script += "\n"
+      script += "  }\n"
+
+    script += '}\n'
+
+    script
 
   setId: (@_id) ->
     @eb.setId @_id
@@ -39,7 +73,7 @@ class GekijouEditor
       title: title,
       intro: intro,
       script: @generate()
-    vgeki._id = @id if @_id
+    vgeki._id = @_id if @_id
 
     moTool.postAjax
       url: '/gekijou/save',

@@ -96,6 +96,7 @@
 }
 #charamodal .pagelist > li {
   width: auto;
+  height: 22px;
 }
 #charamodal .pagelist > li a:hover {
   color: red;

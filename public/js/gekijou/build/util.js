@@ -44,6 +44,12 @@ Paginationbar = (function(_super) {
   Paginationbar.prototype.update = function(page, pagecount) {
     var $pagelist, $pages, i, pa, pagenum, _i, _j, _k, _l, _len, _len1, _ref, _ref1, _ref2, _results, _results1;
     $pagelist = this.el;
+    this.p = page;
+    if (pagecount != null) {
+      this.pagecount = pagecount;
+    } else {
+      pagecount = this.pagecount;
+    }
     if (page && pagecount) {
       if (page === 1) {
         $pagelist.find('.first, .previous').addClass('hidden');
@@ -65,7 +71,7 @@ Paginationbar = (function(_super) {
         for (i = _i = 0, _len = $pages.length; _i < _len; i = ++_i) {
           pa = $pages[i];
           $(pa).data('page', i + 1);
-          if (i === page) {
+          if (i + 1 === page) {
             $(pa).addClass('selected');
           }
           if (i >= pagecount) {
@@ -120,8 +126,13 @@ Paginationbar = (function(_super) {
     });
   };
 
-  Paginationbar.prototype.page = function() {
-    var p;
+  Paginationbar.prototype.page = function(p) {
+    if (p != null) {
+      if (p !== this.page) {
+        this.update(p, this.pagecount);
+      }
+      return;
+    }
     p = this.$('.selected').data('page');
     return parseInt(p);
   };

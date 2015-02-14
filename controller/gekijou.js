@@ -52,17 +52,51 @@ gekijou.post('/save', function *() {
         body.intro = '';
       }
 
-      var g = new Gekijou({
+      var geki = {
         user_id: this.user.id,
         title: body.title,
         intro: body.intro,
         script: body.script
-      });
+      };
+
+      if (body._id) {
+        if (!validator.isMongoId(body._id)) {
+          r.message = '错误的参数';
+          this.body = r;
+          return;
+        }
+        geki._id = body._id;
+      }
+
+      var g;
+      if (body._id) {
+        g = new Gekijou({ _id: body._id });
+        var gekij = yield g.find();
+        if (!gekij) {
+          r.code = 1;
+          r.message = '没有找到该剧场';
+          this.body = r;
+          return;
+        }
+        if (gekij.user_id !== this.user.id) {
+          r.code = 2;
+          r.message = '非作者不能进行编辑';
+          this.body = r;
+          return;
+        }
+        g.set(geki);
+      } else {
+        g = new Gekijou(geki);
+      }
 
       if (g.checkScript()) {
-        var ge = yield g.save();
+        if (body._id) {
+          yield g.update();
+          r.gekijou = geki;
+        } else {
+          r.gekijou = yield g.save();
+        }
         r.code = 0;
-        r.gekijou = ge;
       } else {
         r.message = '错误的脚本';
       }

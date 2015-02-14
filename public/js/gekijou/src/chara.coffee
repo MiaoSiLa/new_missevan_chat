@@ -19,6 +19,7 @@ class Chara
       id: id,
       username: c.username,
       subtitle: c.subtitle,
+      iconid: c.iconid,
       iconurl: c.iconurl,
       iconcolor: c.iconcolor
     id
@@ -87,7 +88,7 @@ class Chara
 
   searchIcon: () ->
     self = @
-    url = '/person/iconlist?pagesize=6'
+    url = '/person/iconlist?pagesize=12'
 
     # title
     title = @el.find('#soundsearchinput').val()
@@ -124,7 +125,7 @@ class Chara
             iconcolor: ''
 
           if p then page = p
-          pagecount = 6
+          pagecount = data.page
 
         self.updatePagination page, pagecount
         self.showIcons iconusers
@@ -193,12 +194,17 @@ class Chara
     @el.find('#selecticon').show()
 
     @el.find('.s_m_t_r_b').click ->
-      self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'
-      $(this).addClass 's_m_t_r_b_a'
+      if not $(this).hasClass 's_m_t_r_b_a'
+        self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'
+        $(this).addClass 's_m_t_r_b_a'
+
+      self.el.find('#soundsearchinput').val ''
+      self.pagination.page 1
       self.searchIcon()
       return
 
     @el.find('#searchbtn').click ->
+      self.pagination.page 1
       self.searchIcon()
       return
 
