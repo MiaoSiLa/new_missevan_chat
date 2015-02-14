@@ -5,7 +5,146 @@ var ControlBar, Editorbar, GGManager, Paginationbar, Playbar, Toolbar, Util,
 Util = (function() {
   function Util() {}
 
-  Util.prototype.init = function() {};
+  Util.prototype.init = function() {
+    if (!String.prototype.trim) {
+      String.prototype.trim = function() {
+        return $.trim(this);
+      };
+    }
+  };
+
+  Util.prototype.findquoteend = function(script, start) {
+    var d, end, i, len;
+    end = -1;
+    i = start;
+    len = script.length;
+    d = script[i] === '\"';
+    i++;
+    while (i < len) {
+      if (script[i] === '\\') {
+        i++;
+        switch (script[i]) {
+          case 'u':
+            i += 5;
+            break;
+          case 'x':
+            i += 3;
+            break;
+          default:
+            i++;
+        }
+      } else if ((d && script[i] === '\"') || (!d && script[i] === '\'')) {
+        end = i;
+        break;
+      } else {
+        i++;
+      }
+    }
+    return end;
+  };
+
+  Util.prototype.findblockend = function(script, start) {
+    var end, i, len;
+    end = -1;
+    i = start;
+    len = script.length;
+    while (i < len) {
+      if (script[i] === '\'' || script[i] === '\"') {
+        i = this.findquoteend(script, i);
+        if (i === -1) {
+          break;
+        }
+      } else if (script[i] === '{') {
+        i = this.findblockend(script, i + 1);
+        if (i === -1) {
+          break;
+        }
+      } else if (script[i] === '}') {
+        end = i;
+        break;
+      }
+      i++;
+    }
+    return end;
+  };
+
+  Util.prototype.splitblock = function(script) {
+    var blocks, content, i, ti, ti2, title;
+    blocks = [];
+    i = 0;
+    while (true) {
+      ti = script.indexOf('{', i);
+      if (ti >= 0) {
+        title = script.substring(i, ti);
+        ti++;
+        ti2 = this.findblockend(script, ti);
+        if (ti2 >= 0) {
+          content = script.substring(ti, ti2);
+          blocks.push({
+            title: title.trim(),
+            content: content
+          });
+          i = ti2 + 1;
+        } else {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+    return blocks;
+  };
+
+  Util.prototype.splitprop = function(script) {
+    var blank, found, i, iend, len, props;
+    props = [];
+    script = script.trim();
+    if (script) {
+      i = 0;
+      iend = -1;
+      len = script.length;
+      blank = /\s/;
+      while (i < len) {
+        if (script[i] === '\"' || script[i] === '\'') {
+          iend = this.findquoteend(script, i);
+          if (iend === -1) {
+            break;
+          }
+          iend++;
+        } else if (blank.test(script[i])) {
+          i++;
+          continue;
+        } else {
+          iend = i + 1;
+          found = false;
+          while (iend < len) {
+            if (blank.test(script[iend])) {
+              found = true;
+              break;
+            }
+            iend++;
+          }
+        }
+        props.push(script.substring(i, iend));
+        i = iend;
+      }
+    }
+    return props;
+  };
+
+  Util.prototype.splitline = function(script) {
+    var l, line, lines, _i, _len, _lines;
+    lines = [];
+    _lines = script.split('\n');
+    for (_i = 0, _len = _lines.length; _i < _len; _i++) {
+      line = _lines[_i];
+      l = line.trim();
+      if (l) {
+        lines.push(l);
+      }
+    }
+    return lines;
+  };
 
   return Util;
 
@@ -191,6 +330,10 @@ Playbar = (function(_super) {
     }
   };
 
+  Playbar.prototype.moveToBegin = function() {
+    this.pos(0);
+  };
+
   return Playbar;
 
 })(ControlBar);
@@ -265,12 +408,21 @@ Editorbar = (function(_super) {
     var $modal;
     $modal = $('#savemodal');
     $modal.find('#gekijou_id').val(_id);
+    this.showpreview();
   };
 
   Editorbar.prototype.getId = function() {
     var $modal;
     $modal = $('#savemodal');
     return $modal.find('#gekijou_id').val();
+  };
+
+  Editorbar.prototype.showpreview = function() {
+    var _id;
+    _id = $('#savemodal #gekijou_id').val();
+    if (_id) {
+      return $('#gekijoupreviewbtn').attr('href', "/gekijou/view/" + _id).show();
+    }
   };
 
   Editorbar.prototype.bind = function() {

@@ -4,6 +4,124 @@
 class Util
 
   init: ->
+    if not String::trim
+      String::trim = ->
+        return $.trim this
+
+      return
+
+  findquoteend: (script, start) ->
+    end = -1
+    i = start
+    len = script.length
+    d = script[i] is '\"'
+
+    i++
+    while i < len
+      if script[i] is '\\'
+        i++
+        switch script[i]
+          when 'u'
+            # \uXXXX
+            i += 5
+          when 'x'
+            # \xXX
+            i += 3
+          else
+            # \n ...
+            i++
+      else if (d and script[i] is '\"') or (not d and script[i] is '\'')
+        end = i
+        break
+      else
+        i++
+
+    end
+
+  findblockend: (script, start) ->
+    end = -1
+    i = start
+    len = script.length
+    while i < len
+      if script[i] is '\'' or script[i] is '\"'
+        i = @findquoteend script, i
+        if i is -1
+          break
+      else if script[i] is '{'
+        i = @findblockend script, i + 1
+        if i is -1
+          break
+      else if script[i] is '}'
+        end = i
+        break
+
+      i++
+
+    end
+
+  splitblock: (script) ->
+    blocks = []
+
+    i = 0
+    while on
+      ti = script.indexOf('{', i)
+      if ti >= 0
+        title = script.substring i, ti
+        ti++
+        ti2 = @findblockend script, ti
+        if ti2 >= 0
+          content = script.substring ti, ti2
+          blocks.push title: title.trim(), content: content
+          i = ti2 + 1
+        else
+          break
+      else
+        break
+
+    blocks
+
+  splitprop: (script) ->
+    props = []
+
+    script = script.trim()
+
+    if script
+      i = 0
+      iend = -1
+      len = script.length
+      blank = /\s/
+      while i < len
+        if script[i] is '\"' or script[i] is '\''
+          iend = @findquoteend script, i
+          if iend is -1
+            break
+          iend++
+        else if blank.test script[i]
+          i++
+          continue
+        else
+          iend = i + 1
+          found = no
+          while iend < len
+            if blank.test script[iend]
+              found = on
+              break
+            iend++
+
+        props.push script.substring i, iend
+        i = iend
+
+    props
+
+  splitline: (script) ->
+    lines = []
+    _lines = script.split '\n'
+
+    for line in _lines
+      l = line.trim()
+      lines.push l if l
+
+    lines
 
 class GGManager
 
@@ -150,6 +268,10 @@ class Playbar extends ControlBar
       [..., l] = @_data
       @pos l.pos
 
+  moveToBegin: ->
+    @pos 0
+    return
+
 
 class Toolbar extends ControlBar
 
@@ -207,11 +329,17 @@ class Editorbar extends ControlBar
   setId: (_id) ->
     $modal = $ '#savemodal'
     $modal.find('#gekijou_id').val _id
+    @showpreview()
     return
 
-  getId: () ->
+  getId: ->
     $modal = $ '#savemodal'
     $modal.find('#gekijou_id').val()
+
+  showpreview: ->
+    _id = $('#savemodal #gekijou_id').val()
+    if _id
+      $('#gekijoupreviewbtn').attr('href', "/gekijou/view/#{_id}").show()
 
   bind: ->
     self = @

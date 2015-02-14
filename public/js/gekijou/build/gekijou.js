@@ -13,10 +13,14 @@ Gekijou = (function() {
     this.tb = new Toolbar($('#common-toolbar'));
     this.chara = new Chara($('#chara-toolbar'));
     this.em = new GEventManager();
+    this.util = new Util();
+    this._playing = false;
+    this._ready = false;
     window.GG = new GGManager();
     GG.gekijou = this;
     GG.chara = this.chara;
     GG.em = this.em;
+    GG.util = this.util;
   }
 
   Gekijou.prototype.setOptions = function(opts) {
@@ -40,7 +44,8 @@ Gekijou = (function() {
     }
     this.pb.bind();
     this.tb.bind();
-    gs = $('#gekijouscript');
+    this.util.init();
+    gs = $('script#gekijouscript');
     script = '';
     if (gs && gs.length > 0) {
       this.parse(gs.html());
@@ -81,12 +86,62 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.parse = function(script) {
+    var b, blocks, _i, _j, _len, _len1;
     if (script) {
       script = script.trim();
     }
     if (script) {
-      console.log(script);
+      blocks = this.util.splitblock(script);
+      for (_i = 0, _len = blocks.length; _i < _len; _i++) {
+        b = blocks[_i];
+        if (b.title === 'chara') {
+          this.chara.parse(b.content);
+        }
+      }
+      for (_j = 0, _len1 = blocks.length; _j < _len1; _j++) {
+        b = blocks[_j];
+        if (b.title === 'event') {
+          this.em.parse(b.content);
+        }
+      }
+      this.chara.select(0);
+      this.rearrange();
     }
+  };
+
+  Gekijou.prototype.reset = function() {
+    this.em.moveToBegin();
+    this.pb.moveToBegin();
+  };
+
+  Gekijou.prototype.preload = function(cb) {
+    var self;
+    self = this;
+    setTimeout(function() {
+      self._ready = true;
+      cb();
+    }, 2000);
+  };
+
+  Gekijou.prototype.play = function() {
+    if (this._playing) {
+      return;
+    }
+    this._playing = true;
+  };
+
+  Gekijou.prototype.run = function() {
+    var self;
+    self = this;
+    setTimeout(function() {
+      moTool.showModalBox($('#loadmodal'), {
+        showClose: false
+      });
+      return self.preload(function() {
+        moTool.hideModalBox($('#loadmodal'));
+        return self.play();
+      });
+    }, 100);
   };
 
   return Gekijou;

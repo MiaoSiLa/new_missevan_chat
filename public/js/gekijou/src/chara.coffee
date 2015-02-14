@@ -34,6 +34,9 @@ class Chara
       if @_sel >= 0
         @el.find(".charabox:eq(#{@_sel})").removeClass 'selected'
 
+      if i >= @charas.length
+        i = -1
+
       if i >= 0
         @el.find(".charabox:eq(#{i})").addClass 'selected'
         index.mo.sender = chatBox.sender @charas[i]
@@ -235,16 +238,44 @@ class Chara
 
     if GG.env is 'dev'
       @devbind()
-
-      suser = $('#user').html()
-      if suser
-        try
-          @select @add JSON.parse suser
-          @refresh()
+      if @charas.length > 0
+        @refresh()
+      else
+        suser = $('#user').html()
+        if suser
+          try
+            @select @add JSON.parse suser
+            @refresh()
 
       @searchIcon()
     else
       # load from script
+      @refresh()
 
     cb()
+    return
+
+  parse: (block_script) ->
+    blocks = GG.util.splitblock block_script
+
+    for b in blocks
+      props = GG.util.splitprop b.title
+      lines = GG.util.splitline b.content
+
+      if props.length >= 3 and props[0] is 'define' and lines.length > 0
+        try
+          c =
+            id: parseInt(props[1]),
+            username: JSON.parse(props[2]),
+            subtitle: if props[3] then JSON.parse(props[3]) else ''
+
+          for line, i in lines
+            lineprops = GG.util.splitprop line
+            if lineprops.length >= 4 && lineprops[0] is 'icon'
+              c.iconid = parseInt lineprops[1]
+              c.iconurl = JSON.parse lineprops[2]
+              c.iconcolor = JSON.parse lineprops[3]
+
+          @add c
+
     return

@@ -42,6 +42,9 @@ Chara = (function() {
       if (this._sel >= 0) {
         this.el.find(".charabox:eq(" + this._sel + ")").removeClass('selected');
       }
+      if (i >= this.charas.length) {
+        i = -1;
+      }
       if (i >= 0) {
         this.el.find(".charabox:eq(" + i + ")").addClass('selected');
         index.mo.sender = chatBox.sender(this.charas[i]);
@@ -233,18 +236,51 @@ Chara = (function() {
     this.bind();
     if (GG.env === 'dev') {
       this.devbind();
-      suser = $('#user').html();
-      if (suser) {
-        try {
-          this.select(this.add(JSON.parse(suser)));
-          this.refresh();
-        } catch (_error) {}
+      if (this.charas.length > 0) {
+        this.refresh();
+      } else {
+        suser = $('#user').html();
+        if (suser) {
+          try {
+            this.select(this.add(JSON.parse(suser)));
+            this.refresh();
+          } catch (_error) {}
+        }
       }
       this.searchIcon();
     } else {
-
+      this.refresh();
     }
     cb();
+  };
+
+  Chara.prototype.parse = function(block_script) {
+    var b, blocks, c, i, line, lineprops, lines, props, _i, _j, _len, _len1;
+    blocks = GG.util.splitblock(block_script);
+    for (_i = 0, _len = blocks.length; _i < _len; _i++) {
+      b = blocks[_i];
+      props = GG.util.splitprop(b.title);
+      lines = GG.util.splitline(b.content);
+      if (props.length >= 3 && props[0] === 'define' && lines.length > 0) {
+        try {
+          c = {
+            id: parseInt(props[1]),
+            username: JSON.parse(props[2]),
+            subtitle: props[3] ? JSON.parse(props[3]) : ''
+          };
+          for (i = _j = 0, _len1 = lines.length; _j < _len1; i = ++_j) {
+            line = lines[i];
+            lineprops = GG.util.splitprop(line);
+            if (lineprops.length >= 4 && lineprops[0] === 'icon') {
+              c.iconid = parseInt(lineprops[1]);
+              c.iconurl = JSON.parse(lineprops[2]);
+              c.iconcolor = JSON.parse(lineprops[3]);
+            }
+          }
+          this.add(c);
+        } catch (_error) {}
+      }
+    }
   };
 
   return Chara;

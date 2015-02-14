@@ -14,7 +14,8 @@ gekijou.get('/new', function *() {
 
   yield this.render('gekijou/new', {
     title: '创建_小剧场_MissEvan',
-    user: this.user
+    user: this.user,
+    gekijou: null
   });
 
 });
@@ -96,6 +97,7 @@ gekijou.post('/save', function *() {
 
       var geki = {
         user_id: this.user.id,
+        username: this.user.username,
         title: body.title,
         intro: body.intro,
         script: body.script

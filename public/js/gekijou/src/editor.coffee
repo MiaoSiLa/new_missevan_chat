@@ -50,8 +50,12 @@ class GekijouEditor
         script += "    #{a.type} "
 
         switch a.type
-          when 'text' or 'image'
+          when 'text'
             script += "chara:#{a.chara} #{JSON.stringify(a.val)}"
+          when 'image'
+            script += "chara:#{a.chara} #{JSON.stringify(a.val)}"
+          else
+            # do some thing unexpectly
 
         script += "\n"
       script += "  }\n"

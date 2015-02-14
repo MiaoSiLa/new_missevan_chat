@@ -76,18 +76,19 @@ pageStyles = dev_mode ? [
   <div id="savemodal" class='m_c' data-width="800" style="display:none;">
     <div class="e_t">
       <form id="saveform">
-        <input type="hidden" name="gekijou[_id]" id="gekijou_id">
+        <input type="hidden" name="gekijou[_id]" id="gekijou_id"<% if (gekijou) { %> value="<%= gekijou._id %>"<% } %>>
         <div class="inputgroup">
           <label class="label pie" for="gekijou_title">标题</label>
-          <input class="label_input pie" name="gekijou[title]" id="gekijou_title" type="text">
+          <input class="label_input pie" name="gekijou[title]" id="gekijou_title" type="text"<% if (gekijou) { %> value="<%= gekijou.title %>"<% } %>>
         </div>
         <div class="inputgroup">
           <label class="label pie" for="gekijou_intro">介绍</label>
-          <textarea rows="6" cols="50" name="gekijou[intro]" id="gekijou_intro"></textarea>
+          <textarea rows="6" cols="50" name="gekijou[intro]" id="gekijou_intro"><% if (gekijou) { %><%= gekijou.intro %><% } %></textarea>
           <div class="clear"></div>
         </div>
         <div class="formactions">
           <input id="gekijouokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="保存">
+          <a id="gekijoupreviewbtn" class="formbtn boxbtn pie btn" href="/gekijou/view/<% if (gekijou) { %><%= gekijou._id %><% } %>" target="_blank" style="float:right;margin-right:8px;<% if (!gekijou) { %>display:none;<% } %>">预览</a>
         </div>
       </form>
     </div>

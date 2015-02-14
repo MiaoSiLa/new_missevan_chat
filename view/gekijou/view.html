@@ -6,7 +6,7 @@
     <div id="chattop">
       <!-- inputbox为输入内容窗口-->
       <div id="inputbox">
-        <textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>
+        <textarea id="inputboxtextarea" class="pie" placeholder="弹幕" maxlength="200"></textarea>
 
         <div id="inputboxtextareapostbtn" class="pie"><span>P O S T</span></div>
 
@@ -27,11 +27,32 @@
   </div>
 
   <div id="user" style="display:none"><%- JSON.stringify(user) %></div>
+  <% if (gekijou) { %>
+  <div id="loadmodal" class='m_c' data-width="1100" style="display:none;">
+    <div id="s_l_t"><%= gekijou.title %></div>
 
+    <div id="s_l_u">up主 <a href="/<%= gekijou.user_id %>"><%= gekijou.username %></a></div>
+
+    <div id="s_l_c"></div>
+
+    <div class="loading"><div class="l1"></div><div class="l2"></div><div class="l3"></div><div class="l4"></div><div class="l5"></div><div class="l6"></div></div>
+
+    <div id="s_l">
+      <span id="s_l_1" class="s_l">小剧场加载中...</span>
+      <span id="s_l_2" class="s_l"></span>
+      <span id="s_l_3" class="s_l"></span>
+    </div>
+
+    <div id="s_l_p" style="display:none;">播放</div>
+  </div>
+  <% } %>
 <%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
   <script type="text/javascript" src="/js/chat/chatbox.js"></script>
   <script type="text/javascript" src="/js/chat/chat.desktop.js"></script>
+  <% if (gekijou) { %><script id="gekijouscript" type="text/gekijouscript">
+  <%- gekijou.script %>
+  </script><% } %>
   <% if (dev_mode) { %>
   <script type="text/javascript" src="/js/gekijou/build/util.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/event.js"></script>
@@ -43,7 +64,10 @@
   <script type="text/javascript">
     $(function () {
       var gekijou = new Gekijou();
-      gekijou.init();
+      gekijou.init(function () {
+        gekijou.reset();
+        gekijou.run();
+      });
     });
   </script>
 <%- include('../common/footer.html'); -%>

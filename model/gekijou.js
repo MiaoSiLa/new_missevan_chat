@@ -26,7 +26,7 @@ function Gekijou(data) {
 
 util.inherits(Gekijou, ModelBase);
 
-Gekijou.fields = ['_id', 'user_id', 'title', 'intro', 'script'];
+Gekijou.fields = ['_id', 'user_id', 'username', 'title', 'intro', 'script'];
 
 Gekijou.prototype.set = function (data) {
   if (data) {
