@@ -189,6 +189,8 @@ class Chara
     @el.find('.s_m_t_r_b').click ->
       self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'
       $(this).addClass 's_m_t_r_b_a'
+      self.searchIcon()
+      return
 
     @el.find('#searchbtn').click ->
       self.searchIcon()

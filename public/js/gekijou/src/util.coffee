@@ -8,7 +8,7 @@ class Util
 class GGManager
 
   constructor: ->
-    
+
 
 # Control bar session
 
@@ -191,9 +191,19 @@ class Editorbar extends ControlBar
     @em = @editor.gekijou.em
     @pb = @editor.gekijou.pb
 
+  setId: (_id) ->
+    $modal = $ '#savemodal'
+    $modal.find('#gekijou_id').val _id
+    return
+
+  getId: () ->
+    $modal = $ '#savemodal'
+    $modal.find('#gekijou_id').val()
+
   bind: ->
     self = @
 
+    # 新事件
     $newevbtn = @pb.$('#mpiloop')
     $newevbtn.addClass 'mpiloopa newevent'
     $newevbtn.text '+'
@@ -214,7 +224,28 @@ class Editorbar extends ControlBar
         self.gekijou.rearrange()
 
         moTool.hideModalBox modal
+      return
 
+    # 保存
+    $gsavebtn = @pb.$('#mpisave')
+    $gsavebtn.click ->
+      moTool.showModalBox $ '#savemodal'
+      return
+
+    $('#gekijouokbtn').click ->
+      $modal = $ '#savemodal'
+      title = $modal.find('#gekijou_title').val()
+      intro = $modal.find('#gekijou_intro').val()
+
+      if title
+        moTool.hideModalBox $modal
+        self.editor.save title, intro
+
+      return
+
+    $gsavebtn.show()
+
+    # 按下POST
     @$('#inputboxtextarea').keypress (event) ->
       if event.which isnt 13
         if @value.length >= index.mo.maxLength

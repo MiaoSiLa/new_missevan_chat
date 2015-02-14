@@ -192,7 +192,8 @@ Chara = (function() {
     });
     this.el.find('.s_m_t_r_b').click(function() {
       self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass('s_m_t_r_b_a');
-      return $(this).addClass('s_m_t_r_b_a');
+      $(this).addClass('s_m_t_r_b_a');
+      self.searchIcon();
     });
     this.el.find('#searchbtn').click(function() {
       self.searchIcon();

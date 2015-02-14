@@ -203,3 +203,23 @@
   transform: rotate(-180deg);
   margin-right: -8px;
 }
+#mpisave {
+  position: absolute;
+  left: 160px;
+  bottom: 21px;
+  /* 26 - 5 */
+  padding: 5px;
+}
+.textbtn {
+  color: #fff;
+  cursor: pointer;
+  line-height: 18px;
+  height: 18px;
+  font-size: 14px;
+  text-align: center;
+  border-radius: 5px;
+  transition: background .3s ease;
+}
+.textbtn:hover {
+  background: #444;
+}

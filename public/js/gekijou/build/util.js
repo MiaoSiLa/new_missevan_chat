@@ -246,8 +246,20 @@ Editorbar = (function(_super) {
     this.pb = this.editor.gekijou.pb;
   }
 
+  Editorbar.prototype.setId = function(_id) {
+    var $modal;
+    $modal = $('#savemodal');
+    $modal.find('#gekijou_id').val(_id);
+  };
+
+  Editorbar.prototype.getId = function() {
+    var $modal;
+    $modal = $('#savemodal');
+    return $modal.find('#gekijou_id').val();
+  };
+
   Editorbar.prototype.bind = function() {
-    var $newevbtn, self;
+    var $gsavebtn, $newevbtn, self;
     self = this;
     $newevbtn = this.pb.$('#mpiloop');
     $newevbtn.addClass('mpiloopa newevent');
@@ -267,9 +279,24 @@ Editorbar = (function(_super) {
       if (name) {
         self.em.add(name, parseInt(time));
         self.gekijou.rearrange();
-        return moTool.hideModalBox(modal);
+        moTool.hideModalBox(modal);
       }
     });
+    $gsavebtn = this.pb.$('#mpisave');
+    $gsavebtn.click(function() {
+      moTool.showModalBox($('#savemodal'));
+    });
+    $('#gekijouokbtn').click(function() {
+      var $modal, intro, title;
+      $modal = $('#savemodal');
+      title = $modal.find('#gekijou_title').val();
+      intro = $modal.find('#gekijou_intro').val();
+      if (title) {
+        moTool.hideModalBox($modal);
+        self.editor.save(title, intro);
+      }
+    });
+    $gsavebtn.show();
     this.$('#inputboxtextarea').keypress(function(event) {
       if (event.which !== 13) {
         if (this.value.length >= index.mo.maxLength) {

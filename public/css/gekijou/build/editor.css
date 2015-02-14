@@ -37,8 +37,20 @@
   height: 24px;
 }
 #neweventform label,
-#newcharaform label {
+#newcharaform label,
+#saveform label {
   color: white;
+}
+#saveform {
+  margin-top: -80px;
+}
+#saveform .label_input {
+  width: 380px;
+}
+#saveform #gekijou_intro {
+  margin-top: 20px;
+  width: 450px;
+  height: 80px;
 }
 .inputgroup label {
   float: none;
