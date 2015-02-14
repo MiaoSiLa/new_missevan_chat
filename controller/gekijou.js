@@ -18,6 +18,13 @@ gekijou.get('/new', function *() {
 
 });
 
+gekijou.get('/view', function *() {
+  yield this.render('gekijou/view', {
+    title: 'view_小剧场_MissEvan',
+    user: this.user
+  });
+});
+
 gekijou.post('/save', function *() {
 
   var r = { code: -1 };

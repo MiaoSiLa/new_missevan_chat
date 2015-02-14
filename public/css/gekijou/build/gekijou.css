@@ -151,6 +151,7 @@
   height: auto;
   margin-left: 35px;
   margin-right: -510px;
+  min-height: 60px;
   max-height: 60px;
   transition: all .3s ease;
 }

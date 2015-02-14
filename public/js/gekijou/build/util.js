@@ -162,7 +162,11 @@ Playbar = (function(_super) {
       pn = pns[_i];
       pos = 100 - pn.pos * 100;
       name = moTool.boardReplaceTxt(pn.name);
-      html += "<div id=\"event" + pn.id + "\" class=\"mpf\" style=\"top: " + pos + "%;\">\n  <div class=\"mpfl\"></div>\n  <div class=\"mpfi\"><span>" + name + "</span></div>\n</div>";
+      html += "<div id=\"event" + pn.id + "\" class=\"mpf\" style=\"top: " + pos + "%;\">\n  <div class=\"mpfl\"></div>";
+      if (GG.env === 'dev') {
+        html += "<div class=\"mpfi\"><span>" + name + "</span></div>";
+      }
+      html += "</div>";
     }
     this.$('.mpfo').html(html);
     this._data = pns;

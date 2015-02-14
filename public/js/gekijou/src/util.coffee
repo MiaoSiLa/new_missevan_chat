@@ -124,9 +124,12 @@ class Playbar extends ControlBar
       html += """
               <div id=\"event#{pn.id}\" class="mpf" style="top: #{pos}%;">
                 <div class="mpfl"></div>
-                <div class="mpfi"><span>#{name}</span></div>
-              </div>
               """
+      # 非开发模式下不显示事件名
+      if GG.env is 'dev'
+        html += "<div class=\"mpfi\"><span>#{name}</span></div>"
+
+      html += "</div>"
 
     @$('.mpfo').html html
     @_data = pns

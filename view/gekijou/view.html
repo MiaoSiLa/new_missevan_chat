@@ -1,0 +1,49 @@
+<% pageStyles = dev_mode ? [ '/css/gekijou/build/gekijou.css' ] : [ '/css/gekijou/gekijou.min.css' ];
+%><%- include('../common/header.html'); -%>
+<%- include('./sidebar.html'); -%>
+
+  <div id="chatwrap">
+    <div id="chattop">
+      <!-- inputbox为输入内容窗口-->
+      <div id="inputbox">
+        <textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>
+
+        <div id="inputboxtextareapostbtn" class="pie"><span>P O S T</span></div>
+
+        <div id="soundmusic"><img src="/images/index/music.png" /></div>
+      </div>
+    </div>
+
+    <div id="chatmain" class="abp">
+      <div id="commentCanvas" class="container" style="overflow-y:auto;">
+        <div id="chatbox"></div>
+        <div id="infobox"></div>
+      </div>
+    </div>
+
+    <div id="chatmusic" style="display:none;"></div>
+
+    <div id='private'></div>
+  </div>
+
+  <div id="user" style="display:none"><%- JSON.stringify(user) %></div>
+
+<%- include('../common/loginform.html'); -%>
+  <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="/js/chat/chatbox.js"></script>
+  <script type="text/javascript" src="/js/chat/chat.desktop.js"></script>
+  <% if (dev_mode) { %>
+  <script type="text/javascript" src="/js/gekijou/build/util.js"></script>
+  <script type="text/javascript" src="/js/gekijou/build/event.js"></script>
+  <script type="text/javascript" src="/js/gekijou/build/chara.js"></script>
+  <script type="text/javascript" src="/js/gekijou/build/gekijou.js"></script>
+  <% } else { %>
+  <script type="text/javascript" src="/js/gekijou/gekijou.min.js?v=<%= resource.version %>"></script>
+  <% } %>
+  <script type="text/javascript">
+    $(function () {
+      var gekijou = new Gekijou();
+      gekijou.init();
+    });
+  </script>
+<%- include('../common/footer.html'); -%>

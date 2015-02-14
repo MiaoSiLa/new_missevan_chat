@@ -190,6 +190,12 @@ Chara = (function() {
       }
       self._showmodal = !self._showmodal;
     });
+  };
+
+  Chara.prototype.devbind = function() {
+    var self;
+    self = this;
+    this.el.find('#selecticon').show();
     this.el.find('.s_m_t_r_b').click(function() {
       self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass('s_m_t_r_b_a');
       $(this).addClass('s_m_t_r_b_a');
@@ -219,14 +225,19 @@ Chara = (function() {
   Chara.prototype.init = function(cb) {
     var suser;
     this.bind();
-    suser = $('#user').html();
-    if (suser) {
-      try {
-        this.select(this.add(JSON.parse(suser)));
-        this.refresh();
-      } catch (_error) {}
+    if (GG.env === 'dev') {
+      this.devbind();
+      suser = $('#user').html();
+      if (suser) {
+        try {
+          this.select(this.add(JSON.parse(suser)));
+          this.refresh();
+        } catch (_error) {}
+      }
+      this.searchIcon();
+    } else {
+
     }
-    this.searchIcon();
     cb();
   };
 

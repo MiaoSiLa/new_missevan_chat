@@ -23,6 +23,9 @@ Gekijou = (function() {
     var k, v;
     for (k in opts) {
       v = opts[k];
+      if (k === 'env') {
+        GG.env = v;
+      }
       this.opts[k] = v;
     }
     return this.opts;
@@ -37,7 +40,9 @@ Gekijou = (function() {
     this.pb.bind();
     this.tb.bind();
     this.chara.init(function() {
-      return cb();
+      if (cb) {
+        return cb();
+      }
     });
   };
 

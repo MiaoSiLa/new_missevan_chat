@@ -20,6 +20,9 @@ class Gekijou
 
   setOptions: (opts) ->
     for k, v of opts
+      # set env to GG
+      if k is 'env'
+        GG.env = v
       @opts[k] = v
     @opts
 
@@ -35,7 +38,7 @@ class Gekijou
     @pb.bind()
     @tb.bind()
 
-    @chara.init -> cb()
+    @chara.init -> cb() if cb
     return
 
   # 重新排布播放条

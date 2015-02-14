@@ -185,7 +185,13 @@ class Chara
       self._showmodal = not self._showmodal
       return
 
-    # TODO: check env:dev
+    return
+
+  devbind: ->
+    self = @
+
+    @el.find('#selecticon').show()
+
     @el.find('.s_m_t_r_b').click ->
       self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'
       $(this).addClass 's_m_t_r_b_a'
@@ -221,12 +227,18 @@ class Chara
   init: (cb) ->
     @bind()
 
-    suser = $('#user').html()
-    if suser
-      try
-        @select @add JSON.parse suser
-        @refresh()
+    if GG.env is 'dev'
+      @devbind()
 
-    @searchIcon()
+      suser = $('#user').html()
+      if suser
+        try
+          @select @add JSON.parse suser
+          @refresh()
+
+      @searchIcon()
+    else
+      # load from script
+
     cb()
     return
