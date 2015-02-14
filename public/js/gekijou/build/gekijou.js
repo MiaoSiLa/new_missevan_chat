@@ -32,6 +32,7 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.init = function(cb) {
+    var gs, script;
     chatBox.loadChatOption();
     chatBox.loadUser();
     if (!chatBox.isMobile) {
@@ -39,8 +40,13 @@ Gekijou = (function() {
     }
     this.pb.bind();
     this.tb.bind();
+    gs = $('#gekijouscript');
+    script = '';
+    if (gs && gs.length > 0) {
+      this.parse(gs.html());
+    }
     this.chara.init(function() {
-      if (cb) {
+      if (cb != null) {
         return cb();
       }
     });
@@ -74,7 +80,14 @@ Gekijou = (function() {
     this.pb.moveToLast();
   };
 
-  Gekijou.prototype.parse = function(scripts) {};
+  Gekijou.prototype.parse = function(script) {
+    if (script) {
+      script = script.trim();
+    }
+    if (script) {
+      console.log(script);
+    }
+  };
 
   return Gekijou;
 

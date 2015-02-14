@@ -38,7 +38,13 @@ class Gekijou
     @pb.bind()
     @tb.bind()
 
-    @chara.init -> cb() if cb
+    # script
+    gs = $ 'script#gekijouscript'
+    script = ''
+    if gs and gs.length > 0
+      @parse gs.html()
+
+    @chara.init -> cb() if cb?
     return
 
   # 重新排布播放条
@@ -64,4 +70,10 @@ class Gekijou
     return
 
   # parse
-  parse: (scripts) ->
+  parse: (script) ->
+    script = script.trim() if script
+    if script
+
+      console.log script
+
+    return

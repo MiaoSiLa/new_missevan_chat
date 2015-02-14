@@ -1,3 +1,4 @@
+'use strict';
 
 var config = require('./../config');
 
@@ -18,10 +19,51 @@ gekijou.get('/new', function *() {
 
 });
 
-gekijou.get('/view', function *() {
+gekijou.get('/view/:gekijou_id', function *() {
+  let title = '小剧场_MissEvan';
+  var geki = null;
+  if (this.params && this.params.gekijou_id) {
+    var g = new Gekijou({ _id: this.params.gekijou_id });
+    geki = yield g.find();
+    if (geki.title) {
+      title = geki.title + '_' + title;
+    }
+  }
+
   yield this.render('gekijou/view', {
-    title: 'view_小剧场_MissEvan',
-    user: this.user
+    title: title,
+    user: this.user,
+    gekijou: geki
+  });
+});
+
+gekijou.get('/edit/:gekijou_id', function *() {
+  if (!this.user) {
+    this.status = 403;
+    return;
+  }
+
+  let title = '编辑_小剧场_MissEvan';
+  var geki = null;
+  if (this.params && this.params.gekijou_id) {
+    var g = new Gekijou({ _id: this.params.gekijou_id });
+    geki = yield g.find();
+    if (geki.user_id === this.user.id) {
+      title = geki.title + '_' + title;
+    } else {
+      geki = null;
+    }
+  }
+
+  if (!geki) {
+    this.status = 403;
+    return;
+  }
+
+  yield this.render('gekijou/new', {
+    title: title,
+    user: this.user,
+    gekijou: geki
   });
 });
 
