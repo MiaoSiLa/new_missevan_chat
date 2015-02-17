@@ -140,7 +140,7 @@ Chara = (function() {
           if (p) {
             page = p;
           }
-          pagecount = data.page;
+          pagecount = data.pagecount;
         }
         self.updatePagination(page, pagecount);
         self.showIcons(iconusers);

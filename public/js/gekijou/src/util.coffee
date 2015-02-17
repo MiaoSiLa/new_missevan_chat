@@ -229,6 +229,20 @@ class Playbar extends ControlBar
     @_data = []
 
   bind: ->
+    @$('.mpi').click ->
+      GG.gekijou.emit 'play'
+      return
+    if GG.env isnt 'dev'
+      @$('.mpiloopo').click ->
+        $this = $(this)
+        if $this.hasClass 'mpiloopa'
+          GG.gekijou.autoReplay no
+          $this.removeClass 'mpiloopa'
+        else
+          GG.gekijou.autoReplay on
+          $this.addClass 'mpiloopa'
+        return
+    return
 
   # 预加载 0~1
   preload: (p) ->
@@ -270,6 +284,18 @@ class Playbar extends ControlBar
 
   moveToBegin: ->
     @pos 0
+    return
+
+  start: ->
+    @$('.mpi').removeClass('mpir').addClass('mpip')
+    return
+
+  pause: ->
+    @$('.mpi').removeClass 'mpip'
+    return
+
+  finish: ->
+    @$('.mpi').removeClass('mpip').addClass('mpir')
     return
 
 

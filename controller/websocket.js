@@ -24,10 +24,10 @@ function *connection() {
   // 进入房间
   socket.yon("enter room", function *(data, callback) {
     if ((typeof(callback) !== 'function') || (typeof(data) !== 'object')) {
-      throw new Error("非法参数");
+      throw new TypeError("非法参数");
     }
 
-    if(!data.roomId){
+    if (!data.roomId) {
       throw new Error("非法参数");
     }
 
@@ -59,14 +59,14 @@ function *connection() {
 
   socket.yon("get history", function *(data, callback) {
     if (typeof(callback) !== 'function' || typeof(data) !== 'object')
-    throw new Error("非法参数");
+      throw new TypeError("非法参数");
 
     var socket = this.socket;
     if (!socket.userId)
-    return;
+      return;
 
     if (data.userId && typeof data.userId !== 'number')
-    throw new Error("非法参数");
+      throw new TypeError("非法参数");
 
     // set data.userId to get private message
     var message = new Message(data, socket);
@@ -77,7 +77,7 @@ function *connection() {
   // 发送信息
   socket.yon("send message", function *(data, callback) {
     if (typeof(callback) !== 'function' || typeof(data) !== 'object')
-    throw new Error("非法参数");
+      throw new TypeError("非法参数");
 
     var socket = this.socket;
     if (!socket.userId)
@@ -85,7 +85,7 @@ function *connection() {
 
     if (typeof data.type !== 'number' || typeof data.msg !== 'string'
       || (data.userId && typeof data.userId !== 'number'))
-      throw new Error("非法参数");
+      throw new TypeError("非法参数");
 
     data.msg = data.msg.trim();
     if (data.msg.length > 200) {

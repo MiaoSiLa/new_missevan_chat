@@ -289,7 +289,24 @@ Playbar = (function(_super) {
     this._data = [];
   }
 
-  Playbar.prototype.bind = function() {};
+  Playbar.prototype.bind = function() {
+    this.$('.mpi').click(function() {
+      GG.gekijou.emit('play');
+    });
+    if (GG.env !== 'dev') {
+      this.$('.mpiloopo').click(function() {
+        var $this;
+        $this = $(this);
+        if ($this.hasClass('mpiloopa')) {
+          GG.gekijou.autoReplay(false);
+          $this.removeClass('mpiloopa');
+        } else {
+          GG.gekijou.autoReplay(true);
+          $this.addClass('mpiloopa');
+        }
+      });
+    }
+  };
 
   Playbar.prototype.preload = function(p) {
     p *= 100;
@@ -332,6 +349,18 @@ Playbar = (function(_super) {
 
   Playbar.prototype.moveToBegin = function() {
     this.pos(0);
+  };
+
+  Playbar.prototype.start = function() {
+    this.$('.mpi').removeClass('mpir').addClass('mpip');
+  };
+
+  Playbar.prototype.pause = function() {
+    this.$('.mpi').removeClass('mpip');
+  };
+
+  Playbar.prototype.finish = function() {
+    this.$('.mpi').removeClass('mpip').addClass('mpir');
   };
 
   return Playbar;

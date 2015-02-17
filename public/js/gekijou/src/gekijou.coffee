@@ -111,10 +111,39 @@ class Gekijou
 
     return
 
+  emit: (event) ->
+    @on event
+    return
+
+  on: (event) ->
+    switch event
+      when 'play'
+        if @_playing
+          @pause()
+        else
+          @play()
+    return
+
+  autoReplay: (enable) ->
+    @setOptions autoReplay: enable
+    return
+
   play: ->
     if @_playing then return
     @_playing = on
 
+    @pb.start()
+
+    return
+
+  pause: ->
+    if @_playing
+      @_playing = no
+      @pb.pause()
+    return
+
+  finish: ->
+    @pb.finish()
     return
 
   run: ->

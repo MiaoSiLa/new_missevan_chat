@@ -128,7 +128,7 @@ class Chara
             iconcolor: ''
 
           if p then page = p
-          pagecount = data.page
+          pagecount = data.pagecount
 
         self.updatePagination page, pagecount
         self.showIcons iconusers

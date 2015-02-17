@@ -123,11 +123,44 @@ Gekijou = (function() {
     }, 2000);
   };
 
+  Gekijou.prototype.emit = function(event) {
+    this.on(event);
+  };
+
+  Gekijou.prototype.on = function(event) {
+    switch (event) {
+      case 'play':
+        if (this._playing) {
+          this.pause();
+        } else {
+          this.play();
+        }
+    }
+  };
+
+  Gekijou.prototype.autoReplay = function(enable) {
+    this.setOptions({
+      autoReplay: enable
+    });
+  };
+
   Gekijou.prototype.play = function() {
     if (this._playing) {
       return;
     }
     this._playing = true;
+    this.pb.start();
+  };
+
+  Gekijou.prototype.pause = function() {
+    if (this._playing) {
+      this._playing = false;
+      this.pb.pause();
+    }
+  };
+
+  Gekijou.prototype.finish = function() {
+    this.pb.finish();
   };
 
   Gekijou.prototype.run = function() {
