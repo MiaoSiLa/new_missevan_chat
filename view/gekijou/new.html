@@ -94,8 +94,9 @@ pageStyles = dev_mode ? [
     </div>
   </div>
 
-<%- include('../common/loginform.html'); -%>
   <script type="text/javascript" src="/assets/<%= resource.assets %>/jui/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="/js/chat/jquery.fileupload.js"></script>
+  <script type="text/javascript" src="/js/chat/jquery.iframe-transport.js"></script>
   <script type="text/javascript" src="/js/chat/chatbox.js"></script>
   <script type="text/javascript" src="/js/chat/chat.desktop.js"></script>
   <% if (gekijou) { %><script id="gekijouscript" type="text/gekijouscript">

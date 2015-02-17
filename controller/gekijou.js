@@ -10,14 +10,24 @@ var Model = require('./../model'),
 
 var gekijou = new Router();
 
+gekijou.get('/', function *() {
+  yield this.render('gekijou/index', {
+    title: '小剧场_MissEvan',
+    user: this.user
+  });
+});
+
 gekijou.get('/new', function *() {
+  if (!this.user) {
+    this.redirect('/member/login?backurl=/gekijou/new');
+    return;
+  }
 
   yield this.render('gekijou/new', {
     title: '创建_小剧场_MissEvan',
     user: this.user,
     gekijou: null
   });
-
 });
 
 gekijou.get('/view/:gekijou_id', function *() {
@@ -40,7 +50,11 @@ gekijou.get('/view/:gekijou_id', function *() {
 
 gekijou.get('/edit/:gekijou_id', function *() {
   if (!this.user) {
-    this.status = 403;
+    if (this.params.gekijou_id) {
+      this.redirect('/member/login?backurl=/gekijou/edit/' + this.params.gekijou_id);
+    } else {
+      this.status = 403;
+    }
     return;
   }
 
