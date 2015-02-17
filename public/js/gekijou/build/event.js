@@ -19,14 +19,14 @@ GEvent = (function() {
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
-          this.runAction(type, val1, val2);
+          this.runAction(an);
         }
         break;
       case 'image':
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
-          this.runAction(type, val1, val2, function() {
+          this.runAction(an, function() {
             return an.line = index.mo.chatLine - 1;
           });
         }
@@ -38,7 +38,7 @@ GEvent = (function() {
   };
 
   GEvent.prototype.runAction = function(action, cb) {
-    if (GG.env !== 'dev') {
+    if (GG.gekijou.isplaying()) {
       GG.chara.select(action.chara);
     }
     switch (action.type) {
@@ -148,6 +148,10 @@ GEventManager = (function() {
     }
   };
 
+  GEventManager.prototype.totaltime = function() {
+    return this._timecount;
+  };
+
   GEventManager.prototype.moveToBegin = function() {
     this._currentIndex = 0;
     this._event = this.events[0];
@@ -167,14 +171,13 @@ GEventManager = (function() {
         }
         if (time >= this._timecount) {
           GG.gekijou.emit('end');
-          return 1;
         }
       } else {
         break;
       }
       tt += ev.realtime();
     }
-    return time / this._timecount;
+    return this._currentIndex;
   };
 
   GEventManager.prototype.run = function() {

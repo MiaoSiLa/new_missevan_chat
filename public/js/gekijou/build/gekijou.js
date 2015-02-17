@@ -134,12 +134,12 @@ Gekijou = (function() {
   Gekijou.prototype.on = function(event) {
     switch (event) {
       case 'play':
-        if (this._finished) {
-          this.reset();
-        }
         if (this._playing) {
           this.pause();
         } else {
+          if (this._finished || GG.env === 'dev') {
+            this.reset();
+          }
           this.play();
         }
         break;
@@ -158,8 +158,15 @@ Gekijou = (function() {
     });
   };
 
-  Gekijou.prototype.play = function() {
+  Gekijou.prototype.isplaying = function() {
+    return this._playing;
+  };
+
+  Gekijou.prototype.play = function(untilIndex) {
     var self;
+    if (untilIndex == null) {
+      untilIndex = -1;
+    }
     if (this._playing) {
       return;
     }
@@ -168,12 +175,16 @@ Gekijou = (function() {
     this._lastplaytime = new Date().valueOf();
     self = this;
     this._timer = setInterval(function() {
-      var curtime, pos;
+      var curtime, i, pos;
       curtime = new Date().valueOf();
       self._playedtime += curtime - self._lastplaytime;
       self._lastplaytime = curtime;
-      pos = self.em.runAtTime(self._playedtime);
-      return self.pb.pos(pos);
+      i = self.em.runAtTime(self._playedtime);
+      pos = self._playedtime / self.em.totaltime();
+      self.pb.pos(pos);
+      if (i === untilIndex) {
+        return self.pause();
+      }
     }, 100);
     if (this._playedtime <= 0) {
       this.em.run();

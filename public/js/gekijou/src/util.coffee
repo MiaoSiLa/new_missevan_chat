@@ -260,7 +260,7 @@ class Playbar extends ControlBar
   data: (pns) ->
     html = ''
 
-    for pn in pns
+    for pn, i in pns
       pos = 100 - pn.pos * 100
       name = moTool.boardReplaceTxt pn.name
       html += """
@@ -269,12 +269,21 @@ class Playbar extends ControlBar
               """
       # 非开发模式下不显示事件名
       if GG.env is 'dev'
-        html += "<div class=\"mpfi\"><span>#{name}</span></div>"
+        html += "<div data-event-index=\"#{i}\" class=\"mpfi\"><span>#{name}</span></div>"
 
       html += "</div>"
 
     @$('.mpfo').html html
     @_data = pns
+
+    if GG.env is 'dev'
+      # bind click event
+      @$('.mpfi').click ->
+        i = $(this).data 'event-index'
+        if i >= 0
+          GG.gekijou.reset()
+          GG.gekijou.play i
+
     return
 
   moveToLast: ->

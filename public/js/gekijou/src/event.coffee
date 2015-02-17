@@ -12,12 +12,12 @@ class GEvent
         an.chara = @parseCharaId(val1)
         an.val = val2
         if not norun
-          @runAction type, val1, val2
+          @runAction an
       when 'image'
         an.chara = @parseCharaId(val1)
         an.val = val2
         if not norun
-          @runAction type, val1, val2, ->
+          @runAction an, ->
             an.line = index.mo.chatLine - 1
             #image do some thing here
       else return
@@ -26,10 +26,10 @@ class GEvent
     return
 
   runAction: (action, cb) ->
-    if GG.env isnt 'dev'
+    if GG.gekijou.isplaying()
       # 切换角色
       GG.chara.select action.chara
-    
+
     switch action.type
       when 'text'
         chatBox.loadBubble
@@ -82,7 +82,7 @@ class GEvent
     return
 
   realtime: () ->
-    return @time
+    @time
 
 class GEventManager
 
@@ -107,6 +107,9 @@ class GEventManager
     else
       return no
 
+  totaltime: ->
+    @_timecount
+
   moveToBegin: ->
     @_currentIndex = 0
     @_event = @events[0]
@@ -120,11 +123,11 @@ class GEventManager
           if @next() then @run()
         if time >= @_timecount
           GG.gekijou.emit 'end'
-          return 1
       else
         break
       tt += ev.realtime()
-    return time / @_timecount
+
+    @_currentIndex
 
   run: ->
     if @_event then @_event.run()

@@ -323,20 +323,29 @@ Playbar = (function(_super) {
   };
 
   Playbar.prototype.data = function(pns) {
-    var html, name, pn, pos, _i, _len;
+    var html, i, name, pn, pos, _i, _len;
     html = '';
-    for (_i = 0, _len = pns.length; _i < _len; _i++) {
-      pn = pns[_i];
+    for (i = _i = 0, _len = pns.length; _i < _len; i = ++_i) {
+      pn = pns[i];
       pos = 100 - pn.pos * 100;
       name = moTool.boardReplaceTxt(pn.name);
       html += "<div id=\"event" + pn.id + "\" class=\"mpf\" style=\"top: " + pos + "%;\">\n  <div class=\"mpfl\"></div>";
       if (GG.env === 'dev') {
-        html += "<div class=\"mpfi\"><span>" + name + "</span></div>";
+        html += "<div data-event-index=\"" + i + "\" class=\"mpfi\"><span>" + name + "</span></div>";
       }
       html += "</div>";
     }
     this.$('.mpfo').html(html);
     this._data = pns;
+    if (GG.env === 'dev') {
+      this.$('.mpfi').click(function() {
+        i = $(this).data('event-index');
+        if (i >= 0) {
+          GG.gekijou.reset();
+          return GG.gekijou.play(i);
+        }
+      });
+    }
   };
 
   Playbar.prototype.moveToLast = function() {

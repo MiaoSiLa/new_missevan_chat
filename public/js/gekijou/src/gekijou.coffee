@@ -122,11 +122,11 @@ class Gekijou
   on: (event) ->
     switch event
       when 'play'
-        if @_finished
-          @reset()
         if @_playing
           @pause()
         else
+          if @_finished or GG.env is 'dev'
+            @reset()
           @play()
       when 'end'
         @finish()
@@ -139,7 +139,10 @@ class Gekijou
     @setOptions autoReplay: enable
     return
 
-  play: ->
+  isplaying: ->
+    return @_playing
+
+  play: (untilIndex = -1) ->
     if @_playing then return
     @_playing = on
 
@@ -151,8 +154,13 @@ class Gekijou
         curtime = new Date().valueOf()
         self._playedtime += curtime - self._lastplaytime
         self._lastplaytime = curtime
-        pos = self.em.runAtTime self._playedtime
+        i = self.em.runAtTime self._playedtime
+
+        pos = self._playedtime / self.em.totaltime()
         self.pb.pos pos
+
+        if i is untilIndex
+          self.pause()
       , 100
 
     if @_playedtime <= 0
