@@ -3,7 +3,8 @@
 var config = require('./../config');
 
 var Router = require('koa-router'),
-  validator = require('validator');
+  validator = require('validator'),
+  view = require('./../lib/view');
 
 var Model = require('./../model'),
   Gekijou = Model.Gekijou;
@@ -11,9 +12,20 @@ var Model = require('./../model'),
 var gekijou = new Router();
 
 gekijou.get('/', function *() {
+  var p = 1;
+  if (this.query && this.query.p) {
+    if (validator.isInt(this.query.p)) {
+      p = parseInt(this.query.p);
+    }
+  }
+  var g = new Gekijou();
+  var gekis = yield g.getByPage(p);
+  var pagecount = yield g.getPageCount();
   yield this.render('gekijou/index', {
     title: '小剧场_MissEvan',
-    user: this.user
+    user: this.user,
+    gekijous: gekis,
+    pagination: view.pagination(p, pagecount)
   });
 });
 
@@ -36,7 +48,8 @@ gekijou.get('/view/:gekijou_id', function *() {
   if (this.params && this.params.gekijou_id) {
     var g = new Gekijou({ _id: this.params.gekijou_id });
     geki = yield g.find();
-    if (geki.title) {
+    if (geki && geki.title) {
+      yield g.playCount();
       title = geki.title + '_' + title;
     }
   }
