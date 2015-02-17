@@ -19,22 +19,14 @@ GEvent = (function() {
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
-          chatBox.loadBubble({
-            msg: val2,
-            type: 1,
-            sender: index.mo.sender
-          });
+          this.runAction(type, val1, val2);
         }
         break;
       case 'image':
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
-          chatBox.loadBubble({
-            msg: val2,
-            type: 7,
-            sender: index.mo.sender
-          }, function() {
+          this.runAction(type, val1, val2, function() {
             return an.line = index.mo.chatLine - 1;
           });
         }
@@ -43,6 +35,47 @@ GEvent = (function() {
         return;
     }
     this.actions.push(an);
+  };
+
+  GEvent.prototype.runAction = function(action, cb) {
+    if (GG.env !== 'dev') {
+      GG.chara.select(action.chara);
+    }
+    switch (action.type) {
+      case 'text':
+        chatBox.loadBubble({
+          msg: action.val,
+          type: 1,
+          sender: index.mo.sender
+        });
+        if (cb != null) {
+          cb();
+        }
+        break;
+      case 'image':
+        chatBox.loadBubble({
+          msg: action.val,
+          type: 7,
+          sender: index.mo.sender
+        }, function() {
+          if (cb != null) {
+            return cb();
+          }
+        });
+    }
+  };
+
+  GEvent.prototype.run = function(i) {
+    var self;
+    if (i == null) {
+      i = 0;
+    }
+    if (i < this.actions.length) {
+      self = this;
+      this.runAction(this.actions[i], function() {
+        self.run(i + 1);
+      });
+    }
   };
 
   GEvent.prototype.parseCharaId = function(charaid) {
@@ -66,7 +99,23 @@ GEvent = (function() {
     }
   };
 
-  GEvent.prototype.parse = function(block) {};
+  GEvent.prototype.parse = function(block) {
+    var line, lineprops, lines, _i, _len;
+    lines = GG.util.splitline(block);
+    if (lines.length > 0) {
+      for (_i = 0, _len = lines.length; _i < _len; _i++) {
+        line = lines[_i];
+        lineprops = GG.util.splitprop(line);
+        try {
+          this.action(lineprops[0], lineprops[1], JSON.parse(lineprops[2]), true);
+        } catch (_error) {}
+      }
+    }
+  };
+
+  GEvent.prototype.realtime = function() {
+    return this.time;
+  };
 
   return GEvent;
 
@@ -77,6 +126,8 @@ GEventManager = (function() {
     this.events = [];
     this._lastid = 0;
     this._event = null;
+    this._timecount = 0;
+    this._currentIndex = -1;
   }
 
   GEventManager.prototype.lastid = function() {
@@ -87,8 +138,49 @@ GEventManager = (function() {
     return this._event;
   };
 
+  GEventManager.prototype.next = function() {
+    if (this._currentIndex < this.events.length - 1) {
+      this._currentIndex++;
+      this._event = this.events[this._currentIndex];
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   GEventManager.prototype.moveToBegin = function() {
+    this._currentIndex = 0;
     this._event = this.events[0];
+  };
+
+  GEventManager.prototype.runAtTime = function(time) {
+    var ev, i, tt, _i, _len, _ref;
+    tt = 0;
+    _ref = this.events;
+    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+      ev = _ref[i];
+      if (time >= tt) {
+        if (this._currentIndex < i) {
+          if (this.next()) {
+            this.run();
+          }
+        }
+        if (time >= this._timecount) {
+          GG.gekijou.emit('end');
+          return 1;
+        }
+      } else {
+        break;
+      }
+      tt += ev.realtime();
+    }
+    return time / this._timecount;
+  };
+
+  GEventManager.prototype.run = function() {
+    if (this._event) {
+      this._event.run();
+    }
   };
 
   GEventManager.prototype.add = function(name, time, id) {
@@ -105,30 +197,23 @@ GEventManager = (function() {
     ev = new GEvent(id, name, time);
     this.events.push(ev);
     this._event = ev;
+    this._timecount += ev.realtime();
     return ev;
   };
 
   GEventManager.prototype.parse = function(block_script) {
-    var b, blocks, ev, id, line, lineprops, lines, name, props, time, _i, _j, _len, _len1;
+    var b, blocks, ev, id, name, props, time, _i, _len;
+    this._timecount = 0;
     blocks = GG.util.splitblock(block_script);
     for (_i = 0, _len = blocks.length; _i < _len; _i++) {
       b = blocks[_i];
       props = GG.util.splitprop(b.title);
-      lines = GG.util.splitline(b.content);
       if (props.length >= 4 && props[0] === 'define') {
         id = parseInt(props[1]);
         name = JSON.parse(props[2]);
         time = parseInt(props[3]);
         ev = this.add(name, time, id);
-        if (lines.length > 0) {
-          for (_j = 0, _len1 = lines.length; _j < _len1; _j++) {
-            line = lines[_j];
-            lineprops = GG.util.splitprop(line);
-            try {
-              ev.action(lineprops[0], lineprops[1], JSON.parse(lineprops[2]), true);
-            } catch (_error) {}
-          }
-        }
+        ev.parse(b.content);
       }
     }
   };

@@ -15,6 +15,7 @@ class Gekijou
 
     @_playing = no
     @_ready = no
+    @_playedtime = 0
 
     # 全局管理器
     window.GG = new GGManager()
@@ -96,6 +97,9 @@ class Gekijou
     return
 
   reset: ->
+    $('#chatbox').html ''
+    @_finished = no
+    @_playedtime = 0
     @em.moveToBegin()
     @pb.moveToBegin()
     return
@@ -107,7 +111,7 @@ class Gekijou
         self._ready = on
         cb()
         return
-      , 2000
+      , 1000
 
     return
 
@@ -118,9 +122,16 @@ class Gekijou
   on: (event) ->
     switch event
       when 'play'
+        if @_finished
+          @reset()
         if @_playing
           @pause()
         else
+          @play()
+      when 'end'
+        @finish()
+        if @opts.autoReplay
+          @reset()
           @play()
     return
 
@@ -133,16 +144,37 @@ class Gekijou
     @_playing = on
 
     @pb.start()
+    @_lastplaytime = new Date().valueOf()
+    self = @
+
+    @_timer = setInterval ->
+        curtime = new Date().valueOf()
+        self._playedtime += curtime - self._lastplaytime
+        self._lastplaytime = curtime
+        pos = self.em.runAtTime self._playedtime
+        self.pb.pos pos
+      , 100
+
+    if @_playedtime <= 0
+      @em.run()
 
     return
 
   pause: ->
     if @_playing
       @_playing = no
+      clearInterval @_timer
+      @_timer = 0
       @pb.pause()
     return
 
   finish: ->
+    if @_playing
+      @_playing = no
+    if @_timer
+      clearInterval @_timer
+      @_timer = 0
+    @_finished = on
     @pb.finish()
     return
 

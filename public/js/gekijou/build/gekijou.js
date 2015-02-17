@@ -16,6 +16,7 @@ Gekijou = (function() {
     this.util = new Util();
     this._playing = false;
     this._ready = false;
+    this._playedtime = 0;
     window.GG = new GGManager();
     GG.gekijou = this;
     GG.chara = this.chara;
@@ -110,6 +111,9 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.reset = function() {
+    $('#chatbox').html('');
+    this._finished = false;
+    this._playedtime = 0;
     this.em.moveToBegin();
     this.pb.moveToBegin();
   };
@@ -120,7 +124,7 @@ Gekijou = (function() {
     setTimeout(function() {
       self._ready = true;
       cb();
-    }, 2000);
+    }, 1000);
   };
 
   Gekijou.prototype.emit = function(event) {
@@ -130,9 +134,19 @@ Gekijou = (function() {
   Gekijou.prototype.on = function(event) {
     switch (event) {
       case 'play':
+        if (this._finished) {
+          this.reset();
+        }
         if (this._playing) {
           this.pause();
         } else {
+          this.play();
+        }
+        break;
+      case 'end':
+        this.finish();
+        if (this.opts.autoReplay) {
+          this.reset();
           this.play();
         }
     }
@@ -145,21 +159,45 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.play = function() {
+    var self;
     if (this._playing) {
       return;
     }
     this._playing = true;
     this.pb.start();
+    this._lastplaytime = new Date().valueOf();
+    self = this;
+    this._timer = setInterval(function() {
+      var curtime, pos;
+      curtime = new Date().valueOf();
+      self._playedtime += curtime - self._lastplaytime;
+      self._lastplaytime = curtime;
+      pos = self.em.runAtTime(self._playedtime);
+      return self.pb.pos(pos);
+    }, 100);
+    if (this._playedtime <= 0) {
+      this.em.run();
+    }
   };
 
   Gekijou.prototype.pause = function() {
     if (this._playing) {
       this._playing = false;
+      clearInterval(this._timer);
+      this._timer = 0;
       this.pb.pause();
     }
   };
 
   Gekijou.prototype.finish = function() {
+    if (this._playing) {
+      this._playing = false;
+    }
+    if (this._timer) {
+      clearInterval(this._timer);
+      this._timer = 0;
+    }
+    this._finished = true;
     this.pb.finish();
   };
 
