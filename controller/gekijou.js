@@ -21,10 +21,12 @@ gekijou.get('/', function *() {
   var g = new Gekijou();
   var gekis = yield g.getByPage(p);
   var pagecount = yield g.getPageCount();
+  var pop_gekis = yield g.getPop(p);
   yield this.render('gekijou/index', {
     title: '小剧场_MissEvan',
     user: this.user,
     gekijous: gekis,
+    pop_gekijous: pop_gekis,
     pagination: view.pagination(p, pagecount, '/gekijou')
   });
 });

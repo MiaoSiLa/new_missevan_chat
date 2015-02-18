@@ -82,6 +82,16 @@ Gekijou.prototype.getByPage = function *(page) {
   return r;
 };
 
+Gekijou.prototype.getPop = function *() {
+  var r = yield this.cache.get('pop');
+  if (r === null) {
+    r = yield this.collection.find({checked: 1})
+      .sort({plays: -1}).limit(5).toArray();
+    yield this.cache.set('pop', r);
+  }
+  return r;
+};
+
 Gekijou.prototype.save = function *() {
   let g = this.valueOf();
   delete g._id;
