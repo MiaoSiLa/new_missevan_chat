@@ -25,7 +25,7 @@ gekijou.get('/', function *() {
     title: '小剧场_MissEvan',
     user: this.user,
     gekijous: gekis,
-    pagination: view.pagination(p, pagecount)
+    pagination: view.pagination(p, pagecount, '/gekijou')
   });
 });
 
