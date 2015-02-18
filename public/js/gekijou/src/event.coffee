@@ -69,6 +69,9 @@ class GEvent
       # 特殊动作
       # do some thing
 
+  showImage: (url) ->
+    @action 'image', GG.chara.current(), url
+
   # parse
   parse: (block) ->
     lines = GG.util.splitline block

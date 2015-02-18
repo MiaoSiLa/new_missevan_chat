@@ -18,7 +18,7 @@ class Gekijou
     @_playedtime = 0
 
     # 全局管理器
-    window.GG = new GGManager()
+    new GGManager()
     GG.gekijou = @
     GG.chara = @chara
     GG.em = @em

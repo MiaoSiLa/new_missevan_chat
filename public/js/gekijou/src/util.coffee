@@ -126,6 +126,60 @@ class Util
 class GGManager
 
   constructor: ->
+    window.GG = @
+
+
+# Image Tools
+
+class ImageTools
+
+  initImageUpload: (cb) ->
+    dz = $ '#chattop'
+    el = dz
+    $('#imagefile input', el).fileupload
+      url: 'http://backend1.missevan.cn/mimage/chatimage',
+      dropZone: dz,
+      dataType: 'json',
+      multipart: true,
+      done: (e, data) ->
+        if data and data.result
+          result = data.result
+          if result.code is 0
+            cb null, result.url
+            return
+        cb 'failed'
+        return
+
+    $(document).bind 'dragover', (e) ->
+      dropZone = dz
+      timeout = window.dropZoneTimeout
+
+      if not timeout
+        dropZone.addClass 'in'
+      else
+        clearTimeout timeout
+
+      found = no
+      node = e.target
+
+      while node
+        if node is dropZone[0]
+          found = on
+          break
+        node = node.parentNode
+
+      if found
+        dropZone.addClass 'hover'
+      else
+        dropZone.removeClass 'hover'
+
+      window.dropZoneTimeout = setTimeout ->
+          window.dropZoneTimeout = null;
+          dropZone.removeClass 'in hover'
+        , 100
+
+    $('#fileuploadbtn', el).click ->
+      $('#imagefile input', el).click();
 
 
 # Control bar session
@@ -360,6 +414,7 @@ class Editorbar extends ControlBar
     @gekijou = @editor.gekijou
     @em = @editor.gekijou.em
     @pb = @editor.gekijou.pb
+    @imgtool = new ImageTools()
 
   setId: (_id) ->
     $modal = $ '#savemodal'
@@ -429,6 +484,7 @@ class Editorbar extends ControlBar
       else if event.which is 13
         event.preventDefault()
         self.$('#inputboxtextareapostbtn').click()
+      return
 
     @$('#inputboxtextareapostbtn').click ->
       curev = self.em.current()
@@ -440,6 +496,20 @@ class Editorbar extends ControlBar
           $textbox.val ''
       else
         moTool.showError '请先新建一个事件！'
+      return
 
+    # 图片上传
+    @imgtool.initImageUpload (err, url) ->
+      if err
+        moTool.showError '图片上传失败'
+        return
+
+      curev = self.em.current()
+      if curev
+        curev.showImage url
+      else
+        moTool.showError '请先新建一个事件！'
+
+      return
 
     return

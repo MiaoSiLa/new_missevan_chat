@@ -1,4 +1,4 @@
-var ControlBar, Editorbar, GGManager, Paginationbar, Playbar, Toolbar, Util,
+var ControlBar, Editorbar, GGManager, ImageTools, Paginationbar, Playbar, Toolbar, Util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -151,9 +151,72 @@ Util = (function() {
 })();
 
 GGManager = (function() {
-  function GGManager() {}
+  function GGManager() {
+    window.GG = this;
+  }
 
   return GGManager;
+
+})();
+
+ImageTools = (function() {
+  function ImageTools() {}
+
+  ImageTools.prototype.initImageUpload = function(cb) {
+    var dz, el;
+    dz = $('#chattop');
+    el = dz;
+    $('#imagefile input', el).fileupload({
+      url: 'http://backend1.missevan.cn/mimage/chatimage',
+      dropZone: dz,
+      dataType: 'json',
+      multipart: true,
+      done: function(e, data) {
+        var result;
+        if (data && data.result) {
+          result = data.result;
+          if (result.code === 0) {
+            cb(null, result.url);
+            return;
+          }
+        }
+        cb('failed');
+      }
+    });
+    $(document).bind('dragover', function(e) {
+      var dropZone, found, node, timeout;
+      dropZone = dz;
+      timeout = window.dropZoneTimeout;
+      if (!timeout) {
+        dropZone.addClass('in');
+      } else {
+        clearTimeout(timeout);
+      }
+      found = false;
+      node = e.target;
+      while (node) {
+        if (node === dropZone[0]) {
+          found = true;
+          break;
+        }
+        node = node.parentNode;
+      }
+      if (found) {
+        dropZone.addClass('hover');
+      } else {
+        dropZone.removeClass('hover');
+      }
+      return window.dropZoneTimeout = setTimeout(function() {
+        window.dropZoneTimeout = null;
+        return dropZone.removeClass('in hover');
+      }, 100);
+    });
+    return $('#fileuploadbtn', el).click(function() {
+      return $('#imagefile input', el).click();
+    });
+  };
+
+  return ImageTools;
 
 })();
 
@@ -440,6 +503,7 @@ Editorbar = (function(_super) {
     this.gekijou = this.editor.gekijou;
     this.em = this.editor.gekijou.em;
     this.pb = this.editor.gekijou.pb;
+    this.imgtool = new ImageTools();
   }
 
   Editorbar.prototype.setId = function(_id) {
@@ -505,11 +569,11 @@ Editorbar = (function(_super) {
     this.$('#inputboxtextarea').keypress(function(event) {
       if (event.which !== 13) {
         if (this.value.length >= index.mo.maxLength) {
-          return event.preventDefault();
+          event.preventDefault();
         }
       } else if (event.which === 13) {
         event.preventDefault();
-        return self.$('#inputboxtextareapostbtn').click();
+        self.$('#inputboxtextareapostbtn').click();
       }
     });
     this.$('#inputboxtextareapostbtn').click(function() {
@@ -520,10 +584,23 @@ Editorbar = (function(_super) {
         text = $textbox.val();
         if (text) {
           curev.parseAction(text);
-          return $textbox.val('');
+          $textbox.val('');
         }
       } else {
-        return moTool.showError('请先新建一个事件！');
+        moTool.showError('请先新建一个事件！');
+      }
+    });
+    this.imgtool.initImageUpload(function(err, url) {
+      var curev;
+      if (err) {
+        moTool.showError('图片上传失败');
+        return;
+      }
+      curev = self.em.current();
+      if (curev) {
+        curev.showImage(url);
+      } else {
+        moTool.showError('请先新建一个事件！');
       }
     });
   };

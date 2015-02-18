@@ -36,6 +36,24 @@
   width: 210px;
   height: 24px;
 }
+#chattop.hover {
+  background: #0266C8;
+}
+#chattop.fade {
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  opacity: 1;
+}
+#imagefile {
+  position: absolute;
+  top: 25px;
+  right: 36px;
+  cursor: pointer;
+  padding: 3px;
+}
 #neweventform label,
 #newcharaform label,
 #saveform label {

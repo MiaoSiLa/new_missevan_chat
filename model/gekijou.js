@@ -109,9 +109,14 @@ Gekijou.prototype.save = function *() {
   return yield this.collection.save(g);
 };
 
-Gekijou.prototype.update = function *() {
-  let g = this.valueOf();
-  delete g._id;
+Gekijou.prototype.update = function *(v) {
+  let g;
+  if (v) {
+    g = v;
+  } else {
+    g = this.valueOf();
+    delete g._id;
+  }
   g.updated_time = new Date();
   return yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: g });
 };

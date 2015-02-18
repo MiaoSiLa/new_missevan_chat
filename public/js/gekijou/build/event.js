@@ -99,6 +99,10 @@ GEvent = (function() {
     }
   };
 
+  GEvent.prototype.showImage = function(url) {
+    return this.action('image', GG.chara.current(), url);
+  };
+
   GEvent.prototype.parse = function(block) {
     var line, lineprops, lines, _i, _len;
     lines = GG.util.splitline(block);

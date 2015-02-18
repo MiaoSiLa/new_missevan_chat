@@ -138,7 +138,6 @@ gekijou.post('/save', function *() {
           this.body = r;
           return;
         }
-        geki._id = body._id;
       }
 
       var g;
@@ -164,8 +163,8 @@ gekijou.post('/save', function *() {
 
       if (g.checkScript()) {
         if (body._id) {
-          yield g.update();
-          r.gekijou = geki;
+          yield g.update(geki);
+          //r.gekijou = geki;
         } else {
           r.gekijou = yield g.save();
         }

@@ -17,7 +17,7 @@ Gekijou = (function() {
     this._playing = false;
     this._ready = false;
     this._playedtime = 0;
-    window.GG = new GGManager();
+    new GGManager();
     GG.gekijou = this;
     GG.chara = this.chara;
     GG.em = this.em;
