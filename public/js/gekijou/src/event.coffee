@@ -13,6 +13,7 @@ class GEvent
         an.val = val2
         if not norun
           @runAction an
+
       when 'image'
         an.chara = @parseCharaId(val1)
         an.val = val2
@@ -20,6 +21,15 @@ class GEvent
           @runAction an, ->
             an.line = index.mo.chatLine - 1
             #image do some thing here
+
+      when 'sound'
+        an.line = index.mo.chatLine
+        an.chara = @parseCharaId(val1)
+        an.val = val2
+        if not norun
+          @runAction an, ->
+            # TODO: show some tips in stage
+
       else return
 
     @actions.push an
@@ -40,6 +50,21 @@ class GEvent
       when 'image'
         chatBox.loadBubble { msg: action.val, type: 7, sender: index.mo.sender }, ->
           cb() if cb?
+      when 'sound'
+        moTool.getAjax
+          url: "/sound/getsound?soundid=" + action.val,
+          showLoad: no,
+          callBack: (data2) ->
+            sound = data2.successVal.sound
+            msg = JSON.stringify sound
+
+            # play sound
+            chatBox.loadBubble
+              msg: msg,
+              type: 6,
+              sender: index.mo.sender
+
+            cb() if cb?
     return
 
   run: (i = 0) ->
@@ -66,8 +91,14 @@ class GEvent
     if text[0] isnt '/'
       @action 'text', GG.chara.current(), text
     else
-      # 特殊动作
-      # do some thing
+      cmds = GG.util.splitcommand text
+      switch cmds[0]
+        when '声音'
+          soundid = parseInt cmds[1]
+          if soundid
+            @action 'sound', GG.chara.current(), soundid
+        # 其他特殊动作
+        # do some thing
 
   showImage: (url) ->
     @action 'image', GG.chara.current(), url
@@ -139,6 +170,8 @@ class GEventManager
   add: (name, time = 2000, id = -1) ->
     if id is -1
       id = @_lastid++
+    else
+      @_lastid = id + 1
     ev = new GEvent id, name, time
     @events.push ev
     @_event = ev

@@ -156,7 +156,6 @@ gekijou.post('/save', function *() {
           this.body = r;
           return;
         }
-        g.set(geki);
       } else {
         g = new Gekijou(geki);
       }

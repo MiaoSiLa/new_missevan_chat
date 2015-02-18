@@ -31,6 +31,14 @@ GEvent = (function() {
           });
         }
         break;
+      case 'sound':
+        an.line = index.mo.chatLine;
+        an.chara = this.parseCharaId(val1);
+        an.val = val2;
+        if (!norun) {
+          this.runAction(an, function() {});
+        }
+        break;
       default:
         return;
     }
@@ -60,6 +68,25 @@ GEvent = (function() {
         }, function() {
           if (cb != null) {
             return cb();
+          }
+        });
+        break;
+      case 'sound':
+        moTool.getAjax({
+          url: "/sound/getsound?soundid=" + action.val,
+          showLoad: false,
+          callBack: function(data2) {
+            var msg, sound;
+            sound = data2.successVal.sound;
+            msg = JSON.stringify(sound);
+            chatBox.loadBubble({
+              msg: msg,
+              type: 6,
+              sender: index.mo.sender
+            });
+            if (cb != null) {
+              return cb();
+            }
           }
         });
     }
@@ -92,10 +119,18 @@ GEvent = (function() {
   };
 
   GEvent.prototype.parseAction = function(text) {
+    var cmds, soundid;
     if (text[0] !== '/') {
       return this.action('text', GG.chara.current(), text);
     } else {
-
+      cmds = GG.util.splitcommand(text);
+      switch (cmds[0]) {
+        case '声音':
+          soundid = parseInt(cmds[1]);
+          if (soundid) {
+            return this.action('sound', GG.chara.current(), soundid);
+          }
+      }
     }
   };
 
@@ -200,6 +235,8 @@ GEventManager = (function() {
     }
     if (id === -1) {
       id = this._lastid++;
+    } else {
+      this._lastid = id + 1;
     }
     ev = new GEvent(id, name, time);
     this.events.push(ev);

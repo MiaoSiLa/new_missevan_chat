@@ -123,6 +123,19 @@ class Util
 
     lines
 
+  splitcommand: (text) ->
+    cmdlist = ['声音']
+    cmds = null
+
+    if text[0] is '/'
+      regex_cmd = '/(' + cmdlist.join('|') + ')\\s*?(\\d+)'
+      regex_cmd = new RegExp regex_cmd, 'i'
+      m = text.match regex_cmd
+      if m
+        cmds = [ m[1], m[2] ]
+
+    cmds
+
 class GGManager
 
   constructor: ->

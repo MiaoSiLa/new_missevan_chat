@@ -54,6 +54,8 @@ class GekijouEditor
             script += "chara:#{a.chara} #{JSON.stringify(a.val)}"
           when 'image'
             script += "chara:#{a.chara} #{JSON.stringify(a.val)}"
+          when 'sound'
+            script += "chara:#{a.chara} #{JSON.stringify(a.val)}"
           else
             # do some thing unexpectly
 

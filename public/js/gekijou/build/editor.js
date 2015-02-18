@@ -57,6 +57,9 @@ GekijouEditor = (function() {
           case 'image':
             script += "chara:" + a.chara + " " + (JSON.stringify(a.val));
             break;
+          case 'sound':
+            script += "chara:" + a.chara + " " + (JSON.stringify(a.val));
+            break;
         }
         script += "\n";
       }

@@ -146,6 +146,21 @@ Util = (function() {
     return lines;
   };
 
+  Util.prototype.splitcommand = function(text) {
+    var cmdlist, cmds, m, regex_cmd;
+    cmdlist = ['声音'];
+    cmds = null;
+    if (text[0] === '/') {
+      regex_cmd = '/(' + cmdlist.join('|') + ')\\s*?(\\d+)';
+      regex_cmd = new RegExp(regex_cmd, 'i');
+      m = text.match(regex_cmd);
+      if (m) {
+        cmds = [m[1], m[2]];
+      }
+    }
+    return cmds;
+  };
+
   return Util;
 
 })();
