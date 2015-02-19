@@ -1,10 +1,87 @@
+class GAction
+  constructor: (@type) ->
+    if @type is 'text'
+      @ready = on
+    else
+      @ready = no
+
+  load: (cb) ->
+    if @ready
+      cb()
+      return
+
+    self = @
+    switch @type
+      when 'image'
+        img = new Image()
+        img.onload = ->
+          self.ready = on
+          cb()
+          return
+        img.src = @val
+        self.img = img
+      when 'sound'
+        moTool.getAjax
+          url: "/sound/getsound?soundid=" + @val,
+          showLoad: no,
+          callBack: (data2) ->
+            sound = data2.successVal.sound
+            soundUrl = sound.soundurl
+            s = soundManager.createSound
+        					id: soundUrl,
+        					url: index.mo.soundPath + soundUrl,
+        					multiShot: no,
+        					onload: ->
+                    self.ready = on
+                    cb()
+                    return
+            s.load()
+            self.Jsound = sound
+            self.sound = s
+            return
+      else
+        cb()
+
+    return
+
+  run: (cb) ->
+    action = @
+    @load ->
+      if action.chara and GG.gekijou.isplaying()
+        # 切换角色
+        GG.chara.select action.chara
+
+      switch action.type
+        when 'text'
+          chatBox.loadBubble
+            msg: action.val,
+            type: 1,
+            sender: index.mo.sender
+          cb() if cb?
+        when 'image'
+          chatBox.loadBubble { msg: action.val, type: 7, sender: index.mo.sender }, ->
+            cb() if cb?
+            return
+        when 'sound'
+          msg = JSON.stringify action.Jsound
+
+          # play sound
+          chatBox.loadBubble
+            msg: msg,
+            type: 6,
+            sender: index.mo.sender
+
+          cb() if cb?
+
+    return
+
 class GEvent
 
   constructor: (@id, @name, @time) ->
     @actions = []
 
   action: (type, val1, val2, norun) ->
-    an = type: type
+    an = new GAction type
 
     switch type
       when 'text'
@@ -12,13 +89,13 @@ class GEvent
         an.chara = @parseCharaId(val1)
         an.val = val2
         if not norun
-          @runAction an
+          an.run()
 
       when 'image'
         an.chara = @parseCharaId(val1)
         an.val = val2
         if not norun
-          @runAction an, ->
+          an.run ->
             an.line = index.mo.chatLine - 1
             #image do some thing here
 
@@ -27,7 +104,7 @@ class GEvent
         an.chara = @parseCharaId(val1)
         an.val = val2
         if not norun
-          @runAction an, ->
+          an.run ->
             # TODO: show some tips in stage
 
       else return
@@ -35,42 +112,10 @@ class GEvent
     @actions.push an
     return
 
-  runAction: (action, cb) ->
-    if GG.gekijou.isplaying()
-      # 切换角色
-      GG.chara.select action.chara
-
-    switch action.type
-      when 'text'
-        chatBox.loadBubble
-          msg: action.val,
-          type: 1,
-          sender: index.mo.sender
-        cb() if cb?
-      when 'image'
-        chatBox.loadBubble { msg: action.val, type: 7, sender: index.mo.sender }, ->
-          cb() if cb?
-      when 'sound'
-        moTool.getAjax
-          url: "/sound/getsound?soundid=" + action.val,
-          showLoad: no,
-          callBack: (data2) ->
-            sound = data2.successVal.sound
-            msg = JSON.stringify sound
-
-            # play sound
-            chatBox.loadBubble
-              msg: msg,
-              type: 6,
-              sender: index.mo.sender
-
-            cb() if cb?
-    return
-
   run: (i = 0) ->
     if i < @actions.length
       self = @
-      @runAction @actions[i], ->
+      @actions[i].run ->
         self.run i + 1
         return
 
@@ -148,6 +193,37 @@ class GEventManager
     @_currentIndex = 0
     @_event = @events[0]
     return
+
+  getNeedPreload: ->
+    tt = 0
+    res = []
+    total = @totaltime()
+
+    for ev, i in @events
+      _ctt = ev.realtime()
+      len = ev.actions.length
+
+      # 检查需要预先加载的内容
+      for ac, j in ev.actions
+        pos = (tt + ((j + 1) * _ctt / len)) / total
+        switch ac.type
+          when 'image'
+            res.push
+              pos: pos,
+              type: 'image',
+              imgurl: ac.val,
+              action: ac
+
+          when 'sound'
+            res.push
+              pos: pos,
+              type: 'sound',
+              soundid: ac.val,
+              action: ac
+
+      tt += _ctt
+
+    res
 
   runAtTime: (time) ->
     tt = 0

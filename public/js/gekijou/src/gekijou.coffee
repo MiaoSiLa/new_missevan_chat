@@ -52,7 +52,10 @@ class Gekijou
     if gs and gs.length > 0
       @parse gs.html()
 
-    @chara.init -> cb() if cb?
+    @chara.init ->
+      # 初始化 soundManager
+      soundManager.onready -> cb() if cb?
+      return
     return
 
   # 重新排布播放条
@@ -73,7 +76,10 @@ class Gekijou
       pns[0].pos = 0.5
 
     @pb.data pns
-    @pb.moveToLast()
+    if GG.env is 'dev'
+      @pb.moveToLast()
+    else
+      @pb.moveToBegin()
 
     return
 
@@ -106,13 +112,23 @@ class Gekijou
 
   # 预加载
   preload: (cb) ->
-    self = @
-    setTimeout ->
+    res = @em.getNeedPreload()
+    if res.length <= 0
+      @_ready = on
+      cb()
+    else
+      self = @
+      preload_step = (i, cb2) ->
+        if i >= res.length
+          cb2()
+        else
+          res[i].action.load ->
+            self.pb.preload res[i].pos
+            preload_step i + 1, cb2
+
+      preload_step 0, ->
         self._ready = on
         cb()
-        return
-      , 1000
-
     return
 
   emit: (event) ->

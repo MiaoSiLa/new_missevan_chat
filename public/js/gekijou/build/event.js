@@ -1,4 +1,106 @@
-var GEvent, GEventManager;
+var GAction, GEvent, GEventManager;
+
+GAction = (function() {
+  function GAction(type) {
+    this.type = type;
+    if (this.type === 'text') {
+      this.ready = true;
+    } else {
+      this.ready = false;
+    }
+  }
+
+  GAction.prototype.load = function(cb) {
+    var img, self;
+    if (this.ready) {
+      cb();
+      return;
+    }
+    self = this;
+    switch (this.type) {
+      case 'image':
+        img = new Image();
+        img.onload = function() {
+          self.ready = true;
+          cb();
+        };
+        img.src = this.val;
+        self.img = img;
+        break;
+      case 'sound':
+        moTool.getAjax({
+          url: "/sound/getsound?soundid=" + this.val,
+          showLoad: false,
+          callBack: function(data2) {
+            var s, sound, soundUrl;
+            sound = data2.successVal.sound;
+            soundUrl = sound.soundurl;
+            s = soundManager.createSound({
+              id: soundUrl,
+              url: index.mo.soundPath + soundUrl,
+              multiShot: false,
+              onload: function() {
+                self.ready = true;
+                cb();
+              }
+            });
+            s.load();
+            self.Jsound = sound;
+            self.sound = s;
+          }
+        });
+        break;
+      default:
+        cb();
+    }
+  };
+
+  GAction.prototype.run = function(cb) {
+    var action;
+    action = this;
+    this.load(function() {
+      var msg;
+      if (action.chara && GG.gekijou.isplaying()) {
+        GG.chara.select(action.chara);
+      }
+      switch (action.type) {
+        case 'text':
+          chatBox.loadBubble({
+            msg: action.val,
+            type: 1,
+            sender: index.mo.sender
+          });
+          if (cb != null) {
+            return cb();
+          }
+          break;
+        case 'image':
+          return chatBox.loadBubble({
+            msg: action.val,
+            type: 7,
+            sender: index.mo.sender
+          }, function() {
+            if (cb != null) {
+              cb();
+            }
+          });
+        case 'sound':
+          msg = JSON.stringify(action.Jsound);
+          chatBox.loadBubble({
+            msg: msg,
+            type: 6,
+            sender: index.mo.sender
+          });
+          if (cb != null) {
+            return cb();
+          }
+      }
+    });
+  };
+
+  return GAction;
+
+})();
 
 GEvent = (function() {
   function GEvent(id, name, time) {
@@ -10,23 +112,21 @@ GEvent = (function() {
 
   GEvent.prototype.action = function(type, val1, val2, norun) {
     var an;
-    an = {
-      type: type
-    };
+    an = new GAction(type);
     switch (type) {
       case 'text':
         an.line = index.mo.chatLine;
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
-          this.runAction(an);
+          an.run();
         }
         break;
       case 'image':
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
-          this.runAction(an, function() {
+          an.run(function() {
             return an.line = index.mo.chatLine - 1;
           });
         }
@@ -36,60 +136,13 @@ GEvent = (function() {
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
-          this.runAction(an, function() {});
+          an.run(function() {});
         }
         break;
       default:
         return;
     }
     this.actions.push(an);
-  };
-
-  GEvent.prototype.runAction = function(action, cb) {
-    if (GG.gekijou.isplaying()) {
-      GG.chara.select(action.chara);
-    }
-    switch (action.type) {
-      case 'text':
-        chatBox.loadBubble({
-          msg: action.val,
-          type: 1,
-          sender: index.mo.sender
-        });
-        if (cb != null) {
-          cb();
-        }
-        break;
-      case 'image':
-        chatBox.loadBubble({
-          msg: action.val,
-          type: 7,
-          sender: index.mo.sender
-        }, function() {
-          if (cb != null) {
-            return cb();
-          }
-        });
-        break;
-      case 'sound':
-        moTool.getAjax({
-          url: "/sound/getsound?soundid=" + action.val,
-          showLoad: false,
-          callBack: function(data2) {
-            var msg, sound;
-            sound = data2.successVal.sound;
-            msg = JSON.stringify(sound);
-            chatBox.loadBubble({
-              msg: msg,
-              type: 6,
-              sender: index.mo.sender
-            });
-            if (cb != null) {
-              return cb();
-            }
-          }
-        });
-    }
   };
 
   GEvent.prototype.run = function(i) {
@@ -99,7 +152,7 @@ GEvent = (function() {
     }
     if (i < this.actions.length) {
       self = this;
-      this.runAction(this.actions[i], function() {
+      this.actions[i].run(function() {
         self.run(i + 1);
       });
     }
@@ -194,6 +247,43 @@ GEventManager = (function() {
   GEventManager.prototype.moveToBegin = function() {
     this._currentIndex = 0;
     this._event = this.events[0];
+  };
+
+  GEventManager.prototype.getNeedPreload = function() {
+    var ac, ev, i, j, len, pos, res, total, tt, _ctt, _i, _j, _len, _len1, _ref, _ref1;
+    tt = 0;
+    res = [];
+    total = this.totaltime();
+    _ref = this.events;
+    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+      ev = _ref[i];
+      _ctt = ev.realtime();
+      len = ev.actions.length;
+      _ref1 = ev.actions;
+      for (j = _j = 0, _len1 = _ref1.length; _j < _len1; j = ++_j) {
+        ac = _ref1[j];
+        pos = (tt + ((j + 1) * _ctt / len)) / total;
+        switch (ac.type) {
+          case 'image':
+            res.push({
+              pos: pos,
+              type: 'image',
+              imgurl: ac.val,
+              action: ac
+            });
+            break;
+          case 'sound':
+            res.push({
+              pos: pos,
+              type: 'sound',
+              soundid: ac.val,
+              action: ac
+            });
+        }
+      }
+      tt += _ctt;
+    }
+    return res;
   };
 
   GEventManager.prototype.runAtTime = function(time) {

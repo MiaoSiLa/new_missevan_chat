@@ -52,9 +52,11 @@ Gekijou = (function() {
       this.parse(gs.html());
     }
     this.chara.init(function() {
-      if (cb != null) {
-        return cb();
-      }
+      soundManager.onready(function() {
+        if (cb != null) {
+          return cb();
+        }
+      });
     });
   };
 
@@ -83,7 +85,11 @@ Gekijou = (function() {
       pns[0].pos = 0.5;
     }
     this.pb.data(pns);
-    this.pb.moveToLast();
+    if (GG.env === 'dev') {
+      this.pb.moveToLast();
+    } else {
+      this.pb.moveToBegin();
+    }
   };
 
   Gekijou.prototype.parse = function(script) {
@@ -119,12 +125,28 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.preload = function(cb) {
-    var self;
-    self = this;
-    setTimeout(function() {
-      self._ready = true;
+    var preload_step, res, self;
+    res = this.em.getNeedPreload();
+    if (res.length <= 0) {
+      this._ready = true;
       cb();
-    }, 1000);
+    } else {
+      self = this;
+      preload_step = function(i, cb2) {
+        if (i >= res.length) {
+          return cb2();
+        } else {
+          return res[i].action.load(function() {
+            self.pb.preload(res[i].pos);
+            return preload_step(i + 1, cb2);
+          });
+        }
+      };
+      preload_step(0, function() {
+        self._ready = true;
+        return cb();
+      });
+    }
   };
 
   Gekijou.prototype.emit = function(event) {
