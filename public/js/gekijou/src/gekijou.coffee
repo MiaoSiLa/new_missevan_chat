@@ -50,7 +50,11 @@ class Gekijou
     gs = $ 'script#gekijouscript'
     script = ''
     if gs and gs.length > 0
-      @parse gs.html()
+      @setId gs.data 'id'
+      script = gs.text()
+      script = script.replace /&#34;/g, '"'
+      console.log script
+      @parse script
 
     @chara.init ->
       # 初始化 soundManager
@@ -161,6 +165,7 @@ class Gekijou
   play: (untilIndex = -1) ->
     if @_playing then return
     @_playing = on
+    @_finished = no
 
     @pb.start()
     @_lastplaytime = new Date().valueOf()
@@ -193,13 +198,30 @@ class Gekijou
     return
 
   finish: ->
+    if @_finished
+      return
+
     if @_playing
       @_playing = no
     if @_timer
       clearInterval @_timer
       @_timer = 0
+
     @_finished = on
     @pb.finish()
+
+    if GG.env isnt 'dev'
+      # 增加播放次数
+      moTool.postAjax
+        url: "/gekijou/addplaytimes",
+        value: { _id: @_id },
+        callBack: (data) ->
+          return
+        ,
+        showLoad: false,
+        success: false,
+        error: false,
+        json: false
     return
 
   run: ->
@@ -211,4 +233,7 @@ class Gekijou
           moTool.hideModalBox $('#loadmodal')
           self.play()
       , 100
+    return
+
+  setId: (@_id) ->
     return

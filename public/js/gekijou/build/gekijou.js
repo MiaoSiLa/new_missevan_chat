@@ -49,7 +49,11 @@ Gekijou = (function() {
     gs = $('script#gekijouscript');
     script = '';
     if (gs && gs.length > 0) {
-      this.parse(gs.html());
+      this.setId(gs.data('id'));
+      script = gs.text();
+      script = script.replace(/&#34;/g, '"');
+      console.log(script);
+      this.parse(script);
     }
     this.chara.init(function() {
       soundManager.onready(function() {
@@ -193,6 +197,7 @@ Gekijou = (function() {
       return;
     }
     this._playing = true;
+    this._finished = false;
     this.pb.start();
     this._lastplaytime = new Date().valueOf();
     self = this;
@@ -223,6 +228,9 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.finish = function() {
+    if (this._finished) {
+      return;
+    }
     if (this._playing) {
       this._playing = false;
     }
@@ -232,6 +240,19 @@ Gekijou = (function() {
     }
     this._finished = true;
     this.pb.finish();
+    if (GG.env !== 'dev') {
+      moTool.postAjax({
+        url: "/gekijou/addplaytimes",
+        value: {
+          _id: this._id
+        },
+        callBack: function(data) {},
+        showLoad: false,
+        success: false,
+        error: false,
+        json: false
+      });
+    }
   };
 
   Gekijou.prototype.run = function() {
@@ -246,6 +267,10 @@ Gekijou = (function() {
         return self.play();
       });
     }, 100);
+  };
+
+  Gekijou.prototype.setId = function(_id) {
+    this._id = _id;
   };
 
   return Gekijou;

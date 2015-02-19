@@ -47,13 +47,20 @@ gekijou.get('/new', function *() {
 gekijou.get('/view/:gekijou_id', function *() {
   let title = '小剧场_MissEvan';
   var geki = null;
-  if (this.params && this.params.gekijou_id) {
-    var g = new Gekijou({ _id: this.params.gekijou_id });
-    geki = yield g.find();
-    if (geki && geki.title) {
-      yield g.playCount();
-      title = geki.title + '_' + title;
+  if (this.params) {
+    var _id = this.params.gekijou_id;
+    if (_id && validator.isMongoId(_id)) {
+      var g = new Gekijou({ _id: _id });
+      geki = yield g.find();
+      if (geki && geki.title) {
+        title = geki.title + '_' + title;
+      }
     }
+  }
+
+  if (!geki) {
+    this.status = 404;
+    return;
   }
 
   yield this.render('gekijou/view', {
@@ -61,6 +68,24 @@ gekijou.get('/view/:gekijou_id', function *() {
     user: this.user,
     gekijou: geki
   });
+});
+
+gekijou.post('/addplaytimes', function *() {
+  var r = { code: -1 };
+  if (this.request.body) {
+    var _id = this.request.body._id;
+    if (_id && validator.isMongoId(_id)) {
+      var g = new Gekijou({ _id: _id });
+      var geki = yield g.find();
+      if (geki && geki._id) {
+        yield g.playCount();
+        r.code = 0;
+      } else {
+        r.code = 1;
+      }
+    }
+  }
+  this.body = r;
 });
 
 gekijou.get('/edit/:gekijou_id', function *() {

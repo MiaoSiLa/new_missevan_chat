@@ -100,8 +100,8 @@ pageStyles = dev_mode ? [
   <script type="text/javascript" src="/js/chat/jquery.iframe-transport.js"></script>
   <script type="text/javascript" src="/js/chat/chatbox.js"></script>
   <script type="text/javascript" src="/js/chat/chat.desktop.js"></script>
-  <% if (gekijou) { %><script id="gekijouscript" type="text/gekijouscript">
-<%- gekijou.script %>
+  <% if (gekijou) { %><script id="gekijouscript" data-id="<%= gekijou._id %>" type="text/gekijouscript">
+<%= gekijou.script %>
   </script><% } %>
 <% if (dev_mode) { %>
   <script type="text/javascript" src="/js/gekijou/build/util.js"></script>
