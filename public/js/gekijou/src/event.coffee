@@ -170,6 +170,7 @@ class GEventManager
     @_lastid = 0
     @_event = null
     @_timecount = 0
+    @_curtime = 0
     @_currentIndex = -1
 
   lastid: ->
@@ -231,12 +232,15 @@ class GEventManager
       if time >= tt
         if @_currentIndex < i
           if @next() then @run()
-        if time >= @_timecount
-          GG.gekijou.emit 'end'
       else
         break
       tt += ev.realtime()
 
+    # emit end message
+    if time >= @_timecount and @_curtime < @_timecount
+      GG.gekijou.emit 'end'
+
+    @_curtime = time
     @_currentIndex
 
   run: ->

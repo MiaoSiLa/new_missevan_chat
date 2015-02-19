@@ -50,9 +50,7 @@ Gekijou = (function() {
     script = '';
     if (gs && gs.length > 0) {
       this.setId(gs.data('id'));
-      script = gs.text();
-      script = script.replace(/&#34;/g, '"');
-      console.log(script);
+      script = this.unescape(gs.text());
       this.parse(script);
     }
     this.chara.init(function() {
@@ -96,6 +94,10 @@ Gekijou = (function() {
     }
   };
 
+  Gekijou.prototype.unescape = function(script) {
+    return script.replace(/&(#0?34|quot);/g, '"').replace(/&#0?39;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  };
+
   Gekijou.prototype.parse = function(script) {
     var b, blocks, _i, _j, _len, _len1;
     if (script) {
@@ -132,6 +134,7 @@ Gekijou = (function() {
     var preload_step, res, self;
     res = this.em.getNeedPreload();
     if (res.length <= 0) {
+      this.pb.preload(1);
       this._ready = true;
       cb();
     } else {
@@ -147,6 +150,7 @@ Gekijou = (function() {
         }
       };
       preload_step(0, function() {
+        self.pb.preload(1);
         self._ready = true;
         return cb();
       });
@@ -231,13 +235,11 @@ Gekijou = (function() {
     if (this._finished) {
       return;
     }
-    if (this._playing) {
-      this._playing = false;
-    }
     if (this._timer) {
       clearInterval(this._timer);
       this._timer = 0;
     }
+    this._playing = false;
     this._finished = true;
     this.pb.finish();
     if (GG.env !== 'dev') {

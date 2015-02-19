@@ -219,6 +219,7 @@ GEventManager = (function() {
     this._lastid = 0;
     this._event = null;
     this._timecount = 0;
+    this._curtime = 0;
     this._currentIndex = -1;
   }
 
@@ -298,14 +299,15 @@ GEventManager = (function() {
             this.run();
           }
         }
-        if (time >= this._timecount) {
-          GG.gekijou.emit('end');
-        }
       } else {
         break;
       }
       tt += ev.realtime();
     }
+    if (time >= this._timecount && this._curtime < this._timecount) {
+      GG.gekijou.emit('end');
+    }
+    this._curtime = time;
     return this._currentIndex;
   };
 

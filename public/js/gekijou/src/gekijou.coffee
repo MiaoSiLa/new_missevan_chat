@@ -51,9 +51,7 @@ class Gekijou
     script = ''
     if gs and gs.length > 0
       @setId gs.data 'id'
-      script = gs.text()
-      script = script.replace /&#34;/g, '"'
-      console.log script
+      script = @unescape gs.text()
       @parse script
 
     @chara.init ->
@@ -87,6 +85,9 @@ class Gekijou
 
     return
 
+  unescape: (script) ->
+    script.replace(/&(#0?34|quot);/g, '"').replace(/&#0?39;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+
   # parse
   parse: (script) ->
     script = script.trim() if script
@@ -118,6 +119,7 @@ class Gekijou
   preload: (cb) ->
     res = @em.getNeedPreload()
     if res.length <= 0
+      @pb.preload 1
       @_ready = on
       cb()
     else
@@ -131,6 +133,7 @@ class Gekijou
             preload_step i + 1, cb2
 
       preload_step 0, ->
+        self.pb.preload 1
         self._ready = on
         cb()
     return
@@ -198,16 +201,15 @@ class Gekijou
     return
 
   finish: ->
-    if @_finished
-      return
+    if @_finished then return
 
-    if @_playing
-      @_playing = no
     if @_timer
       clearInterval @_timer
       @_timer = 0
 
+    @_playing = no
     @_finished = on
+
     @pb.finish()
 
     if GG.env isnt 'dev'
