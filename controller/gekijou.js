@@ -75,9 +75,10 @@ gekijou.post('/addplaytimes', function *() {
   if (this.request.body) {
     var _id = this.request.body._id;
     if (_id && validator.isMongoId(_id)) {
+      // TODO: add limit
       var g = new Gekijou({ _id: _id });
       var geki = yield g.find();
-      if (geki && geki._id) {
+      if (geki && geki._id && geki.checked) {
         yield g.playCount();
         r.code = 0;
       } else {
