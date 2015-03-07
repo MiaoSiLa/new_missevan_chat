@@ -70,6 +70,24 @@ gekijou.get('/view/:gekijou_id', function *() {
   });
 });
 
+gekijou.get('/info/:gekijou_id', function *() {
+  var geki = null;
+
+  if (this.params) {
+    var _id = this.params.gekijou_id;
+    if (_id && validator.isMongoId(_id)) {
+      var g = new Gekijou({ _id: _id });
+      geki = yield g.find();
+    }
+  }
+
+  if (geki) {
+    this.body = geki;
+  } else {
+    this.status = 404;
+  }
+});
+
 gekijou.post('/addplaytimes', function *() {
   var r = { code: -1 };
   if (this.request.body) {

@@ -6,7 +6,7 @@ MissEvan聊天室代码
 
 [/doc](https://github.com/MiaoSiLa/new_missevan_chat/tree/master/doc)
 
-## Install
+## Deploy
 
 请在 `npm install` 后删除 `node_modules/koa-ejs/ejs` 目录，因为它带的 ejs 的版本太老了。
 
