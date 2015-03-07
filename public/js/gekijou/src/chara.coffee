@@ -133,7 +133,7 @@ class Chara
             subtitle: c.title,
             iconid: parseInt(c.id),
             iconurl: c.save_name,
-            iconcolor: ''
+            iconcolor: c.iconcolor
 
           if p then page = p
           pagecount = data.pagecount

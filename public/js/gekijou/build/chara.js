@@ -148,7 +148,7 @@ Chara = (function() {
                 subtitle: c.title,
                 iconid: parseInt(c.id),
                 iconurl: c.save_name,
-                iconcolor: ''
+                iconcolor: c.iconcolor
               });
             }
             return _results;
