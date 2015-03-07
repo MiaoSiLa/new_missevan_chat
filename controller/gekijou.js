@@ -82,9 +82,10 @@ gekijou.get('/info/:gekijou_id', function *() {
   }
 
   if (geki) {
-    this.body = geki;
+    this.body = { code: 0, gekijou: geki };
   } else {
-    this.status = 404;
+    //this.status = 404;
+    this.body = { code: 1, message: 'Not Found' };
   }
 });
 
