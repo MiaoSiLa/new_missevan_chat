@@ -147,15 +147,23 @@ Util = (function() {
   };
 
   Util.prototype.splitcommand = function(text) {
-    var cmdlist, cmds, m, regex_cmd;
-    cmdlist = ['声音'];
+    var clist, cmdlist, cmdname, cmds, key, val, _i, _len;
+    cmdlist = {
+      'sound': ['声音', '音频', 'sound'],
+      'state': ['状态', 'state']
+    };
     cmds = null;
     if (text[0] === '/') {
-      regex_cmd = '/(' + cmdlist.join('|') + ')\\s*?(\\d+)';
-      regex_cmd = new RegExp(regex_cmd, 'i');
-      m = text.match(regex_cmd);
-      if (m) {
-        cmds = [m[1], m[2]];
+      for (key in cmdlist) {
+        clist = cmdlist[key];
+        for (_i = 0, _len = clist.length; _i < _len; _i++) {
+          cmdname = clist[_i];
+          if (text.substr(1, cmdname.length).toLowerCase() === cmdname) {
+            val = text.substr(1 + cmdname.length).trim();
+            cmds = [key, val];
+            return cmds;
+          }
+        }
       }
     }
     return cmds;
@@ -401,7 +409,7 @@ Playbar = (function(_super) {
   };
 
   Playbar.prototype.data = function(pns) {
-    var html, i, name, pn, pos, _i, _len;
+    var html, i, name, pn, pos, self, _i, _len;
     html = '';
     for (i = _i = 0, _len = pns.length; _i < _len; i = ++_i) {
       pn = pns[i];
@@ -416,13 +424,27 @@ Playbar = (function(_super) {
     this.$('.mpfo').html(html);
     this._data = pns;
     if (GG.env === 'dev') {
+      self = this;
       this.$('.mpfi').click(function() {
         i = $(this).data('event-index');
         if (i >= 0) {
+          if (GG.gekijou.isplaying()) {
+            GG.gekijou.pause();
+          }
           GG.gekijou.reset();
-          return GG.gekijou.play(i);
+          self.moveToIndex(i);
+          self.pause();
+          GG.em.current(i);
+          GG.gekijou.played(i);
+          return GG.em.run();
         }
       });
+    }
+  };
+
+  Playbar.prototype.moveToIndex = function(i) {
+    if ((0 <= i && i < this._data.length)) {
+      this.pos(this._data[i].pos);
     }
   };
 
@@ -430,7 +452,7 @@ Playbar = (function(_super) {
     var l, _ref;
     if (this._data.length > 0) {
       _ref = this._data, l = _ref[_ref.length - 1];
-      return this.pos(l.pos);
+      this.pos(l.pos);
     }
   };
 
@@ -443,7 +465,7 @@ Playbar = (function(_super) {
   };
 
   Playbar.prototype.pause = function() {
-    this.$('.mpi').removeClass('mpip');
+    this.$('.mpi').removeClass('mpir').removeClass('mpip');
   };
 
   Playbar.prototype.finish = function() {

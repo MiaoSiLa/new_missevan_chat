@@ -167,7 +167,7 @@ Gekijou = (function() {
         if (this._playing) {
           this.pause();
         } else {
-          if (this._finished || GG.env === 'dev') {
+          if (this._finished) {
             this.reset();
           }
           this.play();
@@ -190,6 +190,10 @@ Gekijou = (function() {
 
   Gekijou.prototype.isplaying = function() {
     return this._playing;
+  };
+
+  Gekijou.prototype.played = function(i) {
+    return this._playedtime = this.em.totaltime(i);
   };
 
   Gekijou.prototype.play = function(untilIndex) {

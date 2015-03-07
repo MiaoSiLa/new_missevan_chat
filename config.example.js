@@ -43,6 +43,7 @@ var config = {
 
   app: {
     dev_mode: dev_mode,
+    fake_user: false,
     session_key: 'NSESS'
   },
 

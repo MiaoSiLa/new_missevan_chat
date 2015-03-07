@@ -51,15 +51,10 @@ GekijouEditor = (function() {
         a = _ref2[_k];
         script += "    " + a.type + " ";
         switch (a.type) {
-          case 'text':
-            script += "chara:" + a.chara + " " + (JSON.stringify(a.val));
+          case 'unknow':
             break;
-          case 'image':
+          default:
             script += "chara:" + a.chara + " " + (JSON.stringify(a.val));
-            break;
-          case 'sound':
-            script += "chara:" + a.chara + " " + (JSON.stringify(a.val));
-            break;
         }
         script += "\n";
       }

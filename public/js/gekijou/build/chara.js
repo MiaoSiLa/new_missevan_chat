@@ -16,9 +16,13 @@ Chara = (function() {
     this.pagination = new Paginationbar(this.el.find('.pagelist'));
   }
 
-  Chara.prototype.add = function(c) {
-    var id;
-    id = this._lastid++;
+  Chara.prototype.add = function(c, id) {
+    if (id == null) {
+      id = -1;
+    }
+    if (id === -1) {
+      id = this._lastid++;
+    }
     this.charas.push({
       id: id,
       username: c.username,
@@ -35,6 +39,18 @@ Chara = (function() {
       return this.charas[this._sel].id;
     }
     return -1;
+  };
+
+  Chara.prototype.selectId = function(id) {
+    var c, i, _i, _len, _ref;
+    _ref = this.charas;
+    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+      c = _ref[i];
+      if (c.id === id) {
+        this.select(i);
+        break;
+      }
+    }
   };
 
   Chara.prototype.select = function(i) {
@@ -73,7 +89,7 @@ Chara = (function() {
       if (i === this._sel) {
         html += ' selected';
       }
-      html += "\">\n  <div class=\"chaticonbox\">\n    <img src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n  <div class=\"chatusername\" style=\"color:#ffffff;\">\n    <span>" + name + "</span>\n  </div>\n  <div class=\"chatsubtitle\">\n    <span style=\"color:#91c0ed;\">" + subtitle + "</span>\n  </div>\n  <div class=\"delbtn\"></div>\n</div>";
+      html += "\">\n  <div class=\"chaticonbox\">\n    <img alt=\"" + subtitle + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n  <div class=\"chatusername\" style=\"color:#ffffff;\">\n    <span>" + name + "</span>\n  </div>\n  <div class=\"chatsubtitle\">\n    <span style=\"color:#91c0ed;\">" + subtitle + "</span>\n  </div>\n  <div class=\"delbtn\"></div>\n</div>";
     }
     $modal.html(html);
     self = this;
@@ -153,7 +169,7 @@ Chara = (function() {
   };
 
   Chara.prototype.showIcons = function(iconusers) {
-    var $modal, c, html, self, sender, strc, _i, _len;
+    var $modal, c, html, self, sender, strc, subtitle, _i, _len;
     html = '';
     $modal = this.el.find('#charamodal #selecticonlist');
     $modal.html('');
@@ -164,7 +180,8 @@ Chara = (function() {
       c = iconusers[_i];
       sender = chatBox.sender(c);
       strc = JSON.stringify(c);
-      html += "<div data-user='" + strc + "' class=\"charaicon\">\n  <div class=\"chaticonbox\">\n    <img src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n</div>";
+      subtitle = moTool.boardReplaceTxt(c.subtitle);
+      html += "<div data-user='" + strc + "' class=\"charaicon\">\n  <div class=\"chaticonbox\">\n    <img alt=\"" + subtitle + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n</div>";
     }
     $modal.html(html);
     self = this;
@@ -255,7 +272,7 @@ Chara = (function() {
   };
 
   Chara.prototype.parse = function(block_script) {
-    var b, blocks, c, i, line, lineprops, lines, props, _i, _j, _len, _len1;
+    var b, blocks, c, cid, i, line, lineprops, lines, props, _i, _j, _len, _len1;
     blocks = GG.util.splitblock(block_script);
     for (_i = 0, _len = blocks.length; _i < _len; _i++) {
       b = blocks[_i];
@@ -263,8 +280,9 @@ Chara = (function() {
       lines = GG.util.splitline(b.content);
       if (props.length >= 3 && props[0] === 'define' && lines.length > 0) {
         try {
+          cid = parseInt(props[1]);
           c = {
-            id: parseInt(props[1]),
+            id: cid,
             username: JSON.parse(props[2]),
             subtitle: props[3] ? JSON.parse(props[3]) : ''
           };
@@ -277,7 +295,7 @@ Chara = (function() {
               c.iconcolor = JSON.parse(lineprops[3]);
             }
           }
-          this.add(c);
+          this.add(c, cid);
         } catch (_error) {}
       }
     }

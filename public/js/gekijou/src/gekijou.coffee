@@ -148,7 +148,8 @@ class Gekijou
         if @_playing
           @pause()
         else
-          if @_finished or GG.env is 'dev'
+          if @_finished
+            # or GG.env is 'dev'
             @reset()
           @play()
       when 'end'
@@ -164,6 +165,9 @@ class Gekijou
 
   isplaying: ->
     return @_playing
+
+  played: (i) ->
+    @_playedtime = @em.totaltime i
 
   play: (untilIndex = -1) ->
     if @_playing then return

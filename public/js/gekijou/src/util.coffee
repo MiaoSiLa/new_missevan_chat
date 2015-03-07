@@ -124,15 +124,18 @@ class Util
     lines
 
   splitcommand: (text) ->
-    cmdlist = ['声音']
+    cmdlist = 
+      'sound': ['声音', '音频', 'sound'],
+      'state': ['状态', 'state']
     cmds = null
 
     if text[0] is '/'
-      regex_cmd = '/(' + cmdlist.join('|') + ')\\s*?(\\d+)'
-      regex_cmd = new RegExp regex_cmd, 'i'
-      m = text.match regex_cmd
-      if m
-        cmds = [ m[1], m[2] ]
+      for key, clist of cmdlist
+        for cmdname in clist
+          if text.substr(1, cmdname.length).toLowerCase() is cmdname
+            val = text.substr(1 + cmdname.length).trim()
+            cmds = [ key, val ]
+            return cmds
 
     cmds
 
@@ -345,18 +348,34 @@ class Playbar extends ControlBar
 
     if GG.env is 'dev'
       # bind click event
+      self = @
       @$('.mpfi').click ->
         i = $(this).data 'event-index'
         if i >= 0
+          if GG.gekijou.isplaying()
+            GG.gekijou.pause()
           GG.gekijou.reset()
-          GG.gekijou.play i
 
+          # only play this event
+          self.moveToIndex i
+          self.pause()
+
+          GG.em.current i
+          GG.gekijou.played i
+          GG.em.run()
+
+    return
+
+  moveToIndex: (i) ->
+    if 0 <= i < @_data.length
+      @pos @_data[i].pos
     return
 
   moveToLast: ->
     if @_data.length > 0
       [..., l] = @_data
       @pos l.pos
+    return
 
   moveToBegin: ->
     @pos 0
@@ -367,7 +386,7 @@ class Playbar extends ControlBar
     return
 
   pause: ->
-    @$('.mpi').removeClass 'mpip'
+    @$('.mpi').removeClass('mpir').removeClass('mpip')
     return
 
   finish: ->

@@ -13,8 +13,9 @@ class Chara
     @_sel = -1
     @pagination = new Paginationbar @el.find('.pagelist')
 
-  add: (c) ->
-    id = @_lastid++
+  add: (c, id = -1) ->
+    if id is -1
+      id = @_lastid++
     @charas.push
       id: id,
       username: c.username,
@@ -28,6 +29,13 @@ class Chara
     if @_sel >= 0
       return @charas[@_sel].id
     -1
+
+  selectId: (id) ->
+    for c, i in @charas
+      if c.id is id
+        @select i
+        break
+    return
 
   select: (i) ->
     if i isnt @_sel
@@ -65,7 +73,7 @@ class Chara
       html += """
               \">
                 <div class="chaticonbox">
-                  <img src="#{sender.icon}">
+                  <img alt="#{subtitle}" src="#{sender.icon}">
                 </div>
                 <div class="clear"></div>
                 <div class="chatusername" style="color:#ffffff;">
@@ -151,10 +159,11 @@ class Chara
     for c in iconusers
       sender = chatBox.sender c
       strc = JSON.stringify(c)
+      subtitle = moTool.boardReplaceTxt c.subtitle
       html += """
               <div data-user='#{strc}' class="charaicon">
                 <div class="chaticonbox">
-                  <img src="#{sender.icon}">
+                  <img alt="#{subtitle}" src="#{sender.icon}">
                 </div>
                 <div class="clear"></div>
               </div>
@@ -264,8 +273,9 @@ class Chara
 
       if props.length >= 3 and props[0] is 'define' and lines.length > 0
         try
+          cid = parseInt(props[1])
           c =
-            id: parseInt(props[1]),
+            id: cid,
             username: JSON.parse(props[2]),
             subtitle: if props[3] then JSON.parse(props[3]) else ''
 
@@ -276,6 +286,6 @@ class Chara
               c.iconurl = JSON.parse lineprops[2]
               c.iconcolor = JSON.parse lineprops[3]
 
-          @add c
+          @add c, cid
 
     return

@@ -61,7 +61,7 @@ GAction = (function() {
     this.load(function() {
       var msg;
       if (action.chara && GG.gekijou.isplaying()) {
-        GG.chara.select(action.chara);
+        GG.chara.selectId(action.chara);
       }
       switch (action.type) {
         case 'text':
@@ -70,6 +70,14 @@ GAction = (function() {
             type: 1,
             sender: index.mo.sender
           });
+          if (cb != null) {
+            return cb();
+          }
+          break;
+        case 'state':
+          chatBox.loadMemberState({
+            username: index.mo.sender.name
+          }, action.val);
           if (cb != null) {
             return cb();
           }
@@ -139,6 +147,14 @@ GEvent = (function() {
           an.run(function() {});
         }
         break;
+      case 'state':
+        an.line = index.mo.chatLine;
+        an.chara = this.parseCharaId(val1);
+        an.val = val2;
+        if (!norun) {
+          an.run();
+        }
+        break;
       default:
         return;
     }
@@ -172,16 +188,22 @@ GEvent = (function() {
   };
 
   GEvent.prototype.parseAction = function(text) {
-    var cmds, soundid;
+    var cmds, soundid, state;
     if (text[0] !== '/') {
       return this.action('text', GG.chara.current(), text);
     } else {
       cmds = GG.util.splitcommand(text);
       switch (cmds[0]) {
-        case '声音':
+        case 'sound':
           soundid = parseInt(cmds[1]);
           if (soundid) {
             return this.action('sound', GG.chara.current(), soundid);
+          }
+          break;
+        case 'state':
+          state = cmds[1];
+          if (state) {
+            return this.action('state', GG.chara.current(), state);
           }
       }
     }
@@ -227,7 +249,14 @@ GEventManager = (function() {
     return this._lastid;
   };
 
-  GEventManager.prototype.current = function() {
+  GEventManager.prototype.current = function(i) {
+    if (i == null) {
+      i = -1;
+    }
+    if (i !== -1) {
+      this._currentIndex = i;
+      this._event = this.events[i];
+    }
     return this._event;
   };
 
@@ -241,7 +270,22 @@ GEventManager = (function() {
     }
   };
 
-  GEventManager.prototype.totaltime = function() {
+  GEventManager.prototype.totaltime = function(untili) {
+    var counttime, ev, i, _i, _len, _ref;
+    if (untili == null) {
+      untili = -1;
+    }
+    if (untili !== -1) {
+      counttime = 0;
+      _ref = this.events;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        ev = _ref[i];
+        if (untili <= i) {
+          return counttime;
+        }
+        counttime += ev.realtime();
+      }
+    }
     return this._timecount;
   };
 

@@ -49,7 +49,7 @@ class GAction
     @load ->
       if action.chara and GG.gekijou.isplaying()
         # 切换角色
-        GG.chara.select action.chara
+        GG.chara.selectId action.chara
 
       switch action.type
         when 'text'
@@ -57,6 +57,9 @@ class GAction
             msg: action.val,
             type: 1,
             sender: index.mo.sender
+          cb() if cb?
+        when 'state'
+          chatBox.loadMemberState { username: index.mo.sender.name }, action.val
           cb() if cb?
         when 'image'
           chatBox.loadBubble { msg: action.val, type: 7, sender: index.mo.sender }, ->
@@ -107,6 +110,14 @@ class GEvent
           an.run ->
             # TODO: show some tips in stage
 
+      when 'state'
+        # TODO add pos
+        an.line = index.mo.chatLine
+        an.chara = @parseCharaId(val1)
+        an.val = val2
+        if not norun
+          an.run()
+
       else return
 
     @actions.push an
@@ -138,10 +149,14 @@ class GEvent
     else
       cmds = GG.util.splitcommand text
       switch cmds[0]
-        when '声音'
+        when 'sound'
           soundid = parseInt cmds[1]
           if soundid
             @action 'sound', GG.chara.current(), soundid
+        when 'state'
+          state = cmds[1]
+          if state
+            @action 'state', GG.chara.current(), state
         # 其他特殊动作
         # do some thing
 
@@ -176,7 +191,10 @@ class GEventManager
   lastid: ->
     @_lastid
 
-  current: ->
+  current: (i = -1) ->
+    if i isnt -1
+      @_currentIndex = i
+      @_event = @events[i]
     @_event
 
   next: ->
@@ -187,7 +205,13 @@ class GEventManager
     else
       return no
 
-  totaltime: ->
+  totaltime: (untili = -1) ->
+    if untili isnt -1
+      counttime = 0
+      for ev, i in @events
+        if untili <= i
+          return counttime
+        counttime += ev.realtime()
     @_timecount
 
   moveToBegin: ->

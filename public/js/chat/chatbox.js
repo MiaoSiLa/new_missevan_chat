@@ -456,6 +456,7 @@ var chatBox = {
         if (data.type == 1) {
           //文字
           text = moTool.boardReplaceTxt(data.msg);
+          text = text.replace(/\n/g, '<br>');
           fnshowbt();
         } else if (data.type == 7) {
           //图片
@@ -723,6 +724,11 @@ var chatBox = {
 
       $roomId.find('.membercount').text(memberCount);
     }
+  },
+
+  loadMemberState: function(member, state) {
+    var $chatBoxId = $('#chatbox');
+    $chatBoxId.prepend("<div class='clear'></div><div class='chatmessage'>►► " + member.username + " " + moTool.boardReplaceTxt(state) + "</div><div class='clear'></div>");
   },
 
   loadLeavingMember: function(member) {
