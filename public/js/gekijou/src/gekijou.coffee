@@ -1,7 +1,7 @@
 ###
   Author: tengattack
-  Version: 0.1.0
-  Update: 2014/02/13
+  Version: 0.1.3
+  Update: 2014/03/13
 ###
 
 class Gekijou
@@ -194,6 +194,7 @@ class Gekijou
     if @_playedtime <= 0
       @em.run()
 
+    soundManager.resumeAll()
     return
 
   pause: ->
@@ -202,6 +203,7 @@ class Gekijou
       clearInterval @_timer
       @_timer = 0
       @pb.pause()
+      soundManager.pauseAll()
     return
 
   finish: ->

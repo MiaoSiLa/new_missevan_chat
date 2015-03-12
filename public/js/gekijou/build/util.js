@@ -500,15 +500,74 @@ Toolbar = (function(_super) {
     return this._display[item] = !this._display[item];
   };
 
+  Toolbar.prototype.setVolume = function(volume) {
+    this.$('.mpsvbl').css('width', volume);
+    this._volume = volume;
+    store.set('volume', volume);
+    GG.em.setVolume(volume);
+  };
+
+  Toolbar.prototype.getVolume = function(volume) {
+    return this._volume;
+  };
+
+  Toolbar.prototype.initVolume = function() {
+    var volume;
+    volume = parseInt(store.get('volume'));
+    if (volume !== NaN) {
+      this.$('.mpsvblr').css('left', (100 - volume) / 100 * 88);
+      this.$('.mpsvbl').css('width', volume);
+      this._volume = volume;
+    } else {
+      this._volume = 100;
+    }
+  };
+
   Toolbar.prototype.bind = function() {
-    var self;
+    var $mpsvblClass, $mpsvblrClass, self, updateVolume;
     self = this;
+    this.initVolume();
     this.$('.mpsv').click(function() {
       if (self["switch"]('sv')) {
         $(this).find('.mpsvo').show();
       } else {
         $(this).find('.mpsvo').hide();
       }
+    });
+    $mpsvblClass = this.$('.mpsvbl');
+    $mpsvblrClass = this.$('.mpsvblr');
+    updateVolume = function() {
+      var px, volume, x, xpos;
+      x = $mpsvblrClass.offset().left;
+      px = $mpsvblrClass.parent().offset().left;
+      xpos = x - px;
+      volume = (100 - xpos - 12) * 100 / 88;
+      self.setVolume(volume);
+    };
+    $mpsvblrClass.draggable({
+      axis: 'x',
+      containment: 'parent',
+      drag: function(e) {
+        updateVolume();
+      },
+      stop: function() {
+        updateVolume();
+      }
+    });
+    $mpsvblClass.click(function(e) {
+      var offsetX;
+      offsetX = e.offsetX + 100 - $mpsvblClass.width();
+      $mpsvblrClass.css('left', offsetX / 100 * 88);
+      self.setVolume(100 - offsetX);
+      e.stopPropagation();
+    });
+    $mpsvblrClass.click(function(e) {
+      e.stopPropagation();
+    });
+    this.$('.mpsvo').click(function(e) {
+      $mpsvblrClass.css('left', e.offsetX / 100 * 88);
+      self.setVolume(100 - e.offsetX);
+      e.stopPropagation();
     });
     this.$('.mpcdm').click(function() {
       if (self["switch"]('dm')) {

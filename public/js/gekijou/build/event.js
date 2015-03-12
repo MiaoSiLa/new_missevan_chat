@@ -331,6 +331,28 @@ GEventManager = (function() {
     return res;
   };
 
+  GEventManager.prototype.setVolume = function(volume) {
+    var ac, _curev, _i, _len, _ref;
+    if (volume == null) {
+      volume = -1;
+    }
+    if (volume === -1) {
+      volume = GG.gekijou.tb.getVolume();
+    }
+    _curev = this.current();
+    if (_curev) {
+      _ref = _curev.actions;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ac = _ref[_i];
+        if (ac.type === 'sound') {
+          if (ac.sound) {
+            ac.sound.setVolume(volume);
+          }
+        }
+      }
+    }
+  };
+
   GEventManager.prototype.runAtTime = function(time) {
     var ev, i, tt, _i, _len, _ref;
     tt = 0;
@@ -357,6 +379,7 @@ GEventManager = (function() {
 
   GEventManager.prototype.run = function() {
     if (this._event) {
+      this.setVolume();
       this._event.run();
     }
   };

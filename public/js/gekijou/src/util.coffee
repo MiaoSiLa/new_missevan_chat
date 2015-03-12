@@ -412,14 +412,74 @@ class Toolbar extends ControlBar
   switch: (item) ->
     @_display[item] = not @_display[item]
 
+  setVolume: (volume) ->
+    @$('.mpsvbl').css 'width', volume
+    @_volume = volume
+    store.set 'volume', volume
+    GG.em.setVolume volume
+    return
+
+  getVolume: (volume) ->
+    @_volume
+
+  initVolume: ->
+    volume = parseInt store.get('volume')
+    if volume isnt NaN
+      @$('.mpsvblr').css 'left', (100 - volume) / 100 * 88
+      @$('.mpsvbl').css 'width', volume
+      @_volume = volume
+    else
+      @_volume = 100
+    return
+
   bind: ->
     self = @
+
+    @initVolume()
 
     @$('.mpsv').click ->
       if self.switch('sv')
         $(@).find('.mpsvo').show()
       else
         $(@).find('.mpsvo').hide()
+      return
+
+    $mpsvblClass = @$ '.mpsvbl'
+    $mpsvblrClass = @$ '.mpsvblr'
+
+    updateVolume = ->
+      x = $mpsvblrClass.offset().left
+      px = $mpsvblrClass.parent().offset().left
+      xpos = x - px
+      volume = (100 - xpos - 12) * 100 / 88
+      self.setVolume volume
+      return
+
+    $mpsvblrClass.draggable
+        axis: 'x',
+        containment: 'parent',
+        drag: (e) ->
+          updateVolume()
+          return
+        ,
+        stop: ->
+          updateVolume()
+          return
+
+    $mpsvblClass.click (e) ->
+      offsetX = e.offsetX + 100 - $mpsvblClass.width()
+      $mpsvblrClass.css 'left', (offsetX / 100 * 88)
+      self.setVolume (100 - offsetX)
+      e.stopPropagation()
+      return
+    $mpsvblrClass.click (e) ->
+      e.stopPropagation()
+      return
+
+    @$('.mpsvo').click (e) ->
+      $mpsvblrClass.css 'left', (e.offsetX / 100 * 88)
+      self.setVolume (100 - e.offsetX)
+      e.stopPropagation()
       return
 
     @$('.mpcdm').click ->

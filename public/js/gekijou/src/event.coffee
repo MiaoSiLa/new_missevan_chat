@@ -250,6 +250,17 @@ class GEventManager
 
     res
 
+  setVolume: (volume = -1) ->
+    if volume is -1
+      volume = GG.gekijou.tb.getVolume()
+    _curev = @current()
+    if _curev
+      for ac in _curev.actions
+        if ac.type is 'sound'
+          if ac.sound
+            ac.sound.setVolume volume
+    return
+
   runAtTime: (time) ->
     tt = 0
     for ev, i in @events
@@ -268,7 +279,9 @@ class GEventManager
     @_currentIndex
 
   run: ->
-    if @_event then @_event.run()
+    if @_event
+      @setVolume()
+      @_event.run()
     return
 
   add: (name, time = 2000, id = -1) ->

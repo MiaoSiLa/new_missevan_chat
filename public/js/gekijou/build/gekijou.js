@@ -1,8 +1,8 @@
 
 /*
   Author: tengattack
-  Version: 0.1.0
-  Update: 2014/02/13
+  Version: 0.1.3
+  Update: 2014/03/13
  */
 var Gekijou;
 
@@ -224,6 +224,7 @@ Gekijou = (function() {
     if (this._playedtime <= 0) {
       this.em.run();
     }
+    soundManager.resumeAll();
   };
 
   Gekijou.prototype.pause = function() {
@@ -232,6 +233,7 @@ Gekijou = (function() {
       clearInterval(this._timer);
       this._timer = 0;
       this.pb.pause();
+      soundManager.pauseAll();
     }
   };
 
