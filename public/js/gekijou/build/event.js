@@ -353,6 +353,20 @@ GEventManager = (function() {
     }
   };
 
+  GEventManager.prototype.getClosetIndex = function(time) {
+    var ev, i, tt, _i, _len, _ref;
+    tt = 0;
+    _ref = this.events;
+    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+      ev = _ref[i];
+      if (tt > time) {
+        return i - 1;
+      }
+      tt += ev.realtime();
+    }
+    return this.events.length - 1;
+  };
+
   GEventManager.prototype.runAtTime = function(time) {
     var ev, i, tt, _i, _len, _ref;
     tt = 0;

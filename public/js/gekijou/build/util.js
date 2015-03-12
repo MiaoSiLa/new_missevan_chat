@@ -376,8 +376,32 @@ Playbar = (function(_super) {
   }
 
   Playbar.prototype.bind = function() {
+    var $mpo;
     this.$('.mpi').click(function() {
       GG.gekijou.emit('play');
+    });
+    this.$('.mpfo').click(function(e) {
+      var pos;
+      pos = 1 - e.offsetY / $(this).height();
+      GG.gekijou.emit('pos', pos);
+    });
+    $mpo = this.$('.mpo');
+    this.$('.mplr').draggable({
+      axis: 'y',
+      containment: $mpo,
+      drag: function() {
+        GG.gekijou.emit('pause');
+      },
+      stop: function() {
+        var $this, h, py, y, ypos;
+        $this = $(this);
+        y = $this.offset().top;
+        py = $mpo.offset().top;
+        h = $mpo.height();
+        ypos = h - (y - py);
+        $this.attr('style', '');
+        GG.gekijou.emit('pos', ypos / h);
+      }
     });
     if (GG.env !== 'dev') {
       this.$('.mpiloopo').click(function() {
@@ -405,7 +429,7 @@ Playbar = (function(_super) {
   };
 
   Playbar.prototype.clear = function() {
-    return this.$('.mpfo').html('');
+    return this.$('.mpfs').html('');
   };
 
   Playbar.prototype.data = function(pns) {
@@ -421,7 +445,7 @@ Playbar = (function(_super) {
       }
       html += "</div>";
     }
-    this.$('.mpfo').html(html);
+    this.$('.mpfs').html(html);
     this._data = pns;
     if (GG.env === 'dev') {
       self = this;
@@ -432,11 +456,7 @@ Playbar = (function(_super) {
             GG.gekijou.pause();
           }
           GG.gekijou.reset();
-          self.moveToIndex(i);
-          self.pause();
-          GG.em.current(i);
-          GG.gekijou.played(i);
-          return GG.em.run();
+          return GG.gekijou.moveTo(i);
         }
       });
     }

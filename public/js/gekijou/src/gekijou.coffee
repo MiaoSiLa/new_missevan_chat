@@ -138,12 +138,24 @@ class Gekijou
         cb()
     return
 
-  emit: (event) ->
-    @on event
+  moveTo: (i) ->
+    @pb.moveToIndex i
+    @em.current i
+    @played i
+    soundManager.stopAll()
+    @em.run()
     return
 
-  on: (event) ->
+  emit: (event, val) ->
+    @on event, val
+    return
+
+  on: (event, val) ->
     switch event
+      when 'pause'
+        # only pause
+        if @_playing
+          @pause()
       when 'play'
         if @_playing
           @pause()
@@ -151,6 +163,14 @@ class Gekijou
           if @_finished
             # or GG.env is 'dev'
             @reset()
+          @play()
+      when 'pos'
+        i = @em.getClosetIndex val * @em.totaltime()
+        if i >= 0
+          if @_playing
+            @pause()
+          @reset()
+          @moveTo i
           @play()
       when 'end'
         @finish()
@@ -168,6 +188,8 @@ class Gekijou
 
   played: (i) ->
     @_playedtime = @em.totaltime i
+    if @_playedtime <= 0
+      @_playedtime = 1
 
   play: (untilIndex = -1) ->
     if @_playing then return
@@ -185,6 +207,7 @@ class Gekijou
         i = self.em.runAtTime self._playedtime
 
         pos = self._playedtime / self.em.totaltime()
+        if pos > 1 then pos = 1
         self.pb.pos pos
 
         if i is untilIndex

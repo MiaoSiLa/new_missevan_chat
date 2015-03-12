@@ -17,6 +17,10 @@
     height: 500px;
   }
 
+  .mpo {
+    cursor: pointer;
+  }
+
   .mppl, .mpl, .mpo, .mpfo {
     width: 3px;
 
@@ -27,6 +31,7 @@
 
   .mplr {
     right: -6px;
+    pointer-events: auto;
   }
 
   .mpo, .mpfo {
@@ -35,13 +40,23 @@
 
   /* 事件列表 */
   .mpfo {
-    padding: 0;
-    top: -6px;
+    top: initial;
+
+    padding: 0 10px;
+    left: -10px;
+
+    .mpfs {
+      position: absolute;
+      top: -6px;
+      width: 3px;
+      height: 100%;
+    }
 
     .mpf {
       top: initial;
       margin-left: 0;
       border: none;
+      pointer-events: auto;
     }
 
     .mpfl {

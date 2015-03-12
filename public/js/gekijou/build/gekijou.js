@@ -157,12 +157,26 @@ Gekijou = (function() {
     }
   };
 
-  Gekijou.prototype.emit = function(event) {
-    this.on(event);
+  Gekijou.prototype.moveTo = function(i) {
+    this.pb.moveToIndex(i);
+    this.em.current(i);
+    this.played(i);
+    soundManager.stopAll();
+    this.em.run();
   };
 
-  Gekijou.prototype.on = function(event) {
+  Gekijou.prototype.emit = function(event, val) {
+    this.on(event, val);
+  };
+
+  Gekijou.prototype.on = function(event, val) {
+    var i;
     switch (event) {
+      case 'pause':
+        if (this._playing) {
+          this.pause();
+        }
+        break;
       case 'play':
         if (this._playing) {
           this.pause();
@@ -170,6 +184,17 @@ Gekijou = (function() {
           if (this._finished) {
             this.reset();
           }
+          this.play();
+        }
+        break;
+      case 'pos':
+        i = this.em.getClosetIndex(val * this.em.totaltime());
+        if (i >= 0) {
+          if (this._playing) {
+            this.pause();
+          }
+          this.reset();
+          this.moveTo(i);
           this.play();
         }
         break;
@@ -193,7 +218,10 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.played = function(i) {
-    return this._playedtime = this.em.totaltime(i);
+    this._playedtime = this.em.totaltime(i);
+    if (this._playedtime <= 0) {
+      return this._playedtime = 1;
+    }
   };
 
   Gekijou.prototype.play = function(untilIndex) {
@@ -216,6 +244,9 @@ Gekijou = (function() {
       self._lastplaytime = curtime;
       i = self.em.runAtTime(self._playedtime);
       pos = self._playedtime / self.em.totaltime();
+      if (pos > 1) {
+        pos = 1;
+      }
       self.pb.pos(pos);
       if (i === untilIndex) {
         return self.pause();

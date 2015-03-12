@@ -14,6 +14,9 @@
 #m .mpb {
   height: 500px;
 }
+#m .mpo {
+  cursor: pointer;
+}
 #m .mppl,
 #m .mpl,
 #m .mpo,
@@ -25,19 +28,28 @@
 }
 #m .mplr {
   right: -6px;
+  pointer-events: auto;
 }
 #m .mpo,
 #m .mpfo {
   height: 100%;
 }
 #m .mpfo {
-  padding: 0;
+  top: initial;
+  padding: 0 10px;
+  left: -10px;
+}
+#m .mpfo .mpfs {
+  position: absolute;
   top: -6px;
+  width: 3px;
+  height: 100%;
 }
 #m .mpfo .mpf {
   top: initial;
   margin-left: 0;
   border: none;
+  pointer-events: auto;
 }
 #m .mpfo .mpfl {
   margin-left: -10px;

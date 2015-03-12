@@ -261,6 +261,14 @@ class GEventManager
             ac.sound.setVolume volume
     return
 
+  getClosetIndex: (time) ->
+    tt = 0
+    for ev, i in @events
+      if tt > time
+        return i - 1
+      tt += ev.realtime()
+    return @events.length - 1
+
   runAtTime: (time) ->
     tt = 0
     for ev, i in @events

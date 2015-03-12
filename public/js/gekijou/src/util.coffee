@@ -302,6 +302,30 @@ class Playbar extends ControlBar
     @$('.mpi').click ->
       GG.gekijou.emit 'play'
       return
+
+    @$('.mpfo').click (e) ->
+      pos = 1 - e.offsetY / $(this).height()
+      GG.gekijou.emit 'pos', pos
+      return
+
+    $mpo = @$ '.mpo'
+    @$('.mplr').draggable
+      axis: 'y',
+      containment: $mpo,
+      drag: ->
+        GG.gekijou.emit 'pause'
+        return
+      ,
+      stop: ->
+        $this = $(this)
+        y = $this.offset().top
+        py = $mpo.offset().top
+        h = $mpo.height()
+        ypos = h - (y - py)
+        $this.attr 'style', ''
+        GG.gekijou.emit 'pos', ypos / h
+        return
+
     if GG.env isnt 'dev'
       @$('.mpiloopo').click ->
         $this = $(this)
@@ -325,7 +349,7 @@ class Playbar extends ControlBar
     @$('.mpl').css 'height', "#{p}%"
 
   clear: ->
-    @$('.mpfo').html ''
+    @$('.mpfs').html ''
 
   data: (pns) ->
     html = ''
@@ -343,7 +367,7 @@ class Playbar extends ControlBar
 
       html += "</div>"
 
-    @$('.mpfo').html html
+    @$('.mpfs').html html
     @_data = pns
 
     if GG.env is 'dev'
@@ -357,12 +381,7 @@ class Playbar extends ControlBar
           GG.gekijou.reset()
 
           # only play this event
-          self.moveToIndex i
-          self.pause()
-
-          GG.em.current i
-          GG.gekijou.played i
-          GG.em.run()
+          GG.gekijou.moveTo i
 
     return
 
