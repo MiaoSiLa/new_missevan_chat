@@ -197,6 +197,9 @@ class GEventManager
       @_event = @events[i]
     @_event
 
+  currentIndex: ->
+    @_currentIndex
+
   next: ->
     if @_currentIndex < @events.length - 1
       @_currentIndex++
@@ -290,6 +293,13 @@ class GEventManager
     if @_event
       @setVolume()
       @_event.run()
+    return
+
+  get: (i) ->
+    @events[i]
+
+  del: (i) ->
+    @events.splice i, 1
     return
 
   add: (name, time = 2000, id = -1) ->

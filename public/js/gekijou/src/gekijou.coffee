@@ -61,7 +61,7 @@ class Gekijou
     return
 
   # 重新排布播放条
-  rearrange: ->
+  rearrange: (keep = no) ->
     @pb.clear()
 
     timecount = 0
@@ -78,6 +78,13 @@ class Gekijou
       pns[0].pos = 0.5
 
     @pb.data pns
+
+    if keep
+      i = @em.currentIndex()
+      if i >= 0
+        @pb.moveToIndex i
+        return
+
     if GG.env is 'dev'
       @pb.moveToLast()
     else

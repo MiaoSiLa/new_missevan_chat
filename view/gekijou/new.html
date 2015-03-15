@@ -55,6 +55,25 @@ pageStyles = dev_mode ? [
     </div>
   </div>
 
+  <div id="editeventmodal" class='m_c' data-width="600" style="display:none;">
+    <div class="e_t">
+      <form id="editeventform">
+        <div class="inputgroup">
+          <label class="label pie" for="editevent_name">事件名</label>
+          <input class="label_input pie" name="editevent[name]" id="editevent_name" type="text">
+        </div>
+        <div class="inputgroup">
+          <label class="label pie" for="editevent_time">事件持续</label>
+          <input class="label_input pie" name="editevent[time]" id="editevent_time" type="text" placeholder="毫秒" value="2000">
+        </div>
+        <div class="formactions">
+          <input id="editeventdelbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="删除">
+          <input id="editeventokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="newcharamodal" class='m_c' data-width="600" style="display:none;">
     <div class="e_t">
       <form id="newcharaform">

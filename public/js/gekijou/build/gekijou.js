@@ -62,8 +62,11 @@ Gekijou = (function() {
     });
   };
 
-  Gekijou.prototype.rearrange = function() {
-    var cur, e, pns, timecount, _i, _j, _len, _len1, _ref, _ref1;
+  Gekijou.prototype.rearrange = function(keep) {
+    var cur, e, i, pns, timecount, _i, _j, _len, _len1, _ref, _ref1;
+    if (keep == null) {
+      keep = false;
+    }
     this.pb.clear();
     timecount = 0;
     _ref = this.em.events;
@@ -87,6 +90,13 @@ Gekijou = (function() {
       pns[0].pos = 0.5;
     }
     this.pb.data(pns);
+    if (keep) {
+      i = this.em.currentIndex();
+      if (i >= 0) {
+        this.pb.moveToIndex(i);
+        return;
+      }
+    }
     if (GG.env === 'dev') {
       this.pb.moveToLast();
     } else {

@@ -433,7 +433,7 @@ Playbar = (function(_super) {
   };
 
   Playbar.prototype.data = function(pns) {
-    var html, i, name, pn, pos, self, _i, _len;
+    var evlabels, html, i, name, pn, pos, self, _i, _len;
     html = '';
     for (i = _i = 0, _len = pns.length; _i < _len; i = ++_i) {
       pn = pns[i];
@@ -449,7 +449,8 @@ Playbar = (function(_super) {
     this._data = pns;
     if (GG.env === 'dev') {
       self = this;
-      this.$('.mpfi').click(function(e) {
+      evlabels = this.$('.mpfi');
+      evlabels.click(function(e) {
         var charaId;
         i = $(this).data('event-index');
         if (i >= 0) {
@@ -462,6 +463,21 @@ Playbar = (function(_super) {
           if (GG.chara.currentId() !== charaId) {
             GG.chara.selectId(charaId);
           }
+        }
+        e.stopPropagation();
+      });
+      evlabels.dblclick(function(e) {
+        var ev, modal;
+        i = $(this).data('event-index');
+        if (i >= 0) {
+          ev = GG.em.get(i);
+        }
+        if (ev) {
+          modal = $('#editeventmodal');
+          modal.data('event-index', i);
+          modal.find('#editevent_name').val(ev.name);
+          modal.find('#editevent_time').val(ev.time);
+          moTool.showModalBox(modal);
         }
         e.stopPropagation();
       });
@@ -665,12 +681,39 @@ Editorbar = (function(_super) {
       var modal, name, time;
       modal = $('#neweventmodal');
       name = modal.find('#newevent_name').val();
-      time = modal.find('#newevent_time').val();
-      if (name) {
-        self.em.add(name, parseInt(time));
+      time = parseInt(modal.find('#newevent_time').val());
+      if (name && time >= 0) {
+        self.em.add(name, time);
         self.gekijou.rearrange();
         moTool.hideModalBox(modal);
       }
+    });
+    $('#editeventokbtn').click(function() {
+      var ev, i, modal, name, time;
+      modal = $('#editeventmodal');
+      i = modal.data('event-index');
+      name = modal.find('#editevent_name').val();
+      time = parseInt(modal.find('#editevent_time').val());
+      if (name && time >= 0) {
+        ev = self.em.get(i);
+      }
+      if (ev) {
+        ev.name = name;
+        ev.time = time;
+        self.gekijou.rearrange(true);
+        moTool.hideModalBox(modal);
+      }
+    });
+    $('#editeventdelbtn').click(function() {
+      var ev, i, modal;
+      modal = $('#editeventmodal');
+      i = modal.data('event-index');
+      if (i >= 0) {
+        ev = self.em.del(i);
+        self.gekijou.reset();
+        self.gekijou.rearrange();
+      }
+      moTool.hideModalBox(modal);
     });
     $gsavebtn = this.pb.$('#mpisave');
     $gsavebtn.click(function() {

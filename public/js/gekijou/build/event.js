@@ -260,6 +260,10 @@ GEventManager = (function() {
     return this._event;
   };
 
+  GEventManager.prototype.currentIndex = function() {
+    return this._currentIndex;
+  };
+
   GEventManager.prototype.next = function() {
     if (this._currentIndex < this.events.length - 1) {
       this._currentIndex++;
@@ -396,6 +400,14 @@ GEventManager = (function() {
       this.setVolume();
       this._event.run();
     }
+  };
+
+  GEventManager.prototype.get = function(i) {
+    return this.events[i];
+  };
+
+  GEventManager.prototype.del = function(i) {
+    this.events.splice(i, 1);
   };
 
   GEventManager.prototype.add = function(name, time, id) {

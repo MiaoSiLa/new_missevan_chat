@@ -373,7 +373,8 @@ class Playbar extends ControlBar
     if GG.env is 'dev'
       # bind click event
       self = @
-      @$('.mpfi').click (e) ->
+      evlabels = @$ '.mpfi'
+      evlabels.click (e) ->
         i = $(this).data 'event-index'
         if i >= 0
           # need keep current chara
@@ -389,6 +390,19 @@ class Playbar extends ControlBar
           if GG.chara.currentId() isnt charaId
             GG.chara.selectId charaId
 
+        e.stopPropagation()
+        return
+
+      evlabels.dblclick (e) ->
+        i = $(this).data 'event-index'
+        if i >= 0
+          ev = GG.em.get i
+        if ev
+          modal = $ '#editeventmodal'
+          modal.data 'event-index', i
+          modal.find('#editevent_name').val ev.name
+          modal.find('#editevent_time').val ev.time
+          moTool.showModalBox modal
         e.stopPropagation()
         return
 
@@ -569,13 +583,45 @@ class Editorbar extends ControlBar
     $('#neweventokbtn').click ->
       modal = $ '#neweventmodal'
       name = modal.find('#newevent_name').val()
-      time = modal.find('#newevent_time').val()
+      time = parseInt modal.find('#newevent_time').val()
 
-      if name
-        self.em.add name, parseInt time
+      if name and time >= 0
+        self.em.add name, time
         self.gekijou.rearrange()
 
         moTool.hideModalBox modal
+      return
+
+    # 修改事件
+    $('#editeventokbtn').click ->
+      modal = $ '#editeventmodal'
+
+      i = modal.data 'event-index'
+      name = modal.find('#editevent_name').val()
+      time = parseInt modal.find('#editevent_time').val()
+
+      if name and time >= 0
+        ev = self.em.get i
+      if ev
+        ev.name = name
+        ev.time = time
+        self.gekijou.rearrange on
+
+        moTool.hideModalBox modal
+      return
+
+    # 删除事件
+    $('#editeventdelbtn').click ->
+      modal = $ '#editeventmodal'
+
+      i = modal.data 'event-index'
+
+      if i >= 0
+        ev = self.em.del i
+        self.gekijou.reset()
+        self.gekijou.rearrange()
+
+      moTool.hideModalBox modal
       return
 
     # 保存
