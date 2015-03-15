@@ -60,7 +60,7 @@ GAction = (function() {
     action = this;
     this.load(function() {
       var msg;
-      if (action.chara && GG.gekijou.isplaying()) {
+      if (action.chara) {
         GG.chara.selectId(action.chara);
       }
       switch (action.type) {

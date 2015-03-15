@@ -527,20 +527,19 @@ Toolbar = (function(_super) {
     GG.em.setVolume(volume);
   };
 
-  Toolbar.prototype.getVolume = function(volume) {
+  Toolbar.prototype.getVolume = function() {
     return this._volume;
   };
 
   Toolbar.prototype.initVolume = function() {
     var volume;
     volume = parseInt(store.get('volume'));
-    if (volume !== NaN) {
-      this.$('.mpsvblr').css('left', (100 - volume) / 100 * 88);
-      this.$('.mpsvbl').css('width', volume);
-      this._volume = volume;
-    } else {
-      this._volume = 100;
+    if (!volume || volume !== 0) {
+      volume = 100;
     }
+    this.$('.mpsvblr').css('left', (100 - volume) / 100 * 88);
+    this.$('.mpsvbl').css('width', volume);
+    this._volume = volume;
   };
 
   Toolbar.prototype.bind = function() {

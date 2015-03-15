@@ -438,17 +438,18 @@ class Toolbar extends ControlBar
     GG.em.setVolume volume
     return
 
-  getVolume: (volume) ->
+  getVolume: ->
     @_volume
 
   initVolume: ->
     volume = parseInt store.get('volume')
-    if volume isnt NaN
-      @$('.mpsvblr').css 'left', (100 - volume) / 100 * 88
-      @$('.mpsvbl').css 'width', volume
-      @_volume = volume
-    else
-      @_volume = 100
+    if not volume or volume isnt 0
+      volume = 100
+
+    @$('.mpsvblr').css 'left', (100 - volume) / 100 * 88
+    @$('.mpsvbl').css 'width', volume
+    @_volume = volume
+
     return
 
   bind: ->

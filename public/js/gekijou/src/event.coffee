@@ -47,7 +47,9 @@ class GAction
   run: (cb) ->
     action = @
     @load ->
-      if action.chara and GG.gekijou.isplaying()
+      # TODO: when in dev need keep current chara
+      # and GG.gekijou.isplaying()
+      if action.chara
         # 切换角色
         GG.chara.selectId action.chara
 
