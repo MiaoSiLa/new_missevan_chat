@@ -25,7 +25,7 @@ class Chara
       iconcolor: c.iconcolor
     id
 
-  current: ->
+  currentId: ->
     if @_sel >= 0
       return @charas[@_sel].id
     -1

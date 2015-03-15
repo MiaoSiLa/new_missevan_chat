@@ -47,8 +47,6 @@ class GAction
   run: (cb) ->
     action = @
     @load ->
-      # TODO: when in dev need keep current chara
-      # and GG.gekijou.isplaying()
       if action.chara
         # 切换角色
         GG.chara.selectId action.chara
@@ -147,23 +145,23 @@ class GEvent
   # parse action text
   parseAction: (text) ->
     if text[0] isnt '/'
-      @action 'text', GG.chara.current(), text
+      @action 'text', GG.chara.currentId(), text
     else
       cmds = GG.util.splitcommand text
       switch cmds[0]
         when 'sound'
           soundid = parseInt cmds[1]
           if soundid
-            @action 'sound', GG.chara.current(), soundid
+            @action 'sound', GG.chara.currentId(), soundid
         when 'state'
           state = cmds[1]
           if state
-            @action 'state', GG.chara.current(), state
+            @action 'state', GG.chara.currentId(), state
         # 其他特殊动作
         # do some thing
 
   showImage: (url) ->
-    @action 'image', GG.chara.current(), url
+    @action 'image', GG.chara.currentId(), url
 
   # parse
   parse: (block) ->

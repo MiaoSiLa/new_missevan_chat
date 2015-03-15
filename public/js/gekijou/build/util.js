@@ -449,15 +449,21 @@ Playbar = (function(_super) {
     this._data = pns;
     if (GG.env === 'dev') {
       self = this;
-      this.$('.mpfi').click(function() {
+      this.$('.mpfi').click(function(e) {
+        var charaId;
         i = $(this).data('event-index');
         if (i >= 0) {
+          charaId = GG.chara.currentId();
           if (GG.gekijou.isplaying()) {
             GG.gekijou.pause();
           }
           GG.gekijou.reset();
-          return GG.gekijou.moveTo(i);
+          GG.gekijou.moveTo(i);
+          if (GG.chara.currentId() !== charaId) {
+            GG.chara.selectId(charaId);
+          }
         }
+        e.stopPropagation();
       });
     }
   };

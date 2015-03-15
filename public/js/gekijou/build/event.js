@@ -190,27 +190,27 @@ GEvent = (function() {
   GEvent.prototype.parseAction = function(text) {
     var cmds, soundid, state;
     if (text[0] !== '/') {
-      return this.action('text', GG.chara.current(), text);
+      return this.action('text', GG.chara.currentId(), text);
     } else {
       cmds = GG.util.splitcommand(text);
       switch (cmds[0]) {
         case 'sound':
           soundid = parseInt(cmds[1]);
           if (soundid) {
-            return this.action('sound', GG.chara.current(), soundid);
+            return this.action('sound', GG.chara.currentId(), soundid);
           }
           break;
         case 'state':
           state = cmds[1];
           if (state) {
-            return this.action('state', GG.chara.current(), state);
+            return this.action('state', GG.chara.currentId(), state);
           }
       }
     }
   };
 
   GEvent.prototype.showImage = function(url) {
-    return this.action('image', GG.chara.current(), url);
+    return this.action('image', GG.chara.currentId(), url);
   };
 
   GEvent.prototype.parse = function(block) {

@@ -34,7 +34,7 @@ Chara = (function() {
     return id;
   };
 
-  Chara.prototype.current = function() {
+  Chara.prototype.currentId = function() {
     if (this._sel >= 0) {
       return this.charas[this._sel].id;
     }

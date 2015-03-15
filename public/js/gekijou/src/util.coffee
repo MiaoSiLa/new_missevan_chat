@@ -373,15 +373,24 @@ class Playbar extends ControlBar
     if GG.env is 'dev'
       # bind click event
       self = @
-      @$('.mpfi').click ->
+      @$('.mpfi').click (e) ->
         i = $(this).data 'event-index'
         if i >= 0
+          # need keep current chara
+          charaId = GG.chara.currentId()
+
           if GG.gekijou.isplaying()
             GG.gekijou.pause()
           GG.gekijou.reset()
 
           # only play this event
           GG.gekijou.moveTo i
+
+          if GG.chara.currentId() isnt charaId
+            GG.chara.selectId charaId
+
+        e.stopPropagation()
+        return
 
     return
 
