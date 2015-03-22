@@ -85,9 +85,7 @@ class Gekijou
         @pb.moveToIndex i
         return
 
-    if GG.env is 'dev'
-      @pb.moveToLast()
-    else
+    if GG.env isnt 'dev'
       @pb.moveToBegin()
 
     return

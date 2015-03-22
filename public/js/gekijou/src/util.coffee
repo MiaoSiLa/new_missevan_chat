@@ -586,8 +586,9 @@ class Editorbar extends ControlBar
       time = parseInt modal.find('#newevent_time').val()
 
       if name and time >= 0
-        self.em.add name, time
-        self.gekijou.rearrange()
+        self.em.insert name, time
+        self.gekijou.rearrange on
+        self.gekijou.played self.em.currentIndex()
 
         moTool.hideModalBox modal
       return

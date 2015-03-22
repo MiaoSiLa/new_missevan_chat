@@ -683,8 +683,9 @@ Editorbar = (function(_super) {
       name = modal.find('#newevent_name').val();
       time = parseInt(modal.find('#newevent_time').val());
       if (name && time >= 0) {
-        self.em.add(name, time);
-        self.gekijou.rearrange();
+        self.em.insert(name, time);
+        self.gekijou.rearrange(true);
+        self.gekijou.played(self.em.currentIndex());
         moTool.hideModalBox(modal);
       }
     });

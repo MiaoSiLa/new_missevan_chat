@@ -302,6 +302,18 @@ class GEventManager
     @events.splice i, 1
     return
 
+  insert: (name, time = 2000) ->
+    if 0 <= @_currentIndex < @events.length - 1
+      id = @_lastid++
+      ev = new GEvent id, name, time
+      @events.splice @_currentIndex + 1, 0, ev
+      @_event = ev
+      @_currentIndex++
+      @_timecount += ev.realtime()
+    else
+      ev = @add name, time
+    ev
+
   add: (name, time = 2000, id = -1) ->
     if id is -1
       id = @_lastid++
@@ -310,6 +322,7 @@ class GEventManager
     ev = new GEvent id, name, time
     @events.push ev
     @_event = ev
+    @_currentIndex = @events.length - 1
     @_timecount += ev.realtime()
     ev
 

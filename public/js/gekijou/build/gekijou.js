@@ -97,9 +97,7 @@ Gekijou = (function() {
         return;
       }
     }
-    if (GG.env === 'dev') {
-      this.pb.moveToLast();
-    } else {
+    if (GG.env !== 'dev') {
       this.pb.moveToBegin();
     }
   };

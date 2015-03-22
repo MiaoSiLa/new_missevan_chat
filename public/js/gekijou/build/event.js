@@ -410,6 +410,24 @@ GEventManager = (function() {
     this.events.splice(i, 1);
   };
 
+  GEventManager.prototype.insert = function(name, time) {
+    var ev, id, _ref;
+    if (time == null) {
+      time = 2000;
+    }
+    if ((0 <= (_ref = this._currentIndex) && _ref < this.events.length - 1)) {
+      id = this._lastid++;
+      ev = new GEvent(id, name, time);
+      this.events.splice(this._currentIndex + 1, 0, ev);
+      this._event = ev;
+      this._currentIndex++;
+      this._timecount += ev.realtime();
+    } else {
+      ev = this.add(name, time);
+    }
+    return ev;
+  };
+
   GEventManager.prototype.add = function(name, time, id) {
     var ev;
     if (time == null) {
@@ -426,6 +444,7 @@ GEventManager = (function() {
     ev = new GEvent(id, name, time);
     this.events.push(ev);
     this._event = ev;
+    this._currentIndex = this.events.length - 1;
     this._timecount += ev.realtime();
     return ev;
   };
