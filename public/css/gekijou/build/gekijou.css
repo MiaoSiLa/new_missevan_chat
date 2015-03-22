@@ -1,6 +1,7 @@
 #m {
   background: none;
   box-shadow: none;
+  width: auto;
   height: auto;
   /* 事件列表 */
   /* 播放暂停按钮 */

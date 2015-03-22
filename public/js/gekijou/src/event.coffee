@@ -44,6 +44,22 @@ class GAction
 
     return
 
+  attacheditor: ->
+    if @line >= 0
+      $line = $ '#chatline' + @line
+      $line.prepend """
+                    <div class="line-editor" data-line="#{@line}" data-actionid="">
+                      <div class="line-del">x</div>
+                    </div>
+                    """
+      $line.find('.line-del').click (e) ->
+        line = $(this).parent().data('line')
+        if GG.em.removeLine parseInt(line)
+          $line.remove()
+        e.stopPropagation()
+        return
+    return
+
   run: (cb) ->
     action = @
     @load ->
@@ -51,19 +67,29 @@ class GAction
         # 切换角色
         GG.chara.selectId action.chara
 
+      callback = ->
+        if GG.env is 'dev'
+          action.attacheditor()
+
+        cb() if cb?
+
       switch action.type
         when 'text'
+          action.line = index.mo.chatLine
           chatBox.loadBubble
             msg: action.val,
             type: 1,
             sender: index.mo.sender
-          cb() if cb?
+          callback()
         when 'state'
           chatBox.loadMemberState { username: index.mo.sender.name }, action.val
-          cb() if cb?
+          # TODO add pos
+          # action.line = index.mo.chatLine
+          callback()
         when 'image'
           chatBox.loadBubble { msg: action.val, type: 7, sender: index.mo.sender }, ->
-            cb() if cb?
+            action.line = index.mo.chatLine - 1
+            callback()
             return
         when 'sound'
           msg = JSON.stringify action.Jsound
@@ -74,7 +100,9 @@ class GAction
             type: 6,
             sender: index.mo.sender
 
-          cb() if cb?
+          #action.line = index.mo.chatLine
+
+          callback()
 
     return
 
@@ -88,7 +116,6 @@ class GEvent
 
     switch type
       when 'text'
-        an.line = index.mo.chatLine
         an.chara = @parseCharaId(val1)
         an.val = val2
         if not norun
@@ -99,11 +126,9 @@ class GEvent
         an.val = val2
         if not norun
           an.run ->
-            an.line = index.mo.chatLine - 1
             #image do some thing here
 
       when 'sound'
-        an.line = index.mo.chatLine
         an.chara = @parseCharaId(val1)
         an.val = val2
         if not norun
@@ -111,8 +136,6 @@ class GEvent
             # TODO: show some tips in stage
 
       when 'state'
-        # TODO add pos
-        an.line = index.mo.chatLine
         an.chara = @parseCharaId(val1)
         an.val = val2
         if not norun
@@ -122,6 +145,15 @@ class GEvent
 
     @actions.push an
     return
+
+  removeLine: (line) ->
+    found = no
+    for ac, i in @actions
+      if ac.line is line
+        @actions.splice i, 1
+        found = on
+        break
+    found
 
   run: (i = 0) ->
     if i < @actions.length
@@ -272,6 +304,21 @@ class GEventManager
       tt += ev.realtime()
     return @events.length - 1
 
+  removeLine: (line) ->
+    ev = @current()
+    found = no
+
+    if ev
+      if ev.removeLine line
+        found = on
+
+    if not found
+      for ev in @events
+        if ev.removeLine line
+          found = on
+
+    found
+
   runAtTime: (time) ->
     tt = 0
     for ev, i in @events
@@ -294,6 +341,9 @@ class GEventManager
       @setVolume()
       @_event.run()
     return
+
+  length: ->
+    @events.length
 
   get: (i) ->
     @events[i]

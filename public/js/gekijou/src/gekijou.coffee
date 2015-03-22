@@ -32,13 +32,20 @@ class Gekijou
       @opts[k] = v
     @opts
 
-  # stage & element init
-  init: (cb) ->
+  initChatBox: ->
     chatBox.loadChatOption()
     chatBox.loadUser()
+    # override old func
+    chatBox.insertPrivateBox = ->
+      return
 
     if not chatBox.isMobile
       index.js.loadChatDm()
+    return
+
+  # stage & element init
+  init: (cb) ->
+    @initChatBox()
 
     # binding bars
     @pb.bind()
@@ -87,6 +94,10 @@ class Gekijou
 
     if GG.env isnt 'dev'
       @pb.moveToBegin()
+    else
+      len = @em.length()
+      if len > 0
+        @moveTo len - 1
 
     return
 

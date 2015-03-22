@@ -149,3 +149,16 @@
 #charamodal .s_m_t_r_b.s_m_t_r_b_a {
   background-color: #444;
 }
+.line-editor {
+  position: absolute;
+  z-index: 50;
+}
+.line-editor .line-del {
+  background-color: red;
+  text-align: center;
+  line-height: 16px;
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}

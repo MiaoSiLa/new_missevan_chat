@@ -55,42 +55,60 @@ GAction = (function() {
     }
   };
 
+  GAction.prototype.attacheditor = function() {
+    var $line;
+    if (this.line >= 0) {
+      $line = $('#chatline' + this.line);
+      $line.prepend("<div class=\"line-editor\" data-line=\"" + this.line + "\" data-actionid=\"\">\n  <div class=\"line-del\">x</div>\n</div>");
+      $line.find('.line-del').click(function(e) {
+        var line;
+        line = $(this).parent().data('line');
+        if (GG.em.removeLine(parseInt(line))) {
+          $line.remove();
+        }
+        e.stopPropagation();
+      });
+    }
+  };
+
   GAction.prototype.run = function(cb) {
     var action;
     action = this;
     this.load(function() {
-      var msg;
+      var callback, msg;
       if (action.chara) {
         GG.chara.selectId(action.chara);
       }
+      callback = function() {
+        if (GG.env === 'dev') {
+          action.attacheditor();
+        }
+        if (cb != null) {
+          return cb();
+        }
+      };
       switch (action.type) {
         case 'text':
+          action.line = index.mo.chatLine;
           chatBox.loadBubble({
             msg: action.val,
             type: 1,
             sender: index.mo.sender
           });
-          if (cb != null) {
-            return cb();
-          }
-          break;
+          return callback();
         case 'state':
           chatBox.loadMemberState({
             username: index.mo.sender.name
           }, action.val);
-          if (cb != null) {
-            return cb();
-          }
-          break;
+          return callback();
         case 'image':
           return chatBox.loadBubble({
             msg: action.val,
             type: 7,
             sender: index.mo.sender
           }, function() {
-            if (cb != null) {
-              cb();
-            }
+            action.line = index.mo.chatLine - 1;
+            callback();
           });
         case 'sound':
           msg = JSON.stringify(action.Jsound);
@@ -99,9 +117,7 @@ GAction = (function() {
             type: 6,
             sender: index.mo.sender
           });
-          if (cb != null) {
-            return cb();
-          }
+          return callback();
       }
     });
   };
@@ -123,7 +139,6 @@ GEvent = (function() {
     an = new GAction(type);
     switch (type) {
       case 'text':
-        an.line = index.mo.chatLine;
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
@@ -134,13 +149,10 @@ GEvent = (function() {
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
-          an.run(function() {
-            return an.line = index.mo.chatLine - 1;
-          });
+          an.run(function() {});
         }
         break;
       case 'sound':
-        an.line = index.mo.chatLine;
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
@@ -148,7 +160,6 @@ GEvent = (function() {
         }
         break;
       case 'state':
-        an.line = index.mo.chatLine;
         an.chara = this.parseCharaId(val1);
         an.val = val2;
         if (!norun) {
@@ -159,6 +170,21 @@ GEvent = (function() {
         return;
     }
     this.actions.push(an);
+  };
+
+  GEvent.prototype.removeLine = function(line) {
+    var ac, found, i, _i, _len, _ref;
+    found = false;
+    _ref = this.actions;
+    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+      ac = _ref[i];
+      if (ac.line === line) {
+        this.actions.splice(i, 1);
+        found = true;
+        break;
+      }
+    }
+    return found;
   };
 
   GEvent.prototype.run = function(i) {
@@ -371,6 +397,27 @@ GEventManager = (function() {
     return this.events.length - 1;
   };
 
+  GEventManager.prototype.removeLine = function(line) {
+    var ev, found, _i, _len, _ref;
+    ev = this.current();
+    found = false;
+    if (ev) {
+      if (ev.removeLine(line)) {
+        found = true;
+      }
+    }
+    if (!found) {
+      _ref = this.events;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ev = _ref[_i];
+        if (ev.removeLine(line)) {
+          found = true;
+        }
+      }
+    }
+    return found;
+  };
+
   GEventManager.prototype.runAtTime = function(time) {
     var ev, i, tt, _i, _len, _ref;
     tt = 0;
@@ -400,6 +447,10 @@ GEventManager = (function() {
       this.setVolume();
       this._event.run();
     }
+  };
+
+  GEventManager.prototype.length = function() {
+    return this.events.length;
   };
 
   GEventManager.prototype.get = function(i) {

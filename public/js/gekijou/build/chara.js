@@ -97,7 +97,7 @@ Chara = (function() {
       var id, sid;
       sid = $(this).attr('id');
       id = parseInt(sid.replace('chara', ''));
-      self.select(id);
+      self.selectId(id);
     });
   };
 

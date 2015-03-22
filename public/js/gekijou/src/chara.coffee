@@ -92,7 +92,7 @@ class Chara
     $modal.find('.charabox').click ->
       sid = $(this).attr 'id'
       id = parseInt sid.replace('chara', '')
-      self.select id
+      self.selectId id
       return
 
     return

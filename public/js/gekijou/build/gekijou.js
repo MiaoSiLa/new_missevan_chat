@@ -36,13 +36,18 @@ Gekijou = (function() {
     return this.opts;
   };
 
-  Gekijou.prototype.init = function(cb) {
-    var gs, script;
+  Gekijou.prototype.initChatBox = function() {
     chatBox.loadChatOption();
     chatBox.loadUser();
+    chatBox.insertPrivateBox = function() {};
     if (!chatBox.isMobile) {
       index.js.loadChatDm();
     }
+  };
+
+  Gekijou.prototype.init = function(cb) {
+    var gs, script;
+    this.initChatBox();
     this.pb.bind();
     this.tb.bind();
     this.util.init();
@@ -63,7 +68,7 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.rearrange = function(keep) {
-    var cur, e, i, pns, timecount, _i, _j, _len, _len1, _ref, _ref1;
+    var cur, e, i, len, pns, timecount, _i, _j, _len, _len1, _ref, _ref1;
     if (keep == null) {
       keep = false;
     }
@@ -99,6 +104,11 @@ Gekijou = (function() {
     }
     if (GG.env !== 'dev') {
       this.pb.moveToBegin();
+    } else {
+      len = this.em.length();
+      if (len > 0) {
+        this.moveTo(len - 1);
+      }
     }
   };
 
