@@ -14,12 +14,15 @@ GekijouEditor = (function() {
   }
 
   GekijouEditor.prototype.init = function(cb) {
+    var self;
+    self = this;
     this.eb.bind();
     this._id = this.eb.getId();
     this.gekijou.setOptions({
       env: 'dev'
     });
     this.gekijou.init(function() {
+      self.gekijou.preload();
       chatBox.addInfo('我是M娘', '欢迎使用小剧场编辑器');
       if (cb != null) {
         cb();
@@ -28,10 +31,16 @@ GekijouEditor = (function() {
   };
 
   GekijouEditor.prototype.generate = function() {
-    var a, c, chara, e, em, script, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+    var a, album, c, chara, e, em, script, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     chara = this.gekijou.chara;
     em = this.gekijou.em;
+    album = this.gekijou.album;
     script = '';
+    script = 'setup {\n';
+    if (album.albums && album.albums.length) {
+      script += "  album " + album.albums.join() + "\n";
+    }
+    script += '}\n\n';
     script += 'chara {\n';
     _ref = chara.charas;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {

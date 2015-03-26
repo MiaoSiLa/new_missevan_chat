@@ -199,6 +199,13 @@ class GEvent
           soundid = parseInt cmds[1]
           if soundid
             @action 'sound', GG.chara.currentId(), soundid
+        when 'album'
+          albumid = parseInt cmds[1]
+          if albumid
+            # add album
+            GG.album.loadAlbum albumid, ->
+              GG.album.showSelect()
+              return
         when 'state'
           state = cmds[1]
           if state
@@ -262,6 +269,11 @@ class GEventManager
           return counttime
         counttime += ev.realtime()
     @_timecount
+
+  doAction: (type, val) ->
+    if @_event
+      @_event.action type, GG.chara.currentId(), val
+    return
 
   moveToBegin: ->
     @_currentIndex = 0

@@ -21,6 +21,7 @@ module.exports = function(grunt) {
         files: {
           'public/js/gekijou/build/util.js': 'public/js/gekijou/src/util.coffee',
           'public/js/gekijou/build/chara.js': 'public/js/gekijou/src/chara.coffee',
+          'public/js/gekijou/build/album.js': 'public/js/gekijou/src/album.coffee',
           'public/js/gekijou/build/editor.js': 'public/js/gekijou/src/editor.coffee',
           'public/js/gekijou/build/gekijou.js': 'public/js/gekijou/src/gekijou.coffee',
           'public/js/gekijou/build/event.js': 'public/js/gekijou/src/event.coffee',
@@ -59,6 +60,7 @@ module.exports = function(grunt) {
           'public/js/gekijou/gekijou.min.js': [
             "public/js/gekijou/build/util.js",
             "public/js/gekijou/build/chara.js",
+            "public/js/gekijou/build/album.js",
             "public/js/gekijou/build/event.js",
             "public/js/gekijou/build/gekijou.js",
           ]

@@ -11,12 +11,15 @@ class GekijouEditor
 
   # stage & element init
   init: (cb) ->
+    self = @
+
     @eb.bind()
     @_id = @eb.getId()
 
     @gekijou.setOptions env: 'dev'
     @gekijou.init () ->
       # editor init
+      self.gekijou.preload()
       chatBox.addInfo '我是M娘', '欢迎使用小剧场编辑器'
 
       cb() if cb?
@@ -27,8 +30,19 @@ class GekijouEditor
   generate: () ->
     chara = @gekijou.chara
     em = @gekijou.em
+    album = @gekijou.album
 
     script = ''
+    script = 'setup {\n'
+
+    # ref gekijou this
+    # script += "  gekijou #{refgekijou._id}\n"
+    # and other setup
+
+    if album.albums and album.albums.length
+      script += "  album " + album.albums.join() + "\n"
+
+    script += '}\n\n'
     script += 'chara {\n'
 
     # chara

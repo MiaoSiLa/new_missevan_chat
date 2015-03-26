@@ -234,7 +234,7 @@ GEvent = (function() {
   };
 
   GEvent.prototype.parseAction = function(text) {
-    var cmds, soundid, state;
+    var albumid, cmds, soundid, state;
     if (text[0] !== '/') {
       return this.action('text', GG.chara.currentId(), text);
     } else {
@@ -244,6 +244,14 @@ GEvent = (function() {
           soundid = parseInt(cmds[1]);
           if (soundid) {
             return this.action('sound', GG.chara.currentId(), soundid);
+          }
+          break;
+        case 'album':
+          albumid = parseInt(cmds[1]);
+          if (albumid) {
+            return GG.album.loadAlbum(albumid, function() {
+              GG.album.showSelect();
+            });
           }
           break;
         case 'state':
@@ -337,6 +345,12 @@ GEventManager = (function() {
       }
     }
     return this._timecount;
+  };
+
+  GEventManager.prototype.doAction = function(type, val) {
+    if (this._event) {
+      this._event.action(type, GG.chara.currentId(), val);
+    }
   };
 
   GEventManager.prototype.moveToBegin = function() {

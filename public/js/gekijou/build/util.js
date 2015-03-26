@@ -149,8 +149,9 @@ Util = (function() {
   Util.prototype.splitcommand = function(text) {
     var clist, cmdlist, cmdname, cmds, key, val, _i, _len;
     cmdlist = {
-      'sound': ['声音', '音频', 'sound'],
-      'state': ['状态', 'state']
+      'sound': ['sound', '声音', '音频'],
+      'album': ['album', '专辑'],
+      'state': ['state', '状态']
     };
     cmds = null;
     if (text[0] === '/') {

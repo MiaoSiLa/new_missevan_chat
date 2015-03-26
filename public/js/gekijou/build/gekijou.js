@@ -12,6 +12,7 @@ Gekijou = (function() {
     this.pb = new Playbar($('#m'));
     this.tb = new Toolbar($('#common-toolbar'));
     this.chara = new Chara($('#chara-toolbar'));
+    this.album = new SoundAlbum();
     this.em = new GEventManager();
     this.util = new Util();
     this._playing = false;
@@ -20,6 +21,7 @@ Gekijou = (function() {
     new GGManager();
     GG.gekijou = this;
     GG.chara = this.chara;
+    GG.album = this.album;
     GG.em = this.em;
     GG.util = this.util;
   }
@@ -50,6 +52,7 @@ Gekijou = (function() {
     this.initChatBox();
     this.pb.bind();
     this.tb.bind();
+    this.album.init();
     this.util.init();
     gs = $('script#gekijouscript');
     script = '';
@@ -117,7 +120,7 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.parse = function(script) {
-    var b, blocks, _i, _j, _len, _len1;
+    var b, blocks, _i, _j, _k, _len, _len1, _len2;
     if (script) {
       script = script.trim();
     }
@@ -125,18 +128,37 @@ Gekijou = (function() {
       blocks = this.util.splitblock(script);
       for (_i = 0, _len = blocks.length; _i < _len; _i++) {
         b = blocks[_i];
-        if (b.title === 'chara') {
-          this.chara.parse(b.content);
+        if (b.title === 'setup') {
+          this.parseSetup(b.content);
         }
       }
       for (_j = 0, _len1 = blocks.length; _j < _len1; _j++) {
         b = blocks[_j];
+        if (b.title === 'chara') {
+          this.chara.parse(b.content);
+        }
+      }
+      for (_k = 0, _len2 = blocks.length; _k < _len2; _k++) {
+        b = blocks[_k];
         if (b.title === 'event') {
           this.em.parse(b.content);
         }
       }
       this.chara.select(0);
+      this.album.load();
       this.rearrange();
+    }
+  };
+
+  Gekijou.prototype.parseSetup = function(block) {
+    var i, line, lineprops, lines, _i, _len;
+    lines = this.util.splitline(block);
+    for (i = _i = 0, _len = lines.length; _i < _len; i = ++_i) {
+      line = lines[i];
+      lineprops = this.util.splitprop(line);
+      if (lineprops[0] === 'album') {
+        this.album.set(lineprops[1]);
+      }
     }
   };
 

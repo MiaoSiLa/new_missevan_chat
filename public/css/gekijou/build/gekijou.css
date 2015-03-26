@@ -238,3 +238,47 @@
 .textbtn:hover {
   background: #444;
 }
+#chatmusic {
+  overflow-y: hidden;
+}
+#chatmusic .chatmusic img {
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  -o-transform: scale(1);
+  transform: scale(1);
+  -webkit-transition: all 0.2s ease 0s;
+  -moz-transition: all 0.2s ease 0s;
+  -ms-transition: all 0.2s ease 0s;
+  -o-transition: all 0.2s ease 0s;
+  transition: all 0.2s ease 0s;
+}
+#chatmusic .chatmusic .soundtitle {
+  display: none;
+  position: absolute;
+  overflow: hidden;
+  z-index: 10;
+  color: #fff;
+  background-color: transparent;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  margin: 0;
+  text-align: center;
+  line-height: 100px;
+  transition: background-color 0.2s ease;
+  -webkit-transition: background-color 0.2s ease;
+  -moz-transition: background-color 0.2s ease;
+  -o-transition: background-color 0.2s ease;
+}
+#chatmusic .chatmusic:hover img {
+  -webkit-transform: scale(1.05);
+  -moz-transform: scale(1.05);
+  -ms-transform: scale(1.05);
+  -o-transform: scale(1.05);
+  transform: scale(1.05);
+}
+#chatmusic .chatmusic:hover .soundtitle {
+  display: block;
+  background-color: rgba(0, 0, 0, 0.3);
+}

@@ -10,6 +10,7 @@ class Gekijou
     @pb = new Playbar $ '#m'
     @tb = new Toolbar $ '#common-toolbar'
     @chara = new Chara $ '#chara-toolbar'
+    @album = new SoundAlbum()
     @em = new GEventManager()
     @util = new Util()
 
@@ -21,6 +22,7 @@ class Gekijou
     new GGManager()
     GG.gekijou = @
     GG.chara = @chara
+    GG.album = @album
     GG.em = @em
     GG.util = @util
 
@@ -50,6 +52,8 @@ class Gekijou
     # binding bars
     @pb.bind()
     @tb.bind()
+
+    @album.init()
 
     @util.init()
 
@@ -110,6 +114,11 @@ class Gekijou
     if script
       blocks = @util.splitblock script
       for b in blocks
+        if b.title is 'setup'
+          # parse setup
+          @parseSetup b.content
+
+      for b in blocks
         if b.title is 'chara'
           @chara.parse b.content
 
@@ -118,9 +127,19 @@ class Gekijou
           @em.parse b.content
 
       @chara.select 0
+      # album just need async load
+      @album.load()
 
       @rearrange()
 
+    return
+
+  parseSetup: (block) ->
+    lines = @util.splitline block
+    for line, i in lines
+      lineprops = @util.splitprop line
+      if lineprops[0] is 'album'
+        @album.set lineprops[1]
     return
 
   reset: ->
