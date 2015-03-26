@@ -71,32 +71,12 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.rearrange = function(keep) {
-    var cur, e, i, len, pns, timecount, _i, _j, _len, _len1, _ref, _ref1;
+    var i, len, pns;
     if (keep == null) {
       keep = false;
     }
     this.pb.clear();
-    timecount = 0;
-    _ref = this.em.events;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      e = _ref[_i];
-      timecount += e.time;
-    }
-    pns = [];
-    cur = 0;
-    _ref1 = this.em.events;
-    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-      e = _ref1[_j];
-      pns.push({
-        id: e.id,
-        pos: cur / timecount,
-        name: e.name
-      });
-      cur += e.time;
-    }
-    if (pns.length === 1) {
-      pns[0].pos = 0.5;
-    }
+    pns = this.em.calc();
     this.pb.data(pns);
     if (keep) {
       i = this.em.currentIndex();

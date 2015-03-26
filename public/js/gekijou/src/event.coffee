@@ -270,6 +270,24 @@ class GEventManager
         counttime += ev.realtime()
     @_timecount
 
+  calc: ->
+    pns = []
+    cur = 0
+
+    timecount = 0
+    for e in @events
+      timecount += e.realtime()
+    @_timecount = timecount
+
+    for e in @events
+      pns.push id: e.id, pos: cur / timecount, name: e.name
+      cur += e.realtime()
+
+    if pns.length is 1
+      pns[0].pos = 0.5
+
+    pns
+
   doAction: (type, val) ->
     if @_event
       @_event.action type, GG.chara.currentId(), val

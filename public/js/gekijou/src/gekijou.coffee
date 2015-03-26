@@ -75,19 +75,7 @@ class Gekijou
   rearrange: (keep = no) ->
     @pb.clear()
 
-    timecount = 0
-    for e in @em.events
-      timecount += e.time
-
-    pns = []
-    cur = 0
-    for e in @em.events
-      pns.push id: e.id, pos: cur / timecount, name: e.name
-      cur += e.time
-
-    if pns.length is 1
-      pns[0].pos = 0.5
-
+    pns = @em.calc()
     @pb.data pns
 
     if keep

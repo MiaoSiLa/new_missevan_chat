@@ -347,6 +347,33 @@ GEventManager = (function() {
     return this._timecount;
   };
 
+  GEventManager.prototype.calc = function() {
+    var cur, e, pns, timecount, _i, _j, _len, _len1, _ref, _ref1;
+    pns = [];
+    cur = 0;
+    timecount = 0;
+    _ref = this.events;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      e = _ref[_i];
+      timecount += e.realtime();
+    }
+    this._timecount = timecount;
+    _ref1 = this.events;
+    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+      e = _ref1[_j];
+      pns.push({
+        id: e.id,
+        pos: cur / timecount,
+        name: e.name
+      });
+      cur += e.realtime();
+    }
+    if (pns.length === 1) {
+      pns[0].pos = 0.5;
+    }
+    return pns;
+  };
+
   GEventManager.prototype.doAction = function(type, val) {
     if (this._event) {
       this._event.action(type, GG.chara.currentId(), val);
