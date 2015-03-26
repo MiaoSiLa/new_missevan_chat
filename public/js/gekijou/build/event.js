@@ -55,6 +55,16 @@ GAction = (function() {
     }
   };
 
+  GAction.prototype.attachlaststate = function() {
+    var $cm;
+    $cm = $('#chatbox .chatmessage:first');
+    if ($cm && $cm.length === 1) {
+      this.line = index.mo.chatLine;
+      $cm.attr('id', 'chatline' + this.line);
+      index.mo.chatLine++;
+    }
+  };
+
   GAction.prototype.attacheditor = function() {
     var $line;
     if (this.line >= 0) {
@@ -75,7 +85,7 @@ GAction = (function() {
     var action;
     action = this;
     this.load(function() {
-      var callback, msg;
+      var callback, msg, soundname;
       if (action.chara) {
         GG.chara.selectId(action.chara);
       }
@@ -100,6 +110,9 @@ GAction = (function() {
           chatBox.loadMemberState({
             username: index.mo.sender.name
           }, action.val);
+          if (GG.env === 'dev') {
+            action.attachlaststate();
+          }
           return callback();
         case 'image':
           return chatBox.loadBubble({
@@ -117,6 +130,13 @@ GAction = (function() {
             type: 6,
             sender: index.mo.sender
           });
+          if (GG.env === 'dev') {
+            soundname = action.Jsound ? action.Jsound.soundstr : '';
+            chatBox.loadMemberState({
+              username: index.mo.sender.name
+            }, "播放了声音「" + soundname + "」");
+            action.attachlaststate();
+          }
           return callback();
       }
     });

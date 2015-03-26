@@ -44,6 +44,15 @@ class GAction
 
     return
 
+  attachlaststate: ->
+    # hack to state
+    $cm = $ '#chatbox .chatmessage:first'
+    if ($cm and $cm.length is 1)
+      @line = index.mo.chatLine
+      $cm.attr('id', 'chatline' + @line)
+      index.mo.chatLine++
+    return
+
   attacheditor: ->
     if @line >= 0
       $line = $ '#chatline' + @line
@@ -83,8 +92,10 @@ class GAction
           callback()
         when 'state'
           chatBox.loadMemberState { username: index.mo.sender.name }, action.val
-          # TODO add pos
-          # action.line = index.mo.chatLine
+
+          if GG.env is 'dev'
+            action.attachlaststate()
+
           callback()
         when 'image'
           chatBox.loadBubble { msg: action.val, type: 7, sender: index.mo.sender }, ->
@@ -100,7 +111,10 @@ class GAction
             type: 6,
             sender: index.mo.sender
 
-          #action.line = index.mo.chatLine
+          if GG.env is 'dev'
+            soundname = if action.Jsound then action.Jsound.soundstr else ''
+            chatBox.loadMemberState { username: index.mo.sender.name }, "播放了声音「#{soundname}」"
+            action.attachlaststate()
 
           callback()
 
