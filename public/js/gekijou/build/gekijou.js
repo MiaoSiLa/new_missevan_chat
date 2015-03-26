@@ -156,7 +156,9 @@ Gekijou = (function() {
     if (res.length <= 0) {
       this.pb.preload(1);
       this._ready = true;
-      cb();
+      if (cb != null) {
+        cb();
+      }
     } else {
       self = this;
       preload_step = function(i, cb2) {
@@ -172,7 +174,9 @@ Gekijou = (function() {
       preload_step(0, function() {
         self.pb.preload(1);
         self._ready = true;
-        return cb();
+        if (cb != null) {
+          return cb();
+        }
       });
     }
   };

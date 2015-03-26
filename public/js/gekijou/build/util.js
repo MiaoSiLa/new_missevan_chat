@@ -665,8 +665,27 @@ Editorbar = (function(_super) {
     }
   };
 
+  Editorbar.prototype.showcmdbox = function(bshow) {
+    var $inputboxcmdbox;
+    $inputboxcmdbox = this.$('#inputboxcmdbox');
+    if ($inputboxcmdbox.is(':visible') === bshow) {
+      return;
+    }
+    if (bshow) {
+      $inputboxcmdbox.show();
+      setTimeout(function() {
+        $inputboxcmdbox.css('max-height', 200);
+      }, 0);
+    } else {
+      $inputboxcmdbox.css('max-height', 0);
+      setTimeout(function() {
+        $inputboxcmdbox.hide();
+      }, 150);
+    }
+  };
+
   Editorbar.prototype.bind = function() {
-    var $gsavebtn, $newevbtn, self;
+    var $gsavebtn, $inputboxcmdbox, $inputboxtextarea, $newevbtn, self;
     self = this;
     $newevbtn = this.pb.$('#mpiloop');
     $newevbtn.addClass('mpiloopa newevent');
@@ -732,14 +751,36 @@ Editorbar = (function(_super) {
       }
     });
     $gsavebtn.show();
-    this.$('#inputboxtextarea').keypress(function(event) {
-      if (event.which !== 13) {
-        if (this.value.length >= index.mo.maxLength) {
-          event.preventDefault();
-        }
-      } else if (event.which === 13) {
-        event.preventDefault();
+    $inputboxtextarea = this.$('#inputboxtextarea');
+    $inputboxcmdbox = this.$('#inputboxcmdbox');
+    $inputboxcmdbox.find('p').click(function() {
+      var cmd;
+      cmd = $(this).data('cmd');
+      if (cmd) {
+        $inputboxtextarea.val(cmd);
+        self.showcmdbox(false);
+        $inputboxtextarea.focus();
+      }
+    });
+    $inputboxtextarea.keypress(function(e) {
+      if (e.which === 13) {
+        e.preventDefault();
         self.$('#inputboxtextareapostbtn').click();
+      } else {
+        if (this.value.length >= index.mo.maxLength) {
+          e.preventDefault();
+        }
+      }
+    });
+    $inputboxtextarea.keyup(function(e) {
+      if (e.which === 8) {
+        if (this.value === '') {
+          self.showcmdbox(false);
+          return;
+        }
+      }
+      if (e.which !== 13 && this.value === '/') {
+        self.showcmdbox(true);
       }
     });
     this.$('#inputboxtextareapostbtn').click(function() {
@@ -751,6 +792,7 @@ Editorbar = (function(_super) {
         if (text) {
           curev.parseAction(text);
           $textbox.val('');
+          self.showcmdbox(false);
         }
       } else {
         moTool.showError('请先新建一个事件！');

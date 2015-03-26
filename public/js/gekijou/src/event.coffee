@@ -194,6 +194,7 @@ class GEvent
       @action 'text', GG.chara.currentId(), text
     else
       cmds = GG.util.splitcommand text
+      if not cmds then return
       switch cmds[0]
         when 'sound'
           soundid = parseInt cmds[1]

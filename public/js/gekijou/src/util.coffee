@@ -567,6 +567,24 @@ class Editorbar extends ControlBar
     if _id
       $('#gekijoupreviewbtn').attr('href', "/gekijou/view/#{_id}").show()
 
+  showcmdbox: (bshow) ->
+    $inputboxcmdbox = @$ '#inputboxcmdbox'
+    if $inputboxcmdbox.is(':visible') is bshow
+      return
+    if bshow
+      $inputboxcmdbox.show()
+      setTimeout ->
+          $inputboxcmdbox.css 'max-height', 200
+          return
+        , 0
+    else
+      $inputboxcmdbox.css 'max-height', 0
+      setTimeout ->
+          $inputboxcmdbox.hide()
+          return
+        , 150
+    return
+
   bind: ->
     self = @
 
@@ -644,15 +662,37 @@ class Editorbar extends ControlBar
       return
 
     $gsavebtn.show()
+  
+    $inputboxtextarea = @$ '#inputboxtextarea'
+    $inputboxcmdbox = @$ '#inputboxcmdbox'
+
+    $inputboxcmdbox.find('p').click ->
+      cmd = $(this).data 'cmd'
+      if cmd
+        $inputboxtextarea.val cmd
+        self.showcmdbox no
+        $inputboxtextarea.focus()
+      return
 
     # 按下POST
-    @$('#inputboxtextarea').keypress (event) ->
-      if event.which isnt 13
-        if @value.length >= index.mo.maxLength
-          event.preventDefault()
-      else if event.which is 13
-        event.preventDefault()
+    $inputboxtextarea.keypress (e) ->
+      if e.which is 13
+        e.preventDefault()
         self.$('#inputboxtextareapostbtn').click()
+      else
+        if @value.length >= index.mo.maxLength
+          e.preventDefault()
+      return
+
+    $inputboxtextarea.keyup (e) ->
+      if e.which is 8
+        # backspace
+        if @value is ''
+          # hide cmd box
+          self.showcmdbox no
+          return
+      if e.which isnt 13 and @value is '/'
+        self.showcmdbox on
       return
 
     @$('#inputboxtextareapostbtn').click ->
@@ -663,6 +703,7 @@ class Editorbar extends ControlBar
         if text
           curev.parseAction text
           $textbox.val ''
+          self.showcmdbox no
       else
         moTool.showError '请先新建一个事件！'
       return

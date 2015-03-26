@@ -239,6 +239,9 @@ GEvent = (function() {
       return this.action('text', GG.chara.currentId(), text);
     } else {
       cmds = GG.util.splitcommand(text);
+      if (!cmds) {
+        return;
+      }
       switch (cmds[0]) {
         case 'sound':
           soundid = parseInt(cmds[1]);

@@ -42,6 +42,42 @@
   height: 24px;
 }
 
+#inputboxcmdbox {
+  display: none;
+  overflow: hidden;
+
+  position: absolute;
+  top: 50px;
+  width: 496px;
+  max-height: 0;
+  background: white;
+  z-index: 10;
+
+  font-size: 20px;
+  font-weight: bolder;
+
+  padding: 5px 0;
+  border: 2px solid #7a7a7a;
+  /* box-shadow: 0 5px 5px #666; */
+
+  border-top: none;
+
+  transition: .15s;
+
+  p {
+    padding: 0 10px;
+    cursor: pointer;
+  }
+  p:hover, p.select {
+    background-color: rgba(0,0,0,0.2);
+  }
+}
+
+#inputboxtextarea:focus + #inputboxcmdbox {
+  border: 2px solid #444;
+  border-top: none;
+}
+
 #chattop {
 }
 #chattop.in {

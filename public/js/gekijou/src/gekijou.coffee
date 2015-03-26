@@ -144,7 +144,7 @@ class Gekijou
     if res.length <= 0
       @pb.preload 1
       @_ready = on
-      cb()
+      cb() if cb?
     else
       self = @
       preload_step = (i, cb2) ->
@@ -158,7 +158,7 @@ class Gekijou
       preload_step 0, ->
         self.pb.preload 1
         self._ready = on
-        cb()
+        cb() if cb?
     return
 
   moveTo: (i) ->
