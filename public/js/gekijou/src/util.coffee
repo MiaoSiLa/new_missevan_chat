@@ -585,6 +585,42 @@ class Editorbar extends ControlBar
         , 150
     return
 
+  selectcmdbox: (down) ->
+    $inputboxcmdbox = @$ '#inputboxcmdbox'
+    $ps = $inputboxcmdbox.find 'p'
+    iselect = -1
+
+    for p, i in $ps
+      $p = $(p)
+      if $p.hasClass('select')
+        iselect = i
+        break
+
+    if down
+      if iselect < $ps.length - 1
+        if iselect >= 0
+          $($ps[iselect]).removeClass 'select'
+        $($ps[iselect + 1]).addClass 'select'
+    else
+      if not $inputboxcmdbox.is(':visible')
+        # not shown
+        return
+      if iselect >= 0
+        $($ps[iselect]).removeClass 'select'
+      if iselect - 1 >= 0
+        $($ps[iselect - 1]).addClass 'select'
+    return
+
+  setcmd: (cmd) ->
+    $inputboxtextarea = @$ '#inputboxtextarea'
+    if cmd
+      $inputboxtextarea.val cmd
+      @showcmdbox no
+      # @$('#inputboxcmdbox p.select').removeClass 'select'
+
+      $inputboxtextarea.focus()
+    return
+
   bind: ->
     self = @
 
@@ -668,31 +704,41 @@ class Editorbar extends ControlBar
 
     $inputboxcmdbox.find('p').click ->
       cmd = $(this).data 'cmd'
-      if cmd
-        $inputboxtextarea.val cmd
-        self.showcmdbox no
-        $inputboxtextarea.focus()
+      self.cmdbox cmd
       return
 
-    # 按下POST
-    $inputboxtextarea.keypress (e) ->
-      if e.which is 13
+    # 按下按键
+    $inputboxtextarea.keydown (e) ->
+      if e.which is 8
+        # backspace
+        if 2 <= @value.length <= 4
+          self.showcmdbox on
+        else if @value.length <= 1
+          # hide cmd box
+          self.showcmdbox no
+      else if e.which is 40
+        # down
         e.preventDefault()
-        self.$('#inputboxtextareapostbtn').click()
+        self.showcmdbox on
+        self.selectcmdbox on
+      else if e.which is 38
+        e.preventDefault()
+        self.selectcmdbox no
+      else if e.which is 13
+        e.preventDefault()
+        if $inputboxcmdbox.is(':visible')
+          $selp = $inputboxcmdbox.find 'p.select'
+          if $selp and $selp.length > 0
+            cmd = $selp.data 'cmd'
+            self.setcmd cmd
+        else
+          self.$('#inputboxtextareapostbtn').click()
+      else if e.which is 191 or e.which is 47
+        # forward slash or '/'
+        self.showcmdbox on
       else
         if @value.length >= index.mo.maxLength
           e.preventDefault()
-      return
-
-    $inputboxtextarea.keyup (e) ->
-      if e.which is 8
-        # backspace
-        if @value is ''
-          # hide cmd box
-          self.showcmdbox no
-          return
-      if e.which isnt 13 and @value is '/'
-        self.showcmdbox on
       return
 
     @$('#inputboxtextareapostbtn').click ->

@@ -684,6 +684,49 @@ Editorbar = (function(_super) {
     }
   };
 
+  Editorbar.prototype.selectcmdbox = function(down) {
+    var $inputboxcmdbox, $p, $ps, i, iselect, p, _i, _len;
+    $inputboxcmdbox = this.$('#inputboxcmdbox');
+    $ps = $inputboxcmdbox.find('p');
+    iselect = -1;
+    for (i = _i = 0, _len = $ps.length; _i < _len; i = ++_i) {
+      p = $ps[i];
+      $p = $(p);
+      if ($p.hasClass('select')) {
+        iselect = i;
+        break;
+      }
+    }
+    if (down) {
+      if (iselect < $ps.length - 1) {
+        if (iselect >= 0) {
+          $($ps[iselect]).removeClass('select');
+        }
+        $($ps[iselect + 1]).addClass('select');
+      }
+    } else {
+      if (!$inputboxcmdbox.is(':visible')) {
+        return;
+      }
+      if (iselect >= 0) {
+        $($ps[iselect]).removeClass('select');
+      }
+      if (iselect - 1 >= 0) {
+        $($ps[iselect - 1]).addClass('select');
+      }
+    }
+  };
+
+  Editorbar.prototype.setcmd = function(cmd) {
+    var $inputboxtextarea;
+    $inputboxtextarea = this.$('#inputboxtextarea');
+    if (cmd) {
+      $inputboxtextarea.val(cmd);
+      this.showcmdbox(false);
+      $inputboxtextarea.focus();
+    }
+  };
+
   Editorbar.prototype.bind = function() {
     var $gsavebtn, $inputboxcmdbox, $inputboxtextarea, $newevbtn, self;
     self = this;
@@ -756,31 +799,40 @@ Editorbar = (function(_super) {
     $inputboxcmdbox.find('p').click(function() {
       var cmd;
       cmd = $(this).data('cmd');
-      if (cmd) {
-        $inputboxtextarea.val(cmd);
-        self.showcmdbox(false);
-        $inputboxtextarea.focus();
-      }
+      self.cmdbox(cmd);
     });
-    $inputboxtextarea.keypress(function(e) {
-      if (e.which === 13) {
+    $inputboxtextarea.keydown(function(e) {
+      var $selp, cmd, _ref;
+      if (e.which === 8) {
+        if ((2 <= (_ref = this.value.length) && _ref <= 4)) {
+          self.showcmdbox(true);
+        } else if (this.value.length <= 1) {
+          self.showcmdbox(false);
+        }
+      } else if (e.which === 40) {
         e.preventDefault();
-        self.$('#inputboxtextareapostbtn').click();
+        self.showcmdbox(true);
+        self.selectcmdbox(true);
+      } else if (e.which === 38) {
+        e.preventDefault();
+        self.selectcmdbox(false);
+      } else if (e.which === 13) {
+        e.preventDefault();
+        if ($inputboxcmdbox.is(':visible')) {
+          $selp = $inputboxcmdbox.find('p.select');
+          if ($selp && $selp.length > 0) {
+            cmd = $selp.data('cmd');
+            self.setcmd(cmd);
+          }
+        } else {
+          self.$('#inputboxtextareapostbtn').click();
+        }
+      } else if (e.which === 191 || e.which === 47) {
+        self.showcmdbox(true);
       } else {
         if (this.value.length >= index.mo.maxLength) {
           e.preventDefault();
         }
-      }
-    });
-    $inputboxtextarea.keyup(function(e) {
-      if (e.which === 8) {
-        if (this.value === '') {
-          self.showcmdbox(false);
-          return;
-        }
-      }
-      if (e.which !== 13 && this.value === '/') {
-        self.showcmdbox(true);
       }
     });
     this.$('#inputboxtextareapostbtn').click(function() {
