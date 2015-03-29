@@ -80,3 +80,4 @@ config.js
 .project
 .jshintrc
 .tern-project
+.idea/
