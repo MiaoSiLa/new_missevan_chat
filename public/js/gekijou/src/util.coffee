@@ -570,7 +570,7 @@ class Toolbar extends ControlBar
         staction = if st then 'add' else 'remove'
         moTool.postAjax
           url: "/gekijou/" + stype + "/" + staction,
-          value: { gekijou_id: GG.gekijou._id },
+          value: { _id: GG.gekijou._id },
           showLoad: no,
           callBack: (data) ->
             success = data and data.code is 0

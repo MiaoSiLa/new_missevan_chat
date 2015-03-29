@@ -114,7 +114,7 @@ gekijou.get('/info/:gekijou_id', function *() {
   }
 });
 
-var statusfn = function (stype) {
+function statusmwfn(stype) {
   var gsmethod = 'set' + stype[0].toUpperCase() + stype.substr(1);
   var gcoundmethod = stype + 'Count';
   return function *() {
@@ -133,7 +133,7 @@ var statusfn = function (stype) {
       return;
     }
 
-    var _id = this.request.body.gekijou_id;
+    var _id = this.request.body._id;
     if (_id && validator.isMongoId(_id)) {
       var st = -1;
       switch (this.params.action) {
@@ -174,8 +174,8 @@ var statusfn = function (stype) {
   }
 };
 
-gekijou.post('/favorite/:action', statusfn('favorite'));
-gekijou.post('/good/:action', statusfn('good'));
+gekijou.post('/favorite/:action', statusmwfn('favorite'));
+gekijou.post('/good/:action', statusmwfn('good'));
 
 gekijou.post('/addplaytimes', function *() {
   var r = { code: -1 };

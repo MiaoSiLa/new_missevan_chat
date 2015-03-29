@@ -661,7 +661,7 @@ Toolbar = (function(_super) {
         moTool.postAjax({
           url: "/gekijou/" + stype + "/" + staction,
           value: {
-            gekijou_id: GG.gekijou._id
+            _id: GG.gekijou._id
           },
           showLoad: false,
           callBack: function(data) {

@@ -24,3 +24,18 @@
   "code": 0
 }
 ```
+
+## 赞/收藏
+
+``` POST /gekijou/(good|favorite)/(add|remove) ```
+
+```
+{
+  "_id": "<gekijou _id>"
+}
+
+{
+  "code": 0,
+  "status": <gekijou user status>
+}
+```
