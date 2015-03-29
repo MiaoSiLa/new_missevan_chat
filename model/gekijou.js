@@ -23,13 +23,15 @@ const ONE_PAGE = 30;
 function Gekijou(data) {
   ModelBase.call(this);
 
-  this.set(data);
+  if (data) {
+    this.set(data);
+  }
 }
 
 util.inherits(Gekijou, ModelBase);
 
 Gekijou.fields = ['_id', 'user_id', 'username', 'title', 'intro', 'cover', 'script',
-  'checked', 'created_time', 'updated_time', 'plays'];
+  'checked', 'created_time', 'updated_time', 'plays', 'goods', 'favorites'];
 
 Gekijou.prototype.set = function (data) {
   if (data) {
@@ -52,15 +54,21 @@ Gekijou.prototype.valueOf = function () {
 };
 
 Gekijou.prototype.ensureIndex = function *() {
-  yield this.collection.ensureIndex({
+  var ei1 =  this.collection.ensureIndex({
     created_time: -1
   }, { background: true, w: 1 });
+  var ei2 =  this.collection.ensureIndex({
+    plays: -1
+  }, { background: true, w: 1 });
+
+  yield [ei1, ei2];
 };
 
 Gekijou.prototype.checkScript = function () {
   if (!this.script) {
     return false;
   }
+  // TODO: add check
   return true;
 };
 
@@ -123,6 +131,16 @@ Gekijou.prototype.update = function *(v) {
 
 Gekijou.prototype.playCount = function *() {
   return yield this.collection.update({ _id: new ObjectID(this._id) }, { $inc: { plays: 1 } });
+};
+
+Gekijou.prototype.goodCount = function *(add) {
+  return yield this.collection.update({ _id: new ObjectID(this._id) },
+    { $inc: { goods: (add ? 1 : -1) } });
+};
+
+Gekijou.prototype.favoriteCount = function *(add) {
+  return yield this.collection.update({ _id: new ObjectID(this._id) },
+    { $inc: { favorites: (add ? 1 : -1) } });
 };
 
 module.exports = Gekijou;

@@ -545,6 +545,11 @@ Toolbar = (function(_super) {
 
   Toolbar.prototype.setVolume = function(volume) {
     this.$('.mpsvbl').css('width', volume);
+    if (volume > 0) {
+      this.$('.mpsv').removeClass('mpsvc');
+    } else {
+      this.$('.mpsv').addClass('mpsvc');
+    }
     this._volume = volume;
     store.set('volume', volume);
     GG.em.setVolume(volume);
@@ -565,10 +570,25 @@ Toolbar = (function(_super) {
     this._volume = volume;
   };
 
+  Toolbar.prototype.initStatus = function() {
+    var status;
+    status = GG.gekijou.status;
+    if (!status) {
+      return;
+    }
+    if (status.good) {
+      this.$('.mpcz').addClass('btnzg');
+    }
+    if (status.favorite) {
+      this.$('.mpcs').addClass('mpcsg');
+    }
+  };
+
   Toolbar.prototype.bind = function() {
-    var $mpsvblClass, $mpsvblrClass, self, updateVolume;
+    var $mpsvblClass, $mpsvblrClass, self, statusUpdate, updateVolume;
     self = this;
     this.initVolume();
+    this.initStatus();
     this.$('.mpsv').click(function() {
       if (self["switch"]('sv')) {
         $(this).find('.mpsvo').show();
@@ -625,6 +645,69 @@ Toolbar = (function(_super) {
         $(this).find('.mpcfu').hide();
       }
     });
+    if (GG.env === 'dev') {
+      this.$('.mpcz').hide();
+      this.$('.mpcs').hide();
+    } else {
+      statusUpdate = function(stype, st, fn) {
+        var staction;
+        if (!GG.user) {
+          if (fn != null) {
+            fn(false);
+          }
+          return;
+        }
+        staction = st ? 'add' : 'remove';
+        moTool.postAjax({
+          url: "/gekijou/" + stype + "/" + staction,
+          value: {
+            gekijou_id: GG.gekijou._id
+          },
+          showLoad: false,
+          callBack: function(data) {
+            var success;
+            success = data && data.code === 0;
+            if (fn != null) {
+              fn(success);
+            }
+          },
+          showLoad: false,
+          success: false,
+          error: false,
+          json: false
+        });
+      };
+      this.$('.mpcz').click(function() {
+        var $this, st;
+        $this = $(this);
+        st = $this.hasClass('btnzg');
+        statusUpdate('good', !st, function(success) {
+          if (success) {
+            if (st) {
+              $this.removeClass('btnzg');
+            } else {
+              $this.addClass('btnzg');
+            }
+          }
+        });
+      });
+      this.$('.mpcs').click(function() {
+        var $this, st;
+        $this = $(this);
+        st = $this.hasClass('mpcsg');
+        statusUpdate('favorite', !st, function(success) {
+          if (success) {
+            if (st) {
+              $this.removeClass('mpcsg');
+              moTool.showSuccess('已成功取消收藏！');
+            } else {
+              $this.addClass('mpcsg');
+              moTool.showSuccess('已成功添加收藏！');
+            }
+          }
+        });
+      });
+    }
   };
 
   return Toolbar;

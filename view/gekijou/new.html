@@ -39,7 +39,7 @@ pageStyles = dev_mode ? [
     <div id='private'></div>
   </div>
 
-  <div id="user" style="display:none"><%- JSON.stringify(user) %></div>
+  <div id="user" data-user="<%= JSON.stringify(user) %>" style="display:none"></div>
 
   <!-- 对话框 -->
   <div id="neweventmodal" class='m_c' data-width="600" style="display:none;">

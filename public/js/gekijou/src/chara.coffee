@@ -249,12 +249,9 @@ class Chara
       @devbind()
       if @charas.length > 0
         @refresh()
-      else
-        suser = $('#user').html()
-        if suser
-          try
-            @select @add JSON.parse suser
-            @refresh()
+      else if GG.user
+        @select @add GG.user
+        @refresh()
 
       @searchIcon()
     else

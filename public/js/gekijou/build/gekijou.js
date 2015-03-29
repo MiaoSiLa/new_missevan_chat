@@ -47,8 +47,22 @@ Gekijou = (function() {
     }
   };
 
+  Gekijou.prototype.initUser = function() {
+    var $user, suser;
+    $user = $('#user');
+    if (!($user && $user.length > 0)) {
+      return;
+    }
+    this.status = $user.data('status');
+    suser = $user.data('user');
+    if (suser && typeof suser === 'object') {
+      GG.user = suser;
+    }
+  };
+
   Gekijou.prototype.init = function(cb) {
     var gs, script;
+    this.initUser();
     this.initChatBox();
     this.pb.bind();
     this.tb.bind();

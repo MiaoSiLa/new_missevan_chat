@@ -26,7 +26,7 @@
     <div id='private'></div>
   </div>
 
-  <div id="user" style="display:none"><%- JSON.stringify(user) %></div>
+  <div id="user" data-status="<%= JSON.stringify(gekijou.status) %>" data-user="<%= JSON.stringify(user) %>" style="display:none"></div>
   <% if (gekijou) { %>
   <div id="loadmodal" class='m_c' data-width="1100" style="display:none;">
     <div id="s_l_t"><%= gekijou.title %></div>

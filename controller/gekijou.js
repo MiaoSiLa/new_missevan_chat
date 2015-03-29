@@ -7,9 +7,23 @@ var Router = require('koa-router'),
   view = require('./../lib/view');
 
 var Model = require('./../model'),
-  Gekijou = Model.Gekijou;
+  Gekijou = Model.Gekijou,
+  GekijouStatus = Model.GekijouStatus;
 
 var gekijou = new Router();
+
+function *getGekijouStatus(gekijou_id, user_id) {
+  /*if (user_id)*/ {
+    // user.id must be integer
+    var gs = new GekijouStatus();
+    var gstatus = yield gs.getStatus(gekijou_id, user_id);
+    if (gstatus) {
+      delete gstatus._id;
+      return gstatus;
+    }
+  }
+  return {};
+}
 
 gekijou.get('/', function *() {
   var p = 1;
@@ -52,8 +66,14 @@ gekijou.get('/view/:gekijou_id', function *() {
     if (_id && validator.isMongoId(_id)) {
       var g = new Gekijou({ _id: _id });
       geki = yield g.find();
-      if (geki && geki.title) {
-        title = geki.title + '_' + title;
+      if (geki) {
+        if (geki.title) {
+          title = geki.title + '_' + title;
+        }
+
+        if (this.user) {
+          geki.status = yield getGekijouStatus(geki._id, this.user.id);
+        }
       }
     }
   }
@@ -82,12 +102,80 @@ gekijou.get('/info/:gekijou_id', function *() {
   }
 
   if (geki) {
+
+    if (this.user) {
+      geki.status = yield getGekijouStatus(geki._id, this.user.id);
+    }
+
     this.body = { code: 0, gekijou: geki };
   } else {
     //this.status = 404;
     this.body = { code: 1, message: 'Not Found' };
   }
 });
+
+var statusfn = function (stype) {
+  var gsmethod = 'set' + stype[0].toUpperCase() + stype.substr(1);
+  var gcoundmethod = stype + 'Count';
+  return function *() {
+    if (!this.params) {
+      this.status = 404;
+      return;
+    }
+
+    var r = { code: -1 };
+    if (!this.request.body) {
+      this.body = r;
+      return;
+    }
+    if (!this.user) {
+      this.body = { code: 2, message: 'User not login' };
+      return;
+    }
+
+    var _id = this.request.body.gekijou_id;
+    if (_id && validator.isMongoId(_id)) {
+      var st = -1;
+      switch (this.params.action) {
+        case 'add':
+          st = 1;
+          break;
+        case 'remove':
+          st = 0;
+          break;
+        default:
+          break;
+      }
+
+      if (st !== -1) {
+        var g = new Gekijou();
+        var geki = yield g.find(_id);
+        if (!geki || !geki._id) {
+          // !geki.checked
+          this.body = { code: 3, message: 'Gekijou not exists' };
+          return;
+        }
+
+        var gs = new GekijouStatus();
+        var result = yield gs[gsmethod](_id, this.user.id, st);
+        if (result) {
+          yield g[gcoundmethod](st);
+
+          r.code = 0;
+          r.status = gs.valueOf();
+        } else {
+          r.code = 1;
+          r.message = 'Status update failed';
+        }
+      }
+    }
+
+    this.body = r;
+  }
+};
+
+gekijou.post('/favorite/:action', statusfn('favorite'));
+gekijou.post('/good/:action', statusfn('good'));
 
 gekijou.post('/addplaytimes', function *() {
   var r = { code: -1 };

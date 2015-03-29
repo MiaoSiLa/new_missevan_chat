@@ -67,12 +67,19 @@ var chatBox = {
   },
 
   loadUser: function() {
+    var suser = $("#user").data('user');
+    if(!suser) return;
 
-    if($("#user").html() == '') return;
-    var user = $.parseJSON($("#user").text());
+    var user;
+    if (typeof suser === 'string') {
+      user = $.parseJSON(suser);
+    } else if (typeof suser === 'object') {
+      user = suser;
+    }
 
-    index.mo.sender = chatBox.sender(user);
-
+    if (user) {
+      index.mo.sender = chatBox.sender(user);
+    }
   },
 
   delChats: function() {

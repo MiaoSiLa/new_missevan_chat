@@ -45,8 +45,23 @@ class Gekijou
       index.js.loadChatDm()
     return
 
+  initUser: ->
+    $user = $('#user')
+
+    if not ($user and $user.length > 0)
+      return
+
+    @status = $user.data 'status'
+    suser = $user.data 'user'
+
+    if suser and typeof suser is 'object'
+      GG.user = suser
+
+    return
+
   # stage & element init
   init: (cb) ->
+    @initUser()
     @initChatBox()
 
     # binding bars

@@ -457,6 +457,13 @@ class Toolbar extends ControlBar
 
   setVolume: (volume) ->
     @$('.mpsvbl').css 'width', volume
+    
+    # 静音图标
+    if volume > 0
+      @$('.mpsv').removeClass 'mpsvc'
+    else
+      @$('.mpsv').addClass 'mpsvc'
+
     @_volume = volume
     store.set 'volume', volume
     GG.em.setVolume volume
@@ -476,10 +483,22 @@ class Toolbar extends ControlBar
 
     return
 
+  initStatus: ->
+    status = GG.gekijou.status
+    if not status
+      return
+
+    if status.good
+      @$('.mpcz').addClass 'btnzg'
+    if status.favorite
+      @$('.mpcs').addClass 'mpcsg'
+    return
+
   bind: ->
     self = @
 
     @initVolume()
+    @initStatus()
 
     @$('.mpsv').click ->
       if self.switch('sv')
@@ -539,6 +558,57 @@ class Toolbar extends ControlBar
       else
         $(@).find('.mpcfu').hide()
       return
+
+    if GG.env is 'dev'
+      @$('.mpcz').hide()
+      @$('.mpcs').hide()
+    else
+      statusUpdate = (stype, st, fn) ->
+        if not GG.user
+          fn no if fn?
+          return
+        staction = if st then 'add' else 'remove'
+        moTool.postAjax
+          url: "/gekijou/" + stype + "/" + staction,
+          value: { gekijou_id: GG.gekijou._id },
+          showLoad: no,
+          callBack: (data) ->
+            success = data and data.code is 0
+            fn success if fn?
+            return
+          ,
+          showLoad: false,
+          success: false,
+          error: false,
+          json: false
+        return
+
+      @$('.mpcz').click ->
+        # 赞
+        $this = $ this
+        st = $this.hasClass 'btnzg'
+        statusUpdate 'good', !st, (success) ->
+          if success
+            if st
+              $this.removeClass 'btnzg'
+            else
+              $this.addClass 'btnzg'
+          return
+        return
+      @$('.mpcs').click ->
+        # 收藏
+        $this = $ this
+        st = $this.hasClass 'mpcsg'
+        statusUpdate 'favorite', !st, (success) ->
+          if success
+            if st
+              $this.removeClass 'mpcsg'
+              moTool.showSuccess '已成功取消收藏！'
+            else
+              $this.addClass 'mpcsg'
+              moTool.showSuccess '已成功添加收藏！'
+          return
+        return
 
     return
 

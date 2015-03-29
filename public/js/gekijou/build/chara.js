@@ -249,20 +249,14 @@ Chara = (function() {
   };
 
   Chara.prototype.init = function(cb) {
-    var suser;
     this.bind();
     if (GG.env === 'dev') {
       this.devbind();
       if (this.charas.length > 0) {
         this.refresh();
-      } else {
-        suser = $('#user').html();
-        if (suser) {
-          try {
-            this.select(this.add(JSON.parse(suser)));
-            this.refresh();
-          } catch (_error) {}
-        }
+      } else if (GG.user) {
+        this.select(this.add(GG.user));
+        this.refresh();
       }
       this.searchIcon();
     } else {
