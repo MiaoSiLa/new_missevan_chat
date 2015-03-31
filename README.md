@@ -1,10 +1,16 @@
-# missevan_chat
+# missevan_chat_gekijou
 
-MissEvan聊天室代码
+MissEvan 聊天室与小剧场服务端
 
 ## Document
 
+### API 文档:
+
 [/doc](https://github.com/MiaoSiLa/new_missevan_chat/tree/master/doc)
+
+### 小剧场样例:
+
+[/doc/gs](https://github.com/MiaoSiLa/new_missevan_chat/tree/master/doc/gs)
 
 ## Deploy
 
