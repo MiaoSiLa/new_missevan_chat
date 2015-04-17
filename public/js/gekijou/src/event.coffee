@@ -72,7 +72,7 @@ class GAction
   run: (cb) ->
     action = @
     @load ->
-      if action.chara
+      if action.chara?
         # 切换角色
         GG.chara.selectId action.chara
 
@@ -91,7 +91,10 @@ class GAction
             sender: index.mo.sender
           callback()
         when 'state'
-          chatBox.loadMemberState { username: index.mo.sender.name }, action.val
+          if action.chara is -1
+            chatBox.loadState action.val
+          else
+            chatBox.loadMemberState { username: index.mo.sender.name }, action.val
 
           if GG.env is 'dev'
             action.attachlaststate()
@@ -182,6 +185,9 @@ class GEvent
     if typeof charaid is 'number'
       return charaid
     else if typeof charaid is 'string'
+      if charaid is 'nochara'
+        return -1
+      
       cids = charaid.split ':'
       if cids.length is 2 and cids[0] is 'chara'
         return parseInt cids[1]

@@ -68,7 +68,8 @@ class GekijouEditor
             # some other types
           else
             # text, state, image, sound
-            script += "chara:#{a.chara} #{JSON.stringify(a.val)}"
+            charastr = if a.chara is -1 then 'nochara' else "chara:#{a.chara}"
+            script += "#{charastr} #{JSON.stringify(a.val)}"
 
         script += "\n"
       script += "  }\n"

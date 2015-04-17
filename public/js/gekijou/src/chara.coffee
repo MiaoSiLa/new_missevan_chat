@@ -205,6 +205,13 @@ class Chara
 
     @el.find('#selecticon').show()
 
+    $chbtns = @el.find '#charabtnlist'
+    $chbtns.show()
+    $chbtns.find('#nocharabtn').click ->
+      # no chara button click
+      self.select -1
+      return
+    
     @el.find('.s_m_t_r_b').click ->
       if not $(this).hasClass 's_m_t_r_b_a'
         self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'
@@ -250,7 +257,7 @@ class Chara
       if @charas.length > 0
         @refresh()
       else if GG.user
-        @select @add GG.user
+        @selectId @add GG.user
         @refresh()
 
       @searchIcon()

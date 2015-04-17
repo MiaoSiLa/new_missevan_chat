@@ -733,6 +733,11 @@ var chatBox = {
     }
   },
 
+  loadState: function(state) {
+    var $chatBoxId = $('#chatbox');
+    $chatBoxId.prepend("<div class='clear'></div><div class='chatmessage'>" + moTool.boardReplaceTxt(state) + "</div><div class='clear'></div>");
+  },
+
   loadMemberState: function(member, state) {
     var $chatBoxId = $('#chatbox');
     $chatBoxId.prepend("<div class='clear'></div><div class='chatmessage'>►► " + member.username + " " + moTool.boardReplaceTxt(state) + "</div><div class='clear'></div>");

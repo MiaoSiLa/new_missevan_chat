@@ -214,9 +214,14 @@ Chara = (function() {
   };
 
   Chara.prototype.devbind = function() {
-    var self;
+    var $chbtns, self;
     self = this;
     this.el.find('#selecticon').show();
+    $chbtns = this.el.find('#charabtnlist');
+    $chbtns.show();
+    $chbtns.find('#nocharabtn').click(function() {
+      self.select(-1);
+    });
     this.el.find('.s_m_t_r_b').click(function() {
       if (!$(this).hasClass('s_m_t_r_b_a')) {
         self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass('s_m_t_r_b_a');
@@ -255,7 +260,7 @@ Chara = (function() {
       if (this.charas.length > 0) {
         this.refresh();
       } else if (GG.user) {
-        this.select(this.add(GG.user));
+        this.selectId(this.add(GG.user));
         this.refresh();
       }
       this.searchIcon();

@@ -31,7 +31,7 @@ GekijouEditor = (function() {
   };
 
   GekijouEditor.prototype.generate = function() {
-    var a, album, c, chara, e, em, script, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+    var a, album, c, chara, charastr, e, em, script, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     chara = this.gekijou.chara;
     em = this.gekijou.em;
     album = this.gekijou.album;
@@ -63,7 +63,8 @@ GekijouEditor = (function() {
           case 'unknow':
             break;
           default:
-            script += "chara:" + a.chara + " " + (JSON.stringify(a.val));
+            charastr = a.chara === -1 ? 'nochara' : "chara:" + a.chara;
+            script += "" + charastr + " " + (JSON.stringify(a.val));
         }
         script += "\n";
       }

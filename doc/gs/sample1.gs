@@ -51,10 +51,11 @@ chara {
 #   text chara:[charaid] [string 文本]
 #
 #   # 文本状态操作 `state` ，角色将发出一个文本状态
-#   # 如果不需要角色，可在第二参数指定 nochara（网页版暂未支持）
+#   # 如果不需要角色，可在第二参数指定 nochara
 #   state chara:[charaid] [string 文本]
 #
 #   # 角色发出图片操作 `image` ，角色将发出一个图片
+#   # 如果不需要角色，可在第二参数指定 nochara（网页版暂未支持）
 #   image chara:[charaid] [string 图片地址]
 #
 #   # 事件声音操作 `sound` ，将以角色身份发出一个声音

@@ -86,7 +86,7 @@ GAction = (function() {
     action = this;
     this.load(function() {
       var callback, msg, soundname;
-      if (action.chara) {
+      if (action.chara != null) {
         GG.chara.selectId(action.chara);
       }
       callback = function() {
@@ -107,9 +107,13 @@ GAction = (function() {
           });
           return callback();
         case 'state':
-          chatBox.loadMemberState({
-            username: index.mo.sender.name
-          }, action.val);
+          if (action.chara === -1) {
+            chatBox.loadState(action.val);
+          } else {
+            chatBox.loadMemberState({
+              username: index.mo.sender.name
+            }, action.val);
+          }
           if (GG.env === 'dev') {
             action.attachlaststate();
           }
@@ -225,6 +229,9 @@ GEvent = (function() {
     if (typeof charaid === 'number') {
       return charaid;
     } else if (typeof charaid === 'string') {
+      if (charaid === 'nochara') {
+        return -1;
+      }
       cids = charaid.split(':');
       if (cids.length === 2 && cids[0] === 'chara') {
         return parseInt(cids[1]);
