@@ -45,6 +45,7 @@ class GAction
     return
 
   attachlaststate: ->
+    # 弃用
     # hack to state
     $cm = $ '#chatbox .chatmessage:first'
     if ($cm and $cm.length is 1)
@@ -85,23 +86,30 @@ class GAction
       switch action.type
         when 'text'
           action.line = index.mo.chatLine
-          chatBox.loadBubble
+          #chatBox.loadBubble
+          GG.bubble.popup
             msg: action.val,
             type: 1,
             sender: index.mo.sender
           callback()
         when 'state'
-          if action.chara is -1
-            chatBox.loadState action.val
-          else
-            chatBox.loadMemberState { username: index.mo.sender.name }, action.val
+          # for bubble style
+          action.line = index.mo.chatLine
 
-          if GG.env is 'dev'
-            action.attachlaststate()
+          statetext = action.val
+          if action.chara isnt -1
+            #chatBox.loadState action.val
+            #chatBox.loadMemberState { username: index.mo.sender.name }, action.val
+            statetext = '►► ' + index.mo.sender.name + ' ' + statetext
+
+          GG.bubble.text statetext
+            
+          #if GG.env is 'dev'
+          #  action.attachlaststate()
 
           callback()
         when 'image'
-          chatBox.loadBubble { msg: action.val, type: 7, sender: index.mo.sender }, ->
+          GG.bubble.popup { msg: action.val, type: 7, sender: index.mo.sender }, ->
             action.line = index.mo.chatLine - 1
             callback()
             return

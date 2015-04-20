@@ -7,6 +7,8 @@
 class Gekijou
 
   constructor: (@opts = {}) ->
+    @bubble = new ChatBubble()
+
     @pb = new Playbar $ '#m'
     @tb = new Toolbar $ '#common-toolbar'
     @chara = new Chara $ '#chara-toolbar'
@@ -21,6 +23,7 @@ class Gekijou
     # 全局管理器
     new GGManager()
     GG.gekijou = @
+    GG.bubble = @bubble
     GG.chara = @chara
     GG.album = @album
     GG.em = @em
@@ -35,6 +38,9 @@ class Gekijou
     @opts
 
   initChatBox: ->
+    # new style chatbox
+    @bubble.init()
+
     chatBox.loadChatOption()
     chatBox.loadUser()
     # override old func
@@ -146,7 +152,7 @@ class Gekijou
     return
 
   reset: ->
-    $('#chatbox').html ''
+    @bubble.reset()
     @_finished = no
     @_playedtime = 0
     @em.moveToBegin()

@@ -85,7 +85,7 @@ GAction = (function() {
     var action;
     action = this;
     this.load(function() {
-      var callback, msg, soundname;
+      var callback, msg, soundname, statetext;
       if (action.chara != null) {
         GG.chara.selectId(action.chara);
       }
@@ -100,26 +100,22 @@ GAction = (function() {
       switch (action.type) {
         case 'text':
           action.line = index.mo.chatLine;
-          chatBox.loadBubble({
+          GG.bubble.popup({
             msg: action.val,
             type: 1,
             sender: index.mo.sender
           });
           return callback();
         case 'state':
-          if (action.chara === -1) {
-            chatBox.loadState(action.val);
-          } else {
-            chatBox.loadMemberState({
-              username: index.mo.sender.name
-            }, action.val);
+          action.line = index.mo.chatLine;
+          statetext = action.val;
+          if (action.chara !== -1) {
+            statetext = '►► ' + index.mo.sender.name + ' ' + statetext;
           }
-          if (GG.env === 'dev') {
-            action.attachlaststate();
-          }
+          GG.bubble.text(statetext);
           return callback();
         case 'image':
-          return chatBox.loadBubble({
+          return GG.bubble.popup({
             msg: action.val,
             type: 7,
             sender: index.mo.sender

@@ -1,4 +1,4 @@
-<% pageStyles = dev_mode ? [ '/css/gekijou/build/gekijou.css' ] : [ '/css/gekijou/gekijou.min.css' ];
+<% pageStyles = dev_mode ? [ '/css/gekijou/build/gekijou.css', '/css/chat/build/bubble.css' ] : [ '/css/chat/bubble.min.css', '/css/gekijou/gekijou.min.css' ];
 %><%- include('../common/header.html'); -%>
 <%- include('./sidebar.html'); -%>
 
@@ -54,12 +54,14 @@
   <%= gekijou.script %>
   </script><% } %>
   <% if (dev_mode) { %>
+  <script type="text/javascript" src="/js/chat/build/bubble.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/util.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/event.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/chara.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/album.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/gekijou.js"></script>
   <% } else { %>
+  <script type="text/javascript" src="/js/chat/bubble.min.js?v=<%= resource.version %>"></script>
   <script type="text/javascript" src="/js/gekijou/gekijou.min.js?v=<%= resource.version %>"></script>
   <% } %>
   <script type="text/javascript">

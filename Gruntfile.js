@@ -8,6 +8,7 @@ module.exports = function(grunt) {
       },
       dev: {
         files: {
+          'public/css/chat/build/bubble.css': 'public/css/chat/src/bubble.less',
           'public/css/gekijou/build/editor.css': 'public/css/gekijou/src/editor.less',
           'public/css/gekijou/build/gekijou.css': 'public/css/gekijou/src/gekijou.less',
         }
@@ -19,6 +20,7 @@ module.exports = function(grunt) {
       },
       compile: {
         files: {
+          'public/js/chat/build/bubble.js': 'public/js/chat/src/bubble.coffee',
           'public/js/gekijou/build/util.js': 'public/js/gekijou/src/util.coffee',
           'public/js/gekijou/build/chara.js': 'public/js/gekijou/src/chara.coffee',
           'public/js/gekijou/build/album.js': 'public/js/gekijou/src/album.coffee',
@@ -35,6 +37,9 @@ module.exports = function(grunt) {
       },
       compress: {
         files: {
+          'public/css/chat/bubble.min.css': [
+            "public/css/chat/build/bubble.css"
+          ],
           'public/css/gekijou/editor.min.css': [
             "public/css/gekijou/build/editor.css"
           ],
@@ -54,6 +59,9 @@ module.exports = function(grunt) {
           report: 'min',
         },
         files: {
+          'public/js/chat/bubble.min.js': [
+            "public/js/chat/build/bubble.js"
+          ],
           'public/js/gekijou/editor.min.js': [
             "public/js/gekijou/build/editor.js"
           ],

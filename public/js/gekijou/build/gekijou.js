@@ -9,6 +9,7 @@ var Gekijou;
 Gekijou = (function() {
   function Gekijou(opts) {
     this.opts = opts != null ? opts : {};
+    this.bubble = new ChatBubble();
     this.pb = new Playbar($('#m'));
     this.tb = new Toolbar($('#common-toolbar'));
     this.chara = new Chara($('#chara-toolbar'));
@@ -20,6 +21,7 @@ Gekijou = (function() {
     this._playedtime = 0;
     new GGManager();
     GG.gekijou = this;
+    GG.bubble = this.bubble;
     GG.chara = this.chara;
     GG.album = this.album;
     GG.em = this.em;
@@ -39,6 +41,7 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.initChatBox = function() {
+    this.bubble.init();
     chatBox.loadChatOption();
     chatBox.loadUser();
     chatBox.insertPrivateBox = function() {};
@@ -157,7 +160,7 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.reset = function() {
-    $('#chatbox').html('');
+    this.bubble.reset();
     this._finished = false;
     this._playedtime = 0;
     this.em.moveToBegin();
