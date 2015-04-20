@@ -132,10 +132,9 @@ GAction = (function() {
           });
           if (GG.env === 'dev') {
             soundname = action.Jsound ? action.Jsound.soundstr : '';
-            chatBox.loadMemberState({
-              username: index.mo.sender.name
-            }, "播放了声音「" + soundname + "」");
-            action.attachlaststate();
+            action.line = index.mo.chatLine;
+            statetext = ': ' + index.mo.sender.name + ' ' + ("播放了声音「" + soundname + "」");
+            GG.bubble.text(statetext);
           }
           return callback();
       }

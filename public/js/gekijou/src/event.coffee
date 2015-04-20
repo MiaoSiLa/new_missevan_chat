@@ -124,8 +124,11 @@ class GAction
 
           if GG.env is 'dev'
             soundname = if action.Jsound then action.Jsound.soundstr else ''
-            chatBox.loadMemberState { username: index.mo.sender.name }, "播放了声音「#{soundname}」"
-            action.attachlaststate()
+            #chatBox.loadMemberState { username: index.mo.sender.name }, "播放了声音「#{soundname}」"
+            #action.attachlaststate()
+            action.line = index.mo.chatLine
+            statetext = ': ' + index.mo.sender.name + ' ' + "播放了声音「#{soundname}」"
+            GG.bubble.text statetext
 
           callback()
 
