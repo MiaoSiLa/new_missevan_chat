@@ -14,12 +14,19 @@ ChatBubble = (function() {
     this.el.html('');
   };
 
+  ChatBubble.prototype.addhtml = function(html) {
+    this.el.append(html);
+    $('#chatmain').animate({
+      scrollTop: this.el.height()
+    }, 200);
+  };
+
   ChatBubble.prototype.text = function(str) {
     var chathtml, text;
     text = moTool.boardReplaceTxt(str);
     chathtml = '<li id="chatline' + index.mo.chatLine + '"><div class="chatinfo"><span>' + text + '</span></div></li>';
     index.mo.chatLine++;
-    this.el.prepend(chathtml);
+    this.addhtml(chathtml);
   };
 
   ChatBubble.prototype.popup = function(data, cb) {
@@ -44,7 +51,7 @@ ChatBubble = (function() {
         text = text.replace(/\n/g, '<br>');
         chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n' + '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n' + '  <div class="userSay">\n' + '    <div class="inlineText">' + text + '</div>\n' + '  </div>\n' + '</li>';
         index.mo.chatLine++;
-        this.el.prepend(chathtml);
+        this.addhtml(chathtml);
         if (cb != null) {
           cb();
         }
@@ -66,7 +73,7 @@ ChatBubble = (function() {
           imghtml = '<a target="_blank" href="' + data.msg + '">' + '<img style="width:' + w + 'px;height:' + h + 'px" src="' + data.msg + '" />' + '</a>';
           chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n' + '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n' + '  <div class="userChatImage">' + imghtml + '</div>\n' + '</li>';
           index.mo.chatLine++;
-          self.el.prepend(chathtml);
+          self.addhtml(chathtml);
           if (cb != null) {
             cb();
           }

@@ -1,6 +1,7 @@
 
 class ChatBubble
   constructor: ->
+    # @_direction = 'down'
 
   init: ->
     $cm = $ '#chatmain .container'
@@ -13,13 +14,18 @@ class ChatBubble
     @el.html ''
     return
 
+  addhtml: (html) ->
+    # @el.prepend html
+    @el.append html
+    $('#chatmain').animate { scrollTop: @el.height() }, 200
+    return
+
   text: (str) ->
     text = moTool.boardReplaceTxt str
     chathtml = '<li id="chatline' + index.mo.chatLine + '"><div class="chatinfo"><span>' + text + '</span></div></li>'
 
     index.mo.chatLine++
-    @el.prepend chathtml
-
+    @addhtml chathtml
     return
 
   popup: (data, cb) ->
@@ -55,7 +61,7 @@ class ChatBubble
                  + '</li>';
 
         index.mo.chatLine++;
-        @el.prepend chathtml
+        @addhtml chathtml
 
         cb() if cb?
 
@@ -82,7 +88,7 @@ class ChatBubble
                + '</li>';
 
           index.mo.chatLine++;
-          self.el.prepend chathtml
+          self.addhtml chathtml
 
           cb() if cb?
           return
