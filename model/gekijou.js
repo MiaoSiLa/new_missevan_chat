@@ -73,7 +73,7 @@ Gekijou.prototype.checkScript = function () {
 };
 
 Gekijou.prototype.getPageCount = function *() {
-  return Math.ceil((yield this.count()) / ONE_PAGE);
+  return Math.ceil((yield this.count({checked: 1})) / ONE_PAGE);
 };
 
 Gekijou.prototype.getByPage = function *(page) {

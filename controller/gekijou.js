@@ -45,6 +45,25 @@ gekijou.get('/', function *() {
   });
 });
 
+gekijou.get('/list', function *() {
+  var p = 1;
+  if (this.query && this.query.p) {
+    if (validator.isInt(this.query.p)) {
+      p = parseInt(this.query.p);
+    }
+  }
+  var g = new Gekijou();
+  var gekis = yield g.getByPage(p);
+  var pagecount = yield g.getPageCount();
+  
+  this.body = {
+    code: 0,
+    page: p,
+    pagecount: pagecount,
+    gekijous: gekis
+  };
+});
+
 gekijou.get('/new', function *() {
   if (!this.user) {
     this.redirect('/member/login?backurl=/gekijou/new');
