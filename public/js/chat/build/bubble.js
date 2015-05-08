@@ -8,6 +8,9 @@ ChatBubble = (function() {
     $cm = $('#chatmain .container');
     $cm.prepend('<div id="chatbubble"><ul id="chat"></ul></div>');
     this.el = $cm.find('#chat');
+    if (!moTool.boardReplaceTxt) {
+      moTool.boardReplaceTxt = GG.util.escape;
+    }
   };
 
   ChatBubble.prototype.reset = function() {

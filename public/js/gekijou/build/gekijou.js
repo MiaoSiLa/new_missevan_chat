@@ -75,7 +75,7 @@ Gekijou = (function() {
     script = '';
     if (gs && gs.length > 0) {
       this.setId(gs.data('id'));
-      script = this.unescape(gs.text());
+      script = this.util.unescape(gs.text());
       this.parse(script);
     }
     this.chara.init(function() {
@@ -110,10 +110,6 @@ Gekijou = (function() {
         this.moveTo(len - 1);
       }
     }
-  };
-
-  Gekijou.prototype.unescape = function(script) {
-    return script.replace(/&(#0?34|quot);/g, '"').replace(/&#0?39;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
   };
 
   Gekijou.prototype.parse = function(script) {

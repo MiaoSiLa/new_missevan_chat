@@ -7,6 +7,11 @@ class ChatBubble
     $cm = $ '#chatmain .container'
     $cm.prepend '<div id="chatbubble"><ul id="chat"></ul></div>'
     @el = $cm.find '#chat'
+
+    # fix bugs in mobile view
+    if not moTool.boardReplaceTxt
+      moTool.boardReplaceTxt = GG.util.escape
+
     return
 
   reset: ->
@@ -33,7 +38,7 @@ class ChatBubble
 
     subTitle = ''
     iconColor = if data.sender.iconColor? then data.sender.iconColor else '#91c0edm#cde1edm#709cc9m#5079c9m#709cc9';
-    
+
     colorlist = iconColor.split 'm'
 
     if data.sender.subTitle

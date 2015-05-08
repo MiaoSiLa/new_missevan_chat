@@ -3,6 +3,9 @@ chatBox.isMobile = true;
 
 $(function() {
   index.soundBox.init();
+  index.soundBox.playChat = function () {};
+  // bg is black
+  index.mo.bgType = 1;
 });
 
 chatBox.loadRoomBarDown = function(el) {

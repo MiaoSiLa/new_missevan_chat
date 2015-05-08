@@ -83,8 +83,8 @@ Chara = (function() {
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
       c = _ref[i];
       sender = chatBox.sender(c);
-      name = moTool.boardReplaceTxt(c.username);
-      subtitle = moTool.boardReplaceTxt(c.subtitle);
+      name = GG.util.escape(c.username);
+      subtitle = GG.util.escape(c.subtitle);
       html += "<div id=\"chara" + c.id + "\" class=\"charabox";
       if (i === this._sel) {
         html += ' selected';
@@ -180,7 +180,7 @@ Chara = (function() {
       c = iconusers[_i];
       sender = chatBox.sender(c);
       strc = JSON.stringify(c);
-      subtitle = moTool.boardReplaceTxt(c.subtitle);
+      subtitle = GG.util.escape(c.subtitle);
       html += "<div data-user='" + strc + "' class=\"charaicon\">\n  <div class=\"chaticonbox\">\n    <img alt=\"" + subtitle + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n</div>";
     }
     $modal.html(html);

@@ -66,8 +66,8 @@ class Chara
 
     for c, i in @charas
       sender = chatBox.sender c
-      name = moTool.boardReplaceTxt c.username
-      subtitle = moTool.boardReplaceTxt c.subtitle
+      name = GG.util.escape c.username
+      subtitle = GG.util.escape c.subtitle
       html += "<div id=\"chara#{c.id}\" class=\"charabox"
       html += ' selected' if i is @_sel
       html += """
@@ -159,7 +159,7 @@ class Chara
     for c in iconusers
       sender = chatBox.sender c
       strc = JSON.stringify(c)
-      subtitle = moTool.boardReplaceTxt c.subtitle
+      subtitle = GG.util.escape c.subtitle
       html += """
               <div data-user='#{strc}' class="charaicon">
                 <div class="chaticonbox">
@@ -211,7 +211,7 @@ class Chara
       # no chara button click
       self.select -1
       return
-    
+
     @el.find('.s_m_t_r_b').click ->
       if not $(this).hasClass 's_m_t_r_b_a'
         self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'

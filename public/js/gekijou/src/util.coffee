@@ -10,6 +10,14 @@ class Util
 
       return
 
+  escape: (str) ->
+    str.replace(/&/g,'&amp;' ).replace(/</g,'&lt;').replace(/>/g,'&gt;').
+      replace(/"/g,'&quot;').replace(/'/g,'&#039;')
+
+  unescape: (str) ->
+    str.replace(/&(#0?34|quot);/g, '"').replace(/&#0?39;/g, '\'').
+      replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+
   findquoteend: (script, start) ->
     end = -1
     i = start
@@ -124,7 +132,7 @@ class Util
     lines
 
   splitcommand: (text) ->
-    cmdlist = 
+    cmdlist =
       'sound': ['sound', '声音', '音频'],
       'album': ['album', '专辑']
       'state': ['state', '状态']
@@ -357,7 +365,7 @@ class Playbar extends ControlBar
 
     for pn, i in pns
       pos = 100 - pn.pos * 100
-      name = moTool.boardReplaceTxt pn.name
+      name = GG.util.escape pn.name
       html += """
               <div id=\"event#{pn.id}\" class="mpf" style="top: #{pos}%;">
                 <div class="mpfl"></div>
@@ -457,7 +465,7 @@ class Toolbar extends ControlBar
 
   setVolume: (volume) ->
     @$('.mpsvbl').css 'width', volume
-    
+
     # 静音图标
     if volume > 0
       @$('.mpsv').removeClass 'mpsvc'
@@ -768,7 +776,7 @@ class Editorbar extends ControlBar
       return
 
     $gsavebtn.show()
-  
+
     $inputboxtextarea = @$ '#inputboxtextarea'
     $inputboxcmdbox = @$ '#inputboxcmdbox'
 

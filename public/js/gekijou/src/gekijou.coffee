@@ -83,7 +83,7 @@ class Gekijou
     script = ''
     if gs and gs.length > 0
       @setId gs.data 'id'
-      script = @unescape gs.text()
+      script = @util.unescape gs.text()
       @parse script
 
     @chara.init ->
@@ -113,9 +113,6 @@ class Gekijou
         @moveTo len - 1
 
     return
-
-  unescape: (script) ->
-    script.replace(/&(#0?34|quot);/g, '"').replace(/&#0?39;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
 
   # parse
   parse: (script) ->

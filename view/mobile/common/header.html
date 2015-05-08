@@ -14,7 +14,11 @@
   <link rel="bookmark" href="/images/index/favicon.ico">
 
   <link rel="stylesheet" type="text/css" href="/css/mobile.css?v=20150114">
-
+  <% if (pageStyles && pageStyles.length) {
+    for (var i = 0; i < pageStyles.length; i++) { %>
+  <link rel="stylesheet" type="text/css" href="<%= pageStyles[i] %>?v=<%= resource.version %>" /><%
+    }
+  } %>
   <meta name="format-detection" content="telephone=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">

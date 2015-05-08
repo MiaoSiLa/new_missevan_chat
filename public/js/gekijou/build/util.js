@@ -13,6 +13,14 @@ Util = (function() {
     }
   };
 
+  Util.prototype.escape = function(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  };
+
+  Util.prototype.unescape = function(str) {
+    return str.replace(/&(#0?34|quot);/g, '"').replace(/&#0?39;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  };
+
   Util.prototype.findquoteend = function(script, start) {
     var d, end, i, len;
     end = -1;
@@ -439,7 +447,7 @@ Playbar = (function(_super) {
     for (i = _i = 0, _len = pns.length; _i < _len; i = ++_i) {
       pn = pns[i];
       pos = 100 - pn.pos * 100;
-      name = moTool.boardReplaceTxt(pn.name);
+      name = GG.util.escape(pn.name);
       html += "<div id=\"event" + pn.id + "\" class=\"mpf\" style=\"top: " + pos + "%;\">\n  <div class=\"mpfl\"></div>";
       if (GG.env === 'dev') {
         html += "<div data-event-index=\"" + i + "\" class=\"mpfi\"><span>" + name + "</span></div>";
