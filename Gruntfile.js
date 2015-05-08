@@ -8,6 +8,7 @@ module.exports = function(grunt) {
       },
       dev: {
         files: {
+          'public/css/chat/build/mobile.css': 'public/css/chat/src/mobile.less',
           'public/css/chat/build/bubble.css': 'public/css/chat/src/bubble.less',
           'public/css/gekijou/build/editor.css': 'public/css/gekijou/src/editor.less',
           'public/css/gekijou/build/gekijou.css': 'public/css/gekijou/src/gekijou.less',
@@ -37,6 +38,9 @@ module.exports = function(grunt) {
       },
       compress: {
         files: {
+          'public/css/chat/mobile.min.css': [
+            "public/css/chat/build/mobile.css"
+          ],
           'public/css/chat/bubble.min.css': [
             "public/css/chat/build/bubble.css"
           ],

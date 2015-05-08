@@ -1,4 +1,6 @@
-<% pageStyles = dev_mode ? [ '/css/gekijou/build/gekijou.css', '/css/chat/build/bubble.css' ] : [ '/css/chat/bubble.min.css', '/css/gekijou/gekijou.min.css' ];
+<% pageStyles = dev_mode ?
+    [ '/css/chat/build/bubble.css', '/css/gekijou/build/gekijou.css', '/css/chat/build/mobile.css' ]
+  : [ '/css/chat/bubble.min.css', '/css/gekijou/gekijou.min.css', '/css/chat/build/mobile.min.css' ];
 %><%- include('../common/header.html'); -%>
 <%- include('./../../gekijou/sidebar.html'); -%>
 

@@ -8,8 +8,10 @@ ChatBubble = (function() {
     $cm = $('#chatmain .container');
     $cm.prepend('<div id="chatbubble"><ul id="chat"></ul></div>');
     this.el = $cm.find('#chat');
-    if (!moTool.boardReplaceTxt) {
+    if (chatBox.isMobile) {
       moTool.boardReplaceTxt = GG.util.escape;
+      index.mo.chatLine = 1;
+      $cm.find('#chatbubble').css('width', '100%');
     }
   };
 

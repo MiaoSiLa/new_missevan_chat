@@ -9,8 +9,10 @@ class ChatBubble
     @el = $cm.find '#chat'
 
     # fix bugs in mobile view
-    if not moTool.boardReplaceTxt
+    if chatBox.isMobile
       moTool.boardReplaceTxt = GG.util.escape
+      index.mo.chatLine = 1
+      $cm.find('#chatbubble').css('width', '100%')
 
     return
 
