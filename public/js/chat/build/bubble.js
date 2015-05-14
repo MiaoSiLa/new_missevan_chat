@@ -64,12 +64,16 @@ ChatBubble = (function() {
       case 7:
         img = new Image();
         img.onload = function() {
-          var h, imghtml, w;
+          var h, imghtml, maxw, w;
           h = this.height;
           w = this.width;
-          if (w > 600) {
-            w = 600;
-            h = Math.floor(600 * this.height / this.width);
+          maxw = 600;
+          if (chatBox.isMobile) {
+            maxw = 225;
+          }
+          if (w > maxw) {
+            w = maxw;
+            h = Math.floor(maxw * this.height / this.width);
           }
           if (h > 600) {
             w = Math.floor(600 * this.width / this.height);

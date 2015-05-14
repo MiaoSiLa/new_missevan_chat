@@ -76,11 +76,16 @@ class ChatBubble
         #图片
         img = new Image()
         img.onload = ->
-          h = @height;
-          w = @width;
-          if w > 600
-            w = 600
-            h = Math.floor(600 * @height / @width)
+          h = @height
+          w = @width
+
+          maxw = 600
+          if chatBox.isMobile
+            maxw = 225
+
+          if w > maxw
+            w = maxw
+            h = Math.floor(maxw * @height / @width)
           if h > 600
             w = Math.floor(600 * @width / @height)
             h = 600

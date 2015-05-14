@@ -17,7 +17,7 @@
 
       <div class="s_h_x s_h_i_l_w s_h_i_l_h pie" style="height:970px;">
 
-        <div class="s_h_m pd30">
+        <div class="s_h_m">
           <% if (gekijous && gekijous.length) {
             for (var i = 0; i < gekijous.length; i++) {
               var geki = gekijous[i]; %>
@@ -53,22 +53,18 @@
 
     <div id="s_m_r">
 
-      <div class="s_h s_h_i_r_h mt20 pdb30">
+      <div class="s_h s_h_i_r_h" style="height:790px;margin-top:25px;">
 
-        <div class="s_m_r_t">
-          <div class="s_m_t_l">最热</div>
-
-          <div class="s_m_t_r btn-group" style="top:0px;width:96px;">
-            <!-- <div class="s_m_t_r_b btn-default s_m_t_r_b_a">
-              综合
-            </div>
-            <div class="s_m_t_r_b btn-default">
-              娱乐
-            </div> -->
-          </div>
+        <div class="s_m_r_t" style="margin-bottom:10px;">
+          <div class="s_m_t_l" style="position:relative">最热</div>
+          <!-- <div class="btn1-group i_album_icon" style="top:3px;">
+            <div class="btn1 btn1-default active s_m_t_r_b" style="padding:3px 0px;"><a href="javascript:void(0)">本周</a></div>
+            <div class="btn1 btn1-default s_m_t_r_b" style="padding:3px 0px;"><a href="javascript:void(0)">本月</a></div>
+				  </div>
+          <div class="clear"></div> -->
         </div>
 
-        <div class="s_h_x s_h_i_r_w s_h_i_r_h pie pd30">
+        <div class="s_h_x s_h_i_r_w s_h_i_r_h pie">
           <% if (pop_gekijous && pop_gekijous.length) {
             for (var i = 0; i < pop_gekijous.length; i++) {
               var geki = pop_gekijous[i]; %>
