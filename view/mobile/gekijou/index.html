@@ -1,0 +1,64 @@
+<%- include('../common/header.html'); -%>
+
+<%- include('../common/navbar.html'); -%>
+
+<%- include('../common/loginform.html'); -%>
+
+<div id="mainbody">
+  <div class="video_content">
+    <div class="group_box">
+      <!-- 核心内容开始 -->
+      <div class="video_group">
+        <div class="group_title">
+            <nav><a href="javascript:;"><h3>小剧场</h3></a></nav>
+        </div>
+
+        <div class="videos_box">
+          <ul>
+            <% if (gekijous && gekijous.length) {
+              for (var i = 0; i < gekijous.length; i++) {
+                var geki = gekijous[i]; %>
+            <li>
+              <div class="video_item_wrapper">
+                <a class="video_pic" href="/gekijou/view/<%= geki._id %>" target="_blank">
+                  <img width="100%" src="http://static.missevan.cn/coversmini/mnocover.png" data-src="<% if (geki.cover) { %><%= geki.cover %><% } else { %>http://static.missevan.cn/coversmini/nocover.png<% } %>">
+                  <div class="meta_play_tx">
+                    <div class="meta_play_item">
+                      <div class="meta_item_ico play_cout"></div>
+                      <span><%= geki.plays %></span>
+                    </div>
+                    <!-- <div class="meta_play_item">
+                      <div class="meta_item_ico comment_cout">
+                      </div>
+                      <span>88</span>
+                    </div> -->
+                    <div class="meta_play_bg"></div>
+                  </div>
+                </a>
+                <div class="video_item_meta">
+                  <div class="meta_title_tx">
+                    <a href="/gekijou/view/<%= geki._id %>" target="_blank"><%= geki.title %></a>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <% }
+            } %>
+          </ul>
+        </div>
+      </div><!-- 核心内容结束 -->
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function rerangeSwipe(){
+    $(".video_pic").height(document.body.offsetWidth * 0.3);
+  }
+  Zepto(function($){
+    rerangeSwipe();
+    $(window).resize(function(){
+      rerangeSwipe();
+    });
+  });
+</script>
+<%- include('../common/footer.html'); -%>
