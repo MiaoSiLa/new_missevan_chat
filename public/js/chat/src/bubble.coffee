@@ -106,5 +106,5 @@ class ChatBubble
           return
         img.src = data.msg
 
-    index.soundBox.playChat();
+    play.soundBox.playChat();
     return

@@ -89,7 +89,7 @@ ChatBubble = (function() {
         };
         img.src = data.msg;
     }
-    index.soundBox.playChat();
+    play.soundBox.playChat();
   };
 
   return ChatBubble;

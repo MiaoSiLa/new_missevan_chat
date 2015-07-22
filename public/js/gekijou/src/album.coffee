@@ -77,7 +77,7 @@ class SoundAlbum
         soundid = parseInt s.id
         self = @
         $music.click ->
-          # index.soundBox.playChatMusic(s.soundurl, $(this), index.mo.soundPath);
+          # play.soundBox.playChatMusic(s.soundurl, $(this), index.mo.soundPath);
           GG.em.doAction 'sound', soundid
           self.hideSelect()
         return

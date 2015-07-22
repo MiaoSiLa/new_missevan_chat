@@ -10,7 +10,7 @@
   width: 130px;
   height: 500px;
   min-width: 130px;
-  padding: 50px 0 126px 70px;
+  padding: 50px 0 70px 70px;
 }
 #m .mpb {
   height: 500px;
@@ -77,10 +77,12 @@
 #m #mpi {
   top: initial;
   bottom: 14px;
+  left: 56px;
 }
 #m #mpiloop {
   top: initial;
-  bottom: 26px;
+  bottom: 18px;
+  left: 100px;
 }
 .toolbar {
   position: fixed;
@@ -228,7 +230,7 @@
 }
 #mpisave {
   position: absolute;
-  left: 160px;
+  left: 154px;
   bottom: 21px;
   /* 26 - 5 */
   padding: 5px;

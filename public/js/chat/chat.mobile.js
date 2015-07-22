@@ -2,9 +2,9 @@
 chatBox.isMobile = true;
 
 $(function() {
-  index.soundBox.init();
-  index.soundBox.playChat = function () {};
-  index.soundBox.playChatStr = function () {};
+  play.soundBox.init();
+  play.soundBox.playChat = function () {};
+  play.soundBox.playChatStr = function () {};
   // bg is black
   index.mo.bgType = 1;
 });

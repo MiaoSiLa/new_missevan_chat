@@ -147,7 +147,7 @@ var chatBox = {
       var $music = $('<div id="sound' + message.id + '" class="chatmusic"><img title="标题: ' + message.soundstr + '&#10;UP主: ' + message.username + '&#10;声音ID: ' + message.id + '&#10;分享者: ' + sender.name + '" src="' + message.front_cover + '" /></div>');
       $music.prependTo($('#chatmusic'));
       $music.click(function() {
-        index.soundBox.playChatMusic(message.soundurl, $(this), index.mo.soundPath);
+        play.soundBox.playChatMusic(message.soundurl, $(this), index.mo.soundPath);
       });
     }
   },
@@ -444,7 +444,7 @@ var chatBox = {
           + "<div class='chatusername' style='color:" + userNameColor + ";'>" + data.sender.name + subTitle + "</div>"
           + "</div>");
 
-        index.soundBox.playChat();
+        play.soundBox.playChat();
 
         var text;
 
@@ -513,8 +513,8 @@ var chatBox = {
           + "<div class='chatusername'>" + data.sender.name + subTitle + "</div>"
           + "</div>");
 
-        index.soundBox.playChat();
-        //index.soundBox.playChatStr(message.soundUrl);
+        play.soundBox.playChat();
+        //play.soundBox.playChatStr(message.soundUrl);
 
         var text;
         var fnshowbt = function (dr) {
@@ -590,7 +590,7 @@ var chatBox = {
 
       case 6:
         data.msg = JSON.parse(data.msg);
-        index.soundBox.playChatStr(data.msg.soundurl);
+        play.soundBox.playChatStr(data.msg.soundurl);
         chatBox.addInfo('声音播放提示', data.sender.name + ' 播放声音 「' + data.msg.soundstr + '」');
         break;
     }
@@ -637,8 +637,8 @@ var chatBox = {
         + "<div class='chatusername' style='color:" + userNameColor + ";'>" + message.userName + message.subTitle + "</div>"
         + "</div>");
 
-      index.soundBox.playChat();
-      index.soundBox.playChatStr(message.soundUrl);
+      play.soundBox.playChat();
+      play.soundBox.playChatStr(message.soundUrl);
 
       $('#chatline' + index.mo.chatLine).data('bubble',moTool.boardReplaceTxt(message.value));
       chatBox.showBt('#chatline' + index.mo.chatLine,message.colors.split('m'),message.spikeColor,message.charColor);
@@ -663,8 +663,8 @@ var chatBox = {
           + "<div class='chatusername'>" + message.userName + message.subTitle + "</div>"
           + "</div>");
 
-      index.soundBox.playChat();
-      index.soundBox.playChatStr(message.soundUrl);
+      play.soundBox.playChat();
+      play.soundBox.playChatStr(message.soundUrl);
 
       $('#privatechatline' + index.mo.pChatLine).data('bubble',moTool.boardReplaceTxt(message.value));
       chatBox.showBt('#privatechatline' + index.mo.pChatLine, message.colors.split('m'), message.spikeColor, message.charColor);
