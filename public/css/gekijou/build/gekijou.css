@@ -13,6 +13,7 @@
   padding: 50px 0 70px 70px;
 }
 #m .mpb {
+  position: relative;
   height: 500px;
 }
 #m .mpo {
@@ -159,6 +160,9 @@
 .toolbar#chara-toolbar {
   top: 210px;
   bottom: initial;
+}
+.toolbar.non-editor#chara-toolbar {
+  top: 90px;
 }
 #charamodal {
   /* display: none; */

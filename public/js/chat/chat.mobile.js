@@ -1,7 +1,11 @@
 
+var play = {};
 chatBox.isMobile = true;
 
 $(function() {
+  /* adjust mobile soundBox for index.js */
+  play.soundBox = index.soundBox;
+
   play.soundBox.init();
   play.soundBox.playChat = function () {};
   play.soundBox.playChatStr = function () {};

@@ -16,7 +16,7 @@ MissEvan 聊天室与小剧场服务端
 
 请在 `npm install` 后删除 `node_modules/koa-ejs/ejs` 目录，因为它带的 ejs 的版本太老了。
 
-## Developing
+## Developers
 
 操杰朋, 腾袭
 

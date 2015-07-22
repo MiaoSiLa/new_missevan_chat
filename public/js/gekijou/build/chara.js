@@ -265,6 +265,7 @@ Chara = (function() {
       }
       this.searchIcon();
     } else {
+      this.el.addClass('non-editor');
       this.refresh();
     }
     cb();

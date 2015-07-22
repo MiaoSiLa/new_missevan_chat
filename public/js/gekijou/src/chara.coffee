@@ -262,6 +262,7 @@ class Chara
 
       @searchIcon()
     else
+      @el.addClass 'non-editor'
       # load from script
       @refresh()
 
