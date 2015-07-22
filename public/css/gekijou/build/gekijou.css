@@ -230,9 +230,8 @@
 }
 #mpisave {
   position: absolute;
-  left: 154px;
-  bottom: 21px;
-  /* 26 - 5 */
+  left: 150px;
+  bottom: 14px;
   padding: 5px;
 }
 .textbtn {
