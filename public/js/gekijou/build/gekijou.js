@@ -224,6 +224,9 @@ Gekijou = (function() {
           this.play();
         }
         break;
+      case 'step':
+        this.scrollToBottom();
+        break;
       case 'pos':
         i = this.em.getClosetIndex(val * this.em.totaltime());
         if (i >= 0) {
@@ -347,6 +350,10 @@ Gekijou = (function() {
 
   Gekijou.prototype.setId = function(_id) {
     this._id = _id;
+  };
+
+  Gekijou.prototype.scrollToBottom = function() {
+    this.bubble.tobottom();
   };
 
   return Gekijou;

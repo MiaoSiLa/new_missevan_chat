@@ -494,6 +494,7 @@ GEventManager = (function() {
         if (this._currentIndex < i) {
           if (this.next()) {
             this.run();
+            GG.gekijou.emit('step');
           }
         }
       } else {

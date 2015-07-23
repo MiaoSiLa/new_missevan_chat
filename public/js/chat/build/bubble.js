@@ -5,6 +5,7 @@ ChatBubble = (function() {
 
   ChatBubble.prototype.init = function() {
     var $cm;
+    this.stage = $('#commentCanvas');
     $cm = $('#chatmain .container');
     $cm.prepend('<div id="chatbubble"><ul id="chat"></ul></div>');
     this.el = $cm.find('#chat');
@@ -90,6 +91,12 @@ ChatBubble = (function() {
         img.src = data.msg;
     }
     play.soundBox.playChat();
+  };
+
+  ChatBubble.prototype.tobottom = function() {
+    this.stage.animate({
+      scrollTop: this.el.height()
+    }, 1000);
   };
 
   return ChatBubble;

@@ -205,6 +205,8 @@ class Gekijou
             # or GG.env is 'dev'
             @reset()
           @play()
+      when 'step'
+        @scrollToBottom()
       when 'pos'
         i = @em.getClosetIndex val * @em.totaltime()
         if i >= 0
@@ -308,4 +310,8 @@ class Gekijou
     return
 
   setId: (@_id) ->
+    return
+
+  scrollToBottom: ->
+    @bubble.tobottom()
     return

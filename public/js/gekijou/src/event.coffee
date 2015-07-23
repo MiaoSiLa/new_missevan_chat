@@ -103,7 +103,7 @@ class GAction
             statetext = '►► ' + index.mo.sender.name + ' ' + statetext
 
           GG.bubble.text statetext
-            
+
           #if GG.env is 'dev'
           #  action.attachlaststate()
 
@@ -198,7 +198,7 @@ class GEvent
     else if typeof charaid is 'string'
       if charaid is 'nochara'
         return -1
-      
+
       cids = charaid.split ':'
       if cids.length is 2 and cids[0] is 'chara'
         return parseInt cids[1]
@@ -386,7 +386,9 @@ class GEventManager
     for ev, i in @events
       if time >= tt
         if @_currentIndex < i
-          if @next() then @run()
+          if @next()
+            @run()
+            GG.gekijou.emit 'step'
       else
         break
       tt += ev.realtime()

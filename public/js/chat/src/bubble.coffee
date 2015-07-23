@@ -4,6 +4,7 @@ class ChatBubble
     # @_direction = 'down'
 
   init: ->
+    @stage = $ '#commentCanvas'
     $cm = $ '#chatmain .container'
     $cm.prepend '<div id="chatbubble"><ul id="chat"></ul></div>'
     @el = $cm.find '#chat'
@@ -106,5 +107,9 @@ class ChatBubble
           return
         img.src = data.msg
 
-    play.soundBox.playChat();
+    play.soundBox.playChat()
+    return
+
+  tobottom: ->
+    @stage.animate { scrollTop: @el.height() }, 1000
     return
