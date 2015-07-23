@@ -1,5 +1,8 @@
 #chatmain {
   -webkit-overflow-scrolling: touch;
+  background-attachment: fixed;
+  background-size: auto 100%;
+  background-position: center;
 }
 #chatbubble {
   position: relative;

@@ -194,25 +194,88 @@ GGManager = (function() {
 ImageTools = (function() {
   function ImageTools() {}
 
+  ImageTools.prototype.callback = function() {
+    moTool.hideModalBox(this.modal);
+    if (this.result && this.result.code === 0) {
+      this.cb(null, this.type(), this.result.url);
+    }
+  };
+
+  ImageTools.prototype.progress = function(str) {
+    this.modal.find('#img_upload_progress').text(str);
+  };
+
+  ImageTools.prototype.type = function() {
+    var typeid;
+    typeid = this.modal.find('input[type=radio]:checked').attr('id');
+    if (typeid.indexOf('chat') >= 0) {
+      return 'chat';
+    } else {
+      return 'background';
+    }
+  };
+
   ImageTools.prototype.initImageUpload = function(cb) {
-    var dz, el;
+    var dz, el, input, modal, self;
+    this.cb = cb;
+    self = this;
     dz = $('#chattop');
     el = dz;
-    $('#imagefile input', el).fileupload({
+    modal = $('#imagemodal');
+    this.modal = modal;
+    modal.find('#imageokbtn').click(function() {
+      if (!$(this).hasClass('pending')) {
+        self.callback();
+      }
+    });
+    input = $('#imagefile input', el);
+    input.bind('fileuploadprogress', function(e, data) {
+      var p, strp;
+      p = data.progress();
+      if (p.loaded === p.total) {
+        self.progress('上传完成');
+      } else {
+        strp = (p.loaded * 100 / p.total).toFixed(1);
+        self.progress(strp + '%');
+      }
+    });
+    input.fileupload({
       url: 'http://backend1.missevan.cn/mimage/chatimage',
       dropZone: dz,
       dataType: 'json',
       multipart: true,
+      add: function(e, data) {
+        var curev;
+        self.result = null;
+        curev = GG.em.current();
+        if (curev) {
+          self.progress('0%');
+          modal.find('#imageokbtn').addClass('pending');
+          moTool.showModalBox(modal);
+          data.submit().error(function() {
+            self.progress('错误');
+          });
+        } else {
+          moTool.showError('请先新建一个事件！');
+        }
+      },
       done: function(e, data) {
-        var result;
+        var img, result;
         if (data && data.result) {
           result = data.result;
-          if (result.code === 0) {
-            cb(null, result.url);
-            return;
+          self.result = data.result;
+          if (result.code !== 0) {
+            self.progress('错误');
+          } else {
+            self.progress('加载中');
+            img = new Image();
+            img.onload = function() {
+              self.progress('完成');
+              return modal.find('#imageokbtn').removeClass('pending');
+            };
+            img.src = result.url;
           }
         }
-        cb('failed');
       }
     });
     $(document).bind('dragover', function(e) {
@@ -941,7 +1004,7 @@ Editorbar = (function(_super) {
         moTool.showError('请先新建一个事件！');
       }
     });
-    this.imgtool.initImageUpload(function(err, url) {
+    this.imgtool.initImageUpload(function(err, type, url) {
       var curev;
       if (err) {
         moTool.showError('图片上传失败');
@@ -949,7 +1012,13 @@ Editorbar = (function(_super) {
       }
       curev = self.em.current();
       if (curev) {
-        curev.showImage(url);
+        switch (type) {
+          case 'chat':
+            curev.showImage(url);
+            break;
+          case 'background':
+            curev.switchBackground(url);
+        }
       } else {
         moTool.showError('请先新建一个事件！');
       }

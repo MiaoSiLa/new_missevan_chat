@@ -20,6 +20,7 @@ class ChatBubble
   reset: ->
     # $('#chatbox').html ''
     @el.html ''
+    @background()
     return
 
   addhtml: (html) ->
@@ -34,6 +35,20 @@ class ChatBubble
 
     index.mo.chatLine++
     @addhtml chathtml
+    return
+
+  background: (data, cb) ->
+    # TODO: effect?
+    if data
+      img = new Image()
+      img.onload = ->
+        $('#chatmain').css 'background-image', 'url(' + data.url + ')'
+        cb() if cb?
+        return
+      img.src = data.url
+    else
+      $('#chatmain').css 'background-image', 'none'
+      cb() if cb?
     return
 
   popup: (data, cb) ->

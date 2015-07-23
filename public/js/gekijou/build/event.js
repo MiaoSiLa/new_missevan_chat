@@ -19,6 +19,7 @@ GAction = (function() {
     self = this;
     switch (this.type) {
       case 'image':
+      case 'background':
         img = new Image();
         img.onload = function() {
           self.ready = true;
@@ -123,6 +124,18 @@ GAction = (function() {
             action.line = index.mo.chatLine - 1;
             callback();
           });
+        case 'background':
+          return GG.bubble.background({
+            url: action.val,
+            effect: action.effect
+          }, function() {
+            if (GG.env === 'dev') {
+              action.line = index.mo.chatLine;
+              statetext = ': ' + "切换背景";
+              GG.bubble.text(statetext);
+            }
+            callback();
+          });
         case 'sound':
           msg = JSON.stringify(action.Jsound);
           chatBox.loadBubble({
@@ -169,6 +182,13 @@ GEvent = (function() {
         an.val = val2;
         if (!norun) {
           an.run(function() {});
+        }
+        break;
+      case 'background':
+        an.effect = val1;
+        an.val = val2;
+        if (!norun) {
+          an.run();
         }
         break;
       case 'sound':
@@ -272,6 +292,10 @@ GEvent = (function() {
     return this.action('image', GG.chara.currentId(), url);
   };
 
+  GEvent.prototype.switchBackground = function(url, effect) {
+    return this.action('background', 'default', url);
+  };
+
   GEvent.prototype.parse = function(block) {
     var line, lineprops, lines, _i, _len;
     lines = GG.util.splitline(block);
@@ -280,6 +304,9 @@ GEvent = (function() {
         line = lines[_i];
         lineprops = GG.util.splitprop(line);
         try {
+          if (lineprops[0] === 'background') {
+            lineprops[1] = JSON.parse(lineprops[1]);
+          }
           this.action(lineprops[0], lineprops[1], JSON.parse(lineprops[2]), true);
         } catch (_error) {}
       }
@@ -406,6 +433,14 @@ GEventManager = (function() {
         pos = (tt + ((j + 1) * _ctt / len)) / total;
         switch (ac.type) {
           case 'image':
+            res.push({
+              pos: pos,
+              type: 'image',
+              imgurl: ac.val,
+              action: ac
+            });
+            break;
+          case 'background':
             res.push({
               pos: pos,
               type: 'image',

@@ -97,7 +97,7 @@
   position:absolute;top:25px;right:36px;cursor:pointer;padding:3px;
 }
 
-#neweventform, #newcharaform, #editeventform, #saveform {
+#neweventform, #newcharaform, #editeventform, #saveform, #imageform {
   label {
     color: white;
   }
@@ -131,10 +131,23 @@
   input {
     float: none;
   }
+
+  .label-radio {
+    color: white;
+    font-size: 16px;
+    text-align: left;
+    margin-right: 20px;
+    width: auto;
+  }
 }
 
 .formactions {
   margin-top: 50px;
+
+  #imageokbtn.pending {
+    color: gray;
+    cursor: progress;
+  }
 }
 
 .formbtn {

@@ -64,8 +64,10 @@ class GekijouEditor
         script += "    #{a.type} "
 
         switch a.type
-          when 'unknow'
+          #when 'unknow'
             # some other types
+          when 'background'
+            script += "\"#{a.effect}\" #{JSON.stringify(a.val)}"
           else
             # text, state, image, sound
             charastr = if a.chara is -1 then 'nochara' else "chara:#{a.chara}"

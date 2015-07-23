@@ -1,6 +1,9 @@
 
 #chatmain {
   -webkit-overflow-scrolling: touch;
+  background-attachment: fixed;
+  background-size: auto 100%;
+  background-position: center;
 }
 
 #chatbubble {
@@ -16,7 +19,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -o-box-sizing: border-box;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   /* -webkit-user-select:none; */
 
   img {
@@ -48,7 +51,7 @@
     border-radius: .35em;
     background-color: #606060;
   }
-  
+
   li .userFace {
     width: 64px;
     height: 64px;
@@ -58,7 +61,7 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -o-box-sizing: border-box;
-    box-sizing: border-box; 
+    box-sizing: border-box;
   }
 
   li .userName {
@@ -92,7 +95,7 @@
   li .inlineText {
     font-size: "Helvetica Neue", Helvetica, 'Microsoft Yahei', tahoma,Georgia, Arial, sans-serif;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.17);
-    color: #333;  
+    color: #333;
     position: relative;
     border-radius: .7em;
     display: block;
@@ -112,16 +115,16 @@
     pointer-events: none;
     top: 14px;
   }
- 
+
   li .inlineText:after {
-    right: 100%;  
+    right: 100%;
     border-color: rgba(248, 248, 248, 0);
     border-right-color: #ADDC4B;
     border-width: 8px;
-    margin-top: -6px; 
+    margin-top: -6px;
   }
   li .inlineText:before {
-    right: 100.2%;    
+    right: 100.2%;
     border-color: rgba(255, 255, 255, 0);
     border-right-color: rgba(145, 180, 105, 0.82);
     border-width: 10px;
@@ -165,18 +168,18 @@
   }
 
   li.author .inlineText:after{
-    left: 100.1%; 
+    left: 100.1%;
     border-color: rgba(248, 248, 248, 0);
     border-left-color:#E6E6E6;
     border-width: 8px;
-    margin-top: -6px; 
+    margin-top: -6px;
   }
   li.author .inlineText:before{
     left: 100.3%;
     border-color: rgba(255, 255, 255, 0);
     border-left-color: rgba(189, 189, 189, 0.7);
     border-width: 10px;
-    margin-top: -8px; 
+    margin-top: -8px;
   }
 
 }

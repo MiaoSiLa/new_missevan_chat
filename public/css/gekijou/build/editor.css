@@ -86,7 +86,8 @@
 #neweventform label,
 #newcharaform label,
 #editeventform label,
-#saveform label {
+#saveform label,
+#imageform label {
   color: white;
 }
 #saveform {
@@ -110,8 +111,19 @@
 .inputgroup input {
   float: none;
 }
+.inputgroup .label-radio {
+  color: white;
+  font-size: 16px;
+  text-align: left;
+  margin-right: 20px;
+  width: auto;
+}
 .formactions {
   margin-top: 50px;
+}
+.formactions #imageokbtn.pending {
+  color: gray;
+  cursor: progress;
 }
 .formbtn {
   display: block;

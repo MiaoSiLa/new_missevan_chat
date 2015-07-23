@@ -18,6 +18,7 @@ ChatBubble = (function() {
 
   ChatBubble.prototype.reset = function() {
     this.el.html('');
+    this.background();
   };
 
   ChatBubble.prototype.addhtml = function(html) {
@@ -33,6 +34,25 @@ ChatBubble = (function() {
     chathtml = '<li id="chatline' + index.mo.chatLine + '"><div class="chatinfo"><span>' + text + '</span></div></li>';
     index.mo.chatLine++;
     this.addhtml(chathtml);
+  };
+
+  ChatBubble.prototype.background = function(data, cb) {
+    var img;
+    if (data) {
+      img = new Image();
+      img.onload = function() {
+        $('#chatmain').css('background-image', 'url(' + data.url + ')');
+        if (cb != null) {
+          cb();
+        }
+      };
+      img.src = data.url;
+    } else {
+      $('#chatmain').css('background-image', 'none');
+      if (cb != null) {
+        cb();
+      }
+    }
   };
 
   ChatBubble.prototype.popup = function(data, cb) {

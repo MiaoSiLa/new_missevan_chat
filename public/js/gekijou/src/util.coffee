@@ -158,21 +158,81 @@ class GGManager
 
 class ImageTools
 
-  initImageUpload: (cb) ->
+  callback: ->
+    moTool.hideModalBox @modal
+    if @result and @result.code is 0
+      @cb null, @type(), @result.url
+    #else
+    #  @cb 'failed'
+    return
+
+  progress: (str) ->
+    @modal.find('#img_upload_progress').text str
+    return
+
+  type: ->
+    typeid = @modal.find('input[type=radio]:checked').attr 'id'
+    if typeid.indexOf('chat') >= 0
+      'chat'
+    else
+      'background'
+
+  initImageUpload: (@cb) ->
+    self = @
     dz = $ '#chattop'
     el = dz
-    $('#imagefile input', el).fileupload
+
+    modal = $ '#imagemodal'
+    @modal = modal
+    modal.find('#imageokbtn').click ->
+      if not $(this).hasClass('pending')
+        self.callback()
+      return
+
+    input = $ '#imagefile input', el
+    # show process
+    input.bind 'fileuploadprogress', (e, data) ->
+      # Log the current bitrate for this upload:
+      p = data.progress()
+      if p.loaded is p.total
+        self.progress '上传完成'
+      else
+        strp = (p.loaded * 100 / p.total).toFixed(1)
+        self.progress strp + '%'
+      return
+
+    input.fileupload
       url: 'http://backend1.missevan.cn/mimage/chatimage',
       dropZone: dz,
       dataType: 'json',
       multipart: true,
+      add: (e, data) ->
+        self.result = null
+        curev = GG.em.current()
+        if curev
+          self.progress '0%'
+          modal.find('#imageokbtn').addClass 'pending'
+          #modal.find('#editevent_time').val ev.time
+          moTool.showModalBox modal
+          data.submit().error ->
+            self.progress '错误'
+            return
+        else
+          moTool.showError '请先新建一个事件！'
+        return
       done: (e, data) ->
         if data and data.result
           result = data.result
-          if result.code is 0
-            cb null, result.url
-            return
-        cb 'failed'
+          self.result = data.result
+          if result.code isnt 0
+            self.progress '错误'
+          else
+            self.progress '加载中'
+            img = new Image()
+            img.onload = ->
+              self.progress '完成'
+              modal.find('#imageokbtn').removeClass 'pending'
+            img.src = result.url
         return
 
     $(document).bind 'dragover', (e) ->
@@ -833,14 +893,18 @@ class Editorbar extends ControlBar
       return
 
     # 图片上传
-    @imgtool.initImageUpload (err, url) ->
+    @imgtool.initImageUpload (err, type, url) ->
       if err
         moTool.showError '图片上传失败'
         return
 
       curev = self.em.current()
       if curev
-        curev.showImage url
+        switch type
+          when 'chat'
+            curev.showImage url
+          when 'background'
+            curev.switchBackground url
       else
         moTool.showError '请先新建一个事件！'
 

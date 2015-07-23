@@ -60,7 +60,8 @@ GekijouEditor = (function() {
         a = _ref2[_k];
         script += "    " + a.type + " ";
         switch (a.type) {
-          case 'unknow':
+          case 'background':
+            script += "\"" + a.effect + "\" " + (JSON.stringify(a.val));
             break;
           default:
             charastr = a.chara === -1 ? 'nochara' : "chara:" + a.chara;

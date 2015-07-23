@@ -12,7 +12,7 @@ class GAction
 
     self = @
     switch @type
-      when 'image'
+      when 'image', 'background'
         img = new Image()
         img.onload = ->
           self.ready = on
@@ -113,6 +113,17 @@ class GAction
             action.line = index.mo.chatLine - 1
             callback()
             return
+
+        when 'background'
+          GG.bubble.background { url: action.val, effect: action.effect }, ->
+            if GG.env is 'dev'
+              # editor
+              action.line = index.mo.chatLine
+              statetext = ': ' + "切换背景"
+              GG.bubble.text statetext
+            callback()
+            return
+
         when 'sound'
           msg = JSON.stringify action.Jsound
 
@@ -155,6 +166,12 @@ class GEvent
         if not norun
           an.run ->
             #image do some thing here
+
+      when 'background'
+        an.effect = val1
+        an.val = val2
+        if not norun
+          an.run()
 
       when 'sound'
         an.chara = @parseCharaId(val1)
@@ -234,6 +251,10 @@ class GEvent
   showImage: (url) ->
     @action 'image', GG.chara.currentId(), url
 
+  switchBackground: (url, effect) ->
+    # TODO: effect?
+    @action 'background', 'default', url
+
   # parse
   parse: (block) ->
     lines = GG.util.splitline block
@@ -242,6 +263,8 @@ class GEvent
       for line in lines
         lineprops = GG.util.splitprop line
         try
+          if lineprops[0] is 'background'
+            lineprops[1] = JSON.parse lineprops[1]
           @action lineprops[0], lineprops[1], JSON.parse(lineprops[2]), on
 
     return
@@ -330,6 +353,13 @@ class GEventManager
         pos = (tt + ((j + 1) * _ctt / len)) / total
         switch ac.type
           when 'image'
+            res.push
+              pos: pos,
+              type: 'image',
+              imgurl: ac.val,
+              action: ac
+
+          when 'background'
             res.push
               pos: pos,
               type: 'image',
