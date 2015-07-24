@@ -613,12 +613,15 @@ class Toolbar extends ControlBar
       e.stopPropagation()
       return
 
+    ### Deprecated: danmaku button
     @$('.mpcdm').click ->
       if self.switch('dm')
         $(@).removeClass('mpcdmc')
       else
         $(@).addClass('mpcdmc')
       return
+    ###
+
 
     @$('.mpcf').click ->
       if self.switch('f')

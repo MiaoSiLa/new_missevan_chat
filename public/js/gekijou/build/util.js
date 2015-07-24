@@ -702,13 +702,15 @@ Toolbar = (function(_super) {
       self.setVolume(100 - e.offsetX);
       e.stopPropagation();
     });
-    this.$('.mpcdm').click(function() {
-      if (self["switch"]('dm')) {
-        $(this).removeClass('mpcdmc');
-      } else {
-        $(this).addClass('mpcdmc');
-      }
-    });
+
+    /* Deprecated: danmaku button
+    @$('.mpcdm').click ->
+      if self.switch('dm')
+        $(@).removeClass('mpcdmc')
+      else
+        $(@).addClass('mpcdmc')
+      return
+     */
     this.$('.mpcf').click(function() {
       if (self["switch"]('f')) {
         $(this).find('.mpcfu').show();
