@@ -886,7 +886,7 @@ Editorbar = (function(_super) {
     self = this;
     $newevbtn = this.pb.$('#mpiloop');
     $newevbtn.addClass('mpiloopa newevent');
-    $newevbtn.text('+');
+    $newevbtn.text('');
     $newevbtn.click(function() {
       var modal, newid;
       modal = $('#neweventmodal');

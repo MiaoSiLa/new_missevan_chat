@@ -765,7 +765,7 @@ class Editorbar extends ControlBar
     # 新事件
     $newevbtn = @pb.$('#mpiloop')
     $newevbtn.addClass 'mpiloopa newevent'
-    $newevbtn.text '+'
+    $newevbtn.text ''
     $newevbtn.click ->
       modal = $ '#neweventmodal'
       newid = self.em.lastid() + 1
