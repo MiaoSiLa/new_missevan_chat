@@ -97,7 +97,18 @@
   position:absolute;top:25px;right:36px;cursor:pointer;padding:3px;
 }
 
-#neweventform, #newcharaform, #editeventform, #saveform, #imageform {
+.modalform {
+  padding-left: 200px;
+  text-align: left;
+
+  .inputgroup {
+    label.lsection {
+      margin-left: -150px;
+      width: 120px;
+      text-align: right;
+    }
+  }
+
   label {
     color: white;
   }
@@ -138,6 +149,7 @@
     text-align: left;
     margin-right: 20px;
     width: auto;
+    cursor: pointer;
   }
 }
 
@@ -164,12 +176,19 @@
   cursor: pointer;
 }
 
-#mpiloop.newevent {
-  background: url(/images/gekijou/editor/add.png) no-repeat;
-}
+#m {
+  #mpiloop.newevent {
+    width: 18px;
+    background: url(/images/gekijou/editor/add.png) no-repeat;
+  }
 
-#mpiloop.newevent:hover {
-  opacity: 0.9;
+  #mpiloop.newevent:hover {
+    opacity: 0.9;
+  }
+
+  #mpisettings {
+    display: block;
+  }
 }
 
 #charamodal {

@@ -15,6 +15,7 @@ class Gekijou
     @album = new SoundAlbum()
     @em = new GEventManager()
     @util = new Util()
+    @settings = {}
 
     @_playing = no
     @_ready = no
@@ -32,8 +33,11 @@ class Gekijou
   setOptions: (opts) ->
     for k, v of opts
       # set env to GG
-      if k is 'env'
-        GG.env = v
+      switch k
+        when 'env'
+          GG.env = v
+        when 'showname'
+          @bubble.showname v
       @opts[k] = v
     @opts
 
@@ -144,8 +148,14 @@ class Gekijou
     lines = @util.splitline block
     for line, i in lines
       lineprops = @util.splitprop line
-      if lineprops[0] is 'album'
-        @album.set lineprops[1]
+      switch lineprops[0]
+        when 'album'
+          @album.set lineprops[1]
+        when 'showname'
+          if lineprops[1] is 'off'
+            @setOptions 'showname': off
+          else
+            @setOptions 'showname': on
     return
 
   reset: ->

@@ -42,6 +42,9 @@ class GekijouEditor
     if album.albums and album.albums.length
       script += "  album " + album.albums.join() + "\n"
 
+    if @gekijou.opts['showname'] is off
+      script += "  showname off\n"
+
     script += '}\n\n'
     script += 'chara {\n'
 

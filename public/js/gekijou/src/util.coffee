@@ -821,6 +821,20 @@ class Editorbar extends ControlBar
       moTool.hideModalBox modal
       return
 
+    # 设置
+    $settingsbtn = @pb.$('#mpisettings')
+    $settingsbtn.click ->
+      modal = $ '#settingsmodal'
+      moTool.showModalBox modal
+      return
+
+    # 保存设置
+    $('#settingsokbtn').click ->
+      modal = $ '#settingsmodal'
+      GG.gekijou.setOptions showname: modal.find('#cb_show_name').prop('checked')
+      moTool.hideModalBox modal
+      return
+
     # 保存
     $gsavebtn = @pb.$('#mpisave')
     $gsavebtn.click ->

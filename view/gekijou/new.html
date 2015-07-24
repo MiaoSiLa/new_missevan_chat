@@ -46,13 +46,13 @@ pageStyles = dev_mode ? [
   <!-- 对话框 -->
   <div id="neweventmodal" class='m_c' data-width="600" style="display:none;">
     <div class="e_t">
-      <form id="neweventform">
+      <form id="neweventform" class="modalform">
         <div class="inputgroup">
-          <label class="label pie" for="newevent_name">事件名</label>
+          <label class="label pie lsection" for="newevent_name">事件名</label>
           <input class="label_input pie" name="newevent[name]" id="newevent_name" type="text">
         </div>
         <div class="inputgroup">
-          <label class="label pie" for="newevent_time">事件持续</label>
+          <label class="label pie lsection" for="newevent_time">事件持续</label>
           <input class="label_input pie" name="newevent[time]" id="newevent_time" type="text" placeholder="毫秒" value="2000">
         </div>
         <div class="formactions">
@@ -64,13 +64,13 @@ pageStyles = dev_mode ? [
 
   <div id="editeventmodal" class='m_c' data-width="600" style="display:none;">
     <div class="e_t">
-      <form id="editeventform">
+      <form id="editeventform" class="modalform">
         <div class="inputgroup">
-          <label class="label pie" for="editevent_name">事件名</label>
+          <label class="label pie lsection" for="editevent_name">事件名</label>
           <input class="label_input pie" name="editevent[name]" id="editevent_name" type="text">
         </div>
         <div class="inputgroup">
-          <label class="label pie" for="editevent_time">事件持续</label>
+          <label class="label pie lsection" for="editevent_time">事件持续</label>
           <input class="label_input pie" name="editevent[time]" id="editevent_time" type="text" placeholder="毫秒" value="2000">
         </div>
         <div class="formactions">
@@ -83,14 +83,14 @@ pageStyles = dev_mode ? [
 
   <div id="newcharamodal" class='m_c' data-width="600" style="display:none;">
     <div class="e_t">
-      <form id="newcharaform">
+      <form id="newcharaform" class="modalform">
         <div id="newchara_user" style="display:none"></div>
         <div class="inputgroup">
-          <label class="label pie" for="newchara_username">用户名</label>
+          <label class="label pie lsection" for="newchara_username">用户名</label>
           <input class="label_input pie" name="newchara[username]" id="newchara_username" type="text">
         </div>
         <div class="inputgroup">
-          <label class="label pie" for="newchara_subtitle">称号</label>
+          <label class="label pie lsection" for="newchara_subtitle">称号</label>
           <input class="label_input pie" name="newchara[subtitle]" id="newchara_subtitle" type="text" placeholder="可选">
         </div>
         <div class="formactions">
@@ -102,13 +102,13 @@ pageStyles = dev_mode ? [
 
   <div id="imagemodal" class='m_c' data-width="600" style="display:none;">
     <div class="e_t">
-      <form id="imageform">
+      <form id="imageform" class="modalform">
         <div class="inputgroup">
-          <label class="label pie" for="img_upload_progress">进度</label>
+          <label class="label pie lsection" for="img_upload_progress">进度</label>
           <span class="label-radio" id="img_upload_progress">0%</span>
         </div>
         <div class="inputgroup">
-          <label class="label pie" for="img_type">类型</label>
+          <label class="label pie lsection" for="img_type">类型</label>
           <input type="radio" name="img_type" id="rd_img_chat" value="chat" checked> <label class="label-radio" for="rd_img_chat">聊天表情</label>
           <input type="radio" name="img_type" id="rd_img_background" value="background"> <label class="label-radio" for="rd_img_background">背景</label>
         </div>
@@ -119,16 +119,30 @@ pageStyles = dev_mode ? [
     </div>
   </div>
 
+  <div id="settingsmodal" class='m_c' data-width="600" style="display:none;">
+    <div class="e_t">
+      <form id="settingsform" class="modalform">
+        <div class="inputgroup">
+          <input type="checkbox" id="cb_show_name" checked>
+          <label class="label pie label-radio" for="cb_show_name">显示名称</label>
+        </div>
+        <div class="formactions">
+          <input id="settingsokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="savemodal" class='m_c' data-width="800" style="display:none;">
     <div class="e_t">
-      <form id="saveform">
+      <form id="saveform" class="modalform">
         <input type="hidden" name="gekijou[_id]" id="gekijou_id"<% if (gekijou) { %> value="<%= gekijou._id %>"<% } %>>
         <div class="inputgroup">
-          <label class="label pie" for="gekijou_title">标题</label>
+          <label class="label pie lsection" for="gekijou_title">标题</label>
           <input class="label_input pie" name="gekijou[title]" id="gekijou_title" type="text"<% if (gekijou) { %> value="<%= gekijou.title %>"<% } %>>
         </div>
         <div class="inputgroup">
-          <label class="label pie" for="gekijou_intro">介绍</label>
+          <label class="label pie lsection" for="gekijou_intro">介绍</label>
           <textarea rows="6" cols="50" name="gekijou[intro]" id="gekijou_intro"><% if (gekijou) { %><%= gekijou.intro %><% } %></textarea>
           <div class="clear"></div>
         </div>

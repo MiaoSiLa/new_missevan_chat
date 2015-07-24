@@ -40,6 +40,9 @@ GekijouEditor = (function() {
     if (album.albums && album.albums.length) {
       script += "  album " + album.albums.join() + "\n";
     }
+    if (this.gekijou.opts['showname'] === false) {
+      script += "  showname off\n";
+    }
     script += '}\n\n';
     script += 'chara {\n';
     _ref = chara.charas;

@@ -99,6 +99,29 @@
     bottom: 18px;
     left: 100px;
   }
+
+  #mpisettings {
+    display: none;
+    position: absolute;
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+    left: 128px;
+    bottom: 18px;
+    margin-left: 15px;
+    background: url(/images/gekijou/editor/settings.png) no-repeat;
+  }
+
+  #mpisettings:hover {
+    opacity: 0.9;
+  }
+
+  #mpisave {
+    position: absolute;
+    left: 171px; /* 171 - 5 */
+    bottom: 13px;
+    padding: 5px;
+  }
 }
 
 .toolbar {
@@ -282,13 +305,6 @@
   }
 }
 
-#mpisave {
-  position: absolute;
-  left: 150px;
-  bottom: 14px;
-  padding: 5px;
-}
-
 .textbtn {
   color: #fff;
   cursor: pointer;
@@ -299,6 +315,8 @@
 
   border-radius: 5px;
   transition: background .3s ease;
+
+  white-space: nowrap;
 
   &:hover {
     background: #444;

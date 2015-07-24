@@ -16,6 +16,7 @@ Gekijou = (function() {
     this.album = new SoundAlbum();
     this.em = new GEventManager();
     this.util = new Util();
+    this.settings = {};
     this._playing = false;
     this._ready = false;
     this._playedtime = 0;
@@ -32,8 +33,12 @@ Gekijou = (function() {
     var k, v;
     for (k in opts) {
       v = opts[k];
-      if (k === 'env') {
-        GG.env = v;
+      switch (k) {
+        case 'env':
+          GG.env = v;
+          break;
+        case 'showname':
+          this.bubble.showname(v);
       }
       this.opts[k] = v;
     }
@@ -149,8 +154,20 @@ Gekijou = (function() {
     for (i = _i = 0, _len = lines.length; _i < _len; i = ++_i) {
       line = lines[i];
       lineprops = this.util.splitprop(line);
-      if (lineprops[0] === 'album') {
-        this.album.set(lineprops[1]);
+      switch (lineprops[0]) {
+        case 'album':
+          this.album.set(lineprops[1]);
+          break;
+        case 'showname':
+          if (lineprops[1] === 'off') {
+            this.setOptions({
+              'showname': false
+            });
+          } else {
+            this.setOptions({
+              'showname': true
+            });
+          }
       }
     }
   };

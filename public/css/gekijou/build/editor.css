@@ -83,11 +83,16 @@
   cursor: pointer;
   padding: 3px;
 }
-#neweventform label,
-#newcharaform label,
-#editeventform label,
-#saveform label,
-#imageform label {
+.modalform {
+  padding-left: 200px;
+  text-align: left;
+}
+.modalform .inputgroup label.lsection {
+  margin-left: -150px;
+  width: 120px;
+  text-align: right;
+}
+.modalform label {
   color: white;
 }
 #saveform {
@@ -117,6 +122,7 @@
   text-align: left;
   margin-right: 20px;
   width: auto;
+  cursor: pointer;
 }
 .formactions {
   margin-top: 50px;
@@ -138,11 +144,15 @@
   background: #000;
   cursor: pointer;
 }
-#mpiloop.newevent {
+#m #mpiloop.newevent {
+  width: 18px;
   background: url(/images/gekijou/editor/add.png) no-repeat;
 }
-#mpiloop.newevent:hover {
+#m #mpiloop.newevent:hover {
   opacity: 0.9;
+}
+#m #mpisettings {
+  display: block;
 }
 #charamodal #selecticon {
   margin-top: 30px;

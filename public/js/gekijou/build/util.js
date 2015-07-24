@@ -884,7 +884,7 @@ Editorbar = (function(_super) {
   };
 
   Editorbar.prototype.bind = function() {
-    var $gsavebtn, $inputboxcmdbox, $inputboxtextarea, $newevbtn, self;
+    var $gsavebtn, $inputboxcmdbox, $inputboxtextarea, $newevbtn, $settingsbtn, self;
     self = this;
     $newevbtn = this.pb.$('#mpiloop');
     $newevbtn.addClass('mpiloopa newevent');
@@ -933,6 +933,20 @@ Editorbar = (function(_super) {
         self.gekijou.reset();
         self.gekijou.rearrange();
       }
+      moTool.hideModalBox(modal);
+    });
+    $settingsbtn = this.pb.$('#mpisettings');
+    $settingsbtn.click(function() {
+      var modal;
+      modal = $('#settingsmodal');
+      moTool.showModalBox(modal);
+    });
+    $('#settingsokbtn').click(function() {
+      var modal;
+      modal = $('#settingsmodal');
+      GG.gekijou.setOptions({
+        showname: modal.find('#cb_show_name').prop('checked')
+      });
       moTool.hideModalBox(modal);
     });
     $gsavebtn = this.pb.$('#mpisave');

@@ -2,6 +2,7 @@
 class ChatBubble
   constructor: ->
     # @_direction = 'down'
+    @_showname = on
 
   init: ->
     @stage = $ '#commentCanvas'
@@ -22,6 +23,8 @@ class ChatBubble
     @el.html ''
     @background()
     return
+
+  showname: (@_showname) ->
 
   addhtml: (html) ->
     # @el.prepend html
@@ -76,9 +79,13 @@ class ChatBubble
         text = text.replace /\n/g, '<br>'
 
         chathtml = '<li id="chatline' + index.mo.chatLine + '">\n'\
-                 + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n'\
-                 + '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n'\
-                 + '  <div class="userSay">\n'\
+                 + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
+
+        if @_showname
+          # show name
+          chathtml += '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n'
+
+        chathtml += '  <div class="userSay">\n'\
                  + '    <div class="inlineText">' + text + '</div>\n'\
                  + '  </div>\n'\
                  + '</li>';
@@ -110,9 +117,13 @@ class ChatBubble
                + '<img style="width:' + w + 'px;height:' + h + 'px" src="' + data.msg + '" />'\
                + '</a>';
           chathtml = '<li id="chatline' + index.mo.chatLine + '">\n'\
-               + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n'\
-               + '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n'\
-               + '  <div class="userChatImage">' + imghtml + '</div>\n'\
+               + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
+
+          if @_showname
+            # show name
+            chathtml += '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n'
+
+          chathtml += '  <div class="userChatImage">' + imghtml + '</div>\n'\
                + '</li>';
 
           index.mo.chatLine++;

@@ -1,7 +1,9 @@
 var ChatBubble;
 
 ChatBubble = (function() {
-  function ChatBubble() {}
+  function ChatBubble() {
+    this._showname = true;
+  }
 
   ChatBubble.prototype.init = function() {
     var $cm;
@@ -19,6 +21,10 @@ ChatBubble = (function() {
   ChatBubble.prototype.reset = function() {
     this.el.html('');
     this.background();
+  };
+
+  ChatBubble.prototype.showname = function(_showname) {
+    this._showname = _showname;
   };
 
   ChatBubble.prototype.addhtml = function(html) {
@@ -75,7 +81,11 @@ ChatBubble = (function() {
       case 1:
         text = moTool.boardReplaceTxt(data.msg);
         text = text.replace(/\n/g, '<br>');
-        chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n' + '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n' + '  <div class="userSay">\n' + '    <div class="inlineText">' + text + '</div>\n' + '  </div>\n' + '</li>';
+        chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
+        if (this._showname) {
+          chathtml += '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n';
+        }
+        chathtml += '  <div class="userSay">\n' + '    <div class="inlineText">' + text + '</div>\n' + '  </div>\n' + '</li>';
         index.mo.chatLine++;
         this.addhtml(chathtml);
         if (cb != null) {
@@ -101,7 +111,11 @@ ChatBubble = (function() {
             h = 600;
           }
           imghtml = '<a target="_blank" href="' + data.msg + '">' + '<img style="width:' + w + 'px;height:' + h + 'px" src="' + data.msg + '" />' + '</a>';
-          chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n' + '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n' + '  <div class="userChatImage">' + imghtml + '</div>\n' + '</li>';
+          chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
+          if (this._showname) {
+            chathtml += '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n';
+          }
+          chathtml += '  <div class="userChatImage">' + imghtml + '</div>\n' + '</li>';
           index.mo.chatLine++;
           self.addhtml(chathtml);
           if (cb != null) {
