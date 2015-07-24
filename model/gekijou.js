@@ -111,8 +111,12 @@ Gekijou.prototype.save = function *() {
     g.created_time = new Date();
     g.updated_time = new Date();
   }
-  if (!g.plays) {
-    g.plays = 0;
+  let counter_keys = ['plays', 'goods', 'favorites'];
+  for (var i = 0; i < counter_keys.length; i++) {
+    let k = counter_keys[i];
+    if (!g[k]) {
+      g[k] = 0;
+    }
   }
   return yield this.collection.save(g);
 };
