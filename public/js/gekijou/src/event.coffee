@@ -90,7 +90,8 @@ class GAction
           GG.bubble.popup
             msg: action.val,
             type: 1,
-            sender: index.mo.sender
+            sender: index.mo.sender,
+            showon: GG.chara.currentShowOn()
           callback()
         when 'state'
           # for bubble style
@@ -110,7 +111,7 @@ class GAction
           callback()
         when 'image'
           if action.chara isnt -1
-            GG.bubble.popup { msg: action.val, type: 7, sender: index.mo.sender }, ->
+            GG.bubble.popup { msg: action.val, type: 7, sender: index.mo.sender, showon: GG.chara.currentShowOn()  }, ->
               action.line = index.mo.chatLine - 1
               callback()
               return

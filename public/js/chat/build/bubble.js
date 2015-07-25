@@ -104,7 +104,11 @@ ChatBubble = (function() {
       case 1:
         text = this.xss(data.msg);
         text = text.replace(/\n/g, '<br>');
-        chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
+        chathtml = '<li ';
+        if (data.showon === 'right') {
+          chathtml += 'class="author" ';
+        }
+        chathtml += 'id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
         if (this._showname) {
           chathtml += '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n';
         }
@@ -134,7 +138,11 @@ ChatBubble = (function() {
             h = 600;
           }
           imghtml = '<a target="_blank" href="' + data.msg + '">' + '<img style="width:' + w + 'px;height:' + h + 'px" src="' + data.msg + '" />' + '</a>';
-          chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
+          chathtml = '<li ';
+          if (data.showon === 'right') {
+            chathtml += 'class="author" ';
+          }
+          chathtml += 'id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
           if (self._showname) {
             chathtml += '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n';
           }

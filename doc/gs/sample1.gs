@@ -31,16 +31,19 @@ setup {
 #   # `iconurl` 需要加上 `http://static.missevan.cn/mimagesmini/` 或 `http://static.missevan.cn/mimages/` 的对应资源地址
 #   icon [iconid] [iconurl] [iconcolor]
 #
+#   # 角色称号
+#   subtitle [string 角色称号]
+#
 #   # 显示位置，默认为 left
 #   showon [left, right]
 # }
 #
 
 chara {
-  define 1 "诸葛亮" "" {
+  define 1 "诸葛亮" {
     icon 22768 "201501/20/dcede7aa9e9b7c114633e817d415216d153731.png" "#97d7e5m#e0f6fbm#97d7e5m#7bbdcbm#97d7e5"
   }
-  define 2 "王朗" "" {
+  define 2 "王朗" {
     icon 22767 "201501/20/79d982de6b15b29028613ae93912cb6d153730.png" "#94cec8m#cdf6f2m#94cec8m#78b8b1m#94cec8"
   }
 }

@@ -20,6 +20,7 @@ class Chara
       id: id,
       username: c.username,
       subtitle: c.subtitle,
+      showon: c.showon,
       iconid: c.iconid,
       iconurl: c.iconurl,
       iconcolor: c.iconcolor
@@ -29,6 +30,11 @@ class Chara
     if @_sel >= 0
       return @charas[@_sel].id
     -1
+
+  currentShowOn: ->
+    if @_sel >= 0
+      return @charas[@_sel].showon
+    null
 
   selectId: (id) ->
     for c, i in @charas
@@ -232,7 +238,9 @@ class Chara
       name = $modal.find('#newchara_username').val()
       if name
         user = $modal.find('#newchara_user').data 'user'
+        showon = $modal.find('input[name=rd_chara_showon]:checked').val()
         user.username = name
+        user.showon = if showon is 'right' then 'right' else 'left'
         user.subtitle = $modal.find('#newchara_subtitle').val()
 
         self.add user
@@ -276,20 +284,28 @@ class Chara
       props = GG.util.splitprop b.title
       lines = GG.util.splitline b.content
 
-      if props.length >= 3 and props[0] is 'define' and lines.length > 0
+      if props.length >= 2 and props[0] is 'define' and lines.length > 0
         try
           cid = parseInt(props[1])
           c =
             id: cid,
             username: JSON.parse(props[2]),
-            subtitle: if props[3] then JSON.parse(props[3]) else ''
+            subtitle: ''
 
           for line, i in lines
             lineprops = GG.util.splitprop line
-            if lineprops.length >= 4 && lineprops[0] is 'icon'
-              c.iconid = parseInt lineprops[1]
-              c.iconurl = JSON.parse lineprops[2]
-              c.iconcolor = JSON.parse lineprops[3]
+            switch lineprops[0]
+              when 'icon'
+                if lineprops.length >= 4
+                  c.iconid = parseInt lineprops[1]
+                  c.iconurl = JSON.parse lineprops[2]
+                  c.iconcolor = JSON.parse lineprops[3]
+              when 'showon'
+                if lineprops.length >= 2
+                  c.showon = if lineprops[1] is 'right' then 'right' else 'left'
+              when 'subtitle'
+                if lineprops.length >= 2 and lineprops[1]
+                  c.subtitle = JSON.parse lineprops[1]
 
           @add c, cid
 

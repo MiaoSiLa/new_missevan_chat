@@ -94,6 +94,11 @@ pageStyles = dev_mode ? [
           <label class="label pie lsection" for="newchara_subtitle">称号</label>
           <input class="label_input pie" name="newchara[subtitle]" id="newchara_subtitle" type="text" placeholder="可选">
         </div>
+        <div class="inputgroup">
+          <label class="label pie lsection">显示位置</label>
+          <input type="radio" name="rd_chara_showon" id="cb_chara_showon_left" value="left" checked><label class="label pie label-radio" for="cb_chara_showon_left">左</label>
+          <input type="radio" name="rd_chara_showon" id="cb_chara_showon_right" value="right"><label class="label pie label-radio" for="cb_chara_showon_right">右</label>
+        </div>
         <div class="formactions">
           <input id="newcharaokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
         </div>

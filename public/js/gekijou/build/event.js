@@ -104,7 +104,8 @@ GAction = (function() {
           GG.bubble.popup({
             msg: action.val,
             type: 1,
-            sender: index.mo.sender
+            sender: index.mo.sender,
+            showon: GG.chara.currentShowOn()
           });
           return callback();
         case 'state':
@@ -120,7 +121,8 @@ GAction = (function() {
             return GG.bubble.popup({
               msg: action.val,
               type: 7,
-              sender: index.mo.sender
+              sender: index.mo.sender,
+              showon: GG.chara.currentShowOn()
             }, function() {
               action.line = index.mo.chatLine - 1;
               callback();

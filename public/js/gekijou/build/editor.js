@@ -48,8 +48,14 @@ GekijouEditor = (function() {
     _ref = chara.charas;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       c = _ref[_i];
-      script += "  define " + c.id + " " + (JSON.stringify(c.username)) + " " + (JSON.stringify(c.subtitle)) + " {\n";
+      script += "  define " + c.id + " " + (JSON.stringify(c.username)) + " {\n";
       script += "    icon " + c.iconid + " " + (JSON.stringify(c.iconurl)) + " " + (JSON.stringify(c.iconcolor)) + "\n";
+      if (c.subtitle) {
+        script += "    subtitle " + (JSON.stringify(c.subtitle)) + "\n";
+      }
+      if (c.showon === 'right') {
+        script += "    showon right\n";
+      }
       script += "  }\n";
     }
     script += '}\n\n';

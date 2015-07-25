@@ -27,6 +27,7 @@ Chara = (function() {
       id: id,
       username: c.username,
       subtitle: c.subtitle,
+      showon: c.showon,
       iconid: c.iconid,
       iconurl: c.iconurl,
       iconcolor: c.iconcolor
@@ -39,6 +40,13 @@ Chara = (function() {
       return this.charas[this._sel].id;
     }
     return -1;
+  };
+
+  Chara.prototype.currentShowOn = function() {
+    if (this._sel >= 0) {
+      return this.charas[this._sel].showon;
+    }
+    return null;
   };
 
   Chara.prototype.selectId = function(id) {
@@ -236,12 +244,14 @@ Chara = (function() {
       self.searchIcon();
     });
     $('#newcharaokbtn').click(function() {
-      var $modal, name, user;
+      var $modal, name, showon, user;
       $modal = $('#newcharamodal');
       name = $modal.find('#newchara_username').val();
       if (name) {
         user = $modal.find('#newchara_user').data('user');
+        showon = $modal.find('input[name=rd_chara_showon]:checked').val();
         user.username = name;
+        user.showon = showon === 'right' ? 'right' : 'left';
         user.subtitle = $modal.find('#newchara_subtitle').val();
         self.add(user);
         self.refresh();
@@ -278,21 +288,34 @@ Chara = (function() {
       b = blocks[_i];
       props = GG.util.splitprop(b.title);
       lines = GG.util.splitline(b.content);
-      if (props.length >= 3 && props[0] === 'define' && lines.length > 0) {
+      if (props.length >= 2 && props[0] === 'define' && lines.length > 0) {
         try {
           cid = parseInt(props[1]);
           c = {
             id: cid,
             username: JSON.parse(props[2]),
-            subtitle: props[3] ? JSON.parse(props[3]) : ''
+            subtitle: ''
           };
           for (i = _j = 0, _len1 = lines.length; _j < _len1; i = ++_j) {
             line = lines[i];
             lineprops = GG.util.splitprop(line);
-            if (lineprops.length >= 4 && lineprops[0] === 'icon') {
-              c.iconid = parseInt(lineprops[1]);
-              c.iconurl = JSON.parse(lineprops[2]);
-              c.iconcolor = JSON.parse(lineprops[3]);
+            switch (lineprops[0]) {
+              case 'icon':
+                if (lineprops.length >= 4) {
+                  c.iconid = parseInt(lineprops[1]);
+                  c.iconurl = JSON.parse(lineprops[2]);
+                  c.iconcolor = JSON.parse(lineprops[3]);
+                }
+                break;
+              case 'showon':
+                if (lineprops.length >= 2) {
+                  c.showon = lineprops[1] === 'right' ? 'right' : 'left';
+                }
+                break;
+              case 'subtitle':
+                if (lineprops.length >= 2 && lineprops[1]) {
+                  c.subtitle = JSON.parse(lineprops[1]);
+                }
             }
           }
           this.add(c, cid);
