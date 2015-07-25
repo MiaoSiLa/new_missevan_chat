@@ -109,10 +109,18 @@ class GAction
 
           callback()
         when 'image'
-          GG.bubble.popup { msg: action.val, type: 7, sender: index.mo.sender }, ->
-            action.line = index.mo.chatLine - 1
-            callback()
-            return
+          if action.chara isnt -1
+            GG.bubble.popup { msg: action.val, type: 7, sender: index.mo.sender }, ->
+              action.line = index.mo.chatLine - 1
+              callback()
+              return
+          else
+            # 状态图片
+            GG.bubble.stateimage action.val, ->
+              action.line = index.mo.chatLine - 1
+              callback()
+              return
+
 
         when 'background'
           GG.bubble.background { url: action.val, effect: action.effect }, ->

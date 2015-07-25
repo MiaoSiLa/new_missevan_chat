@@ -45,6 +45,21 @@ class ChatBubble
     @addhtml chathtml
     return
 
+  stateimage: (url, cb) ->
+    # TODO: limit size of image
+    self = @
+    img = new Image()
+    img.onload = ->
+      chathtml = '<li id="chatline' + index.mo.chatLine + '"><div class="chatinfo">'\
+        + '<img class="state-image" src=' + JSON.stringify(url) + ' /></div></li>';
+
+      index.mo.chatLine++
+      self.addhtml chathtml
+      cb() if cb?
+      return
+    img.src = url
+    return
+
   background: (data, cb) ->
     # TODO: effect?
     if data

@@ -174,11 +174,7 @@ class ImageTools
     return
 
   type: ->
-    typeid = @modal.find('input[type=radio]:checked').attr 'id'
-    if typeid.indexOf('chat') >= 0
-      'chat'
-    else
-      'background'
+    @modal.find('input[type=radio]:checked').val()
 
   initImageUpload: (@cb) ->
     self = @
@@ -982,6 +978,8 @@ class Editorbar extends ControlBar
               $textarea.append '<img src=' + JSON.stringify(url) + ' />'
             else
               curev.showImage url
+          #when 'nochara'
+            # 状态图片
           when 'background'
             curev.switchBackground url
       else

@@ -49,6 +49,22 @@ ChatBubble = (function() {
     this.addhtml(chathtml);
   };
 
+  ChatBubble.prototype.stateimage = function(url, cb) {
+    var img, self;
+    self = this;
+    img = new Image();
+    img.onload = function() {
+      var chathtml;
+      chathtml = '<li id="chatline' + index.mo.chatLine + '"><div class="chatinfo">' + '<img class="state-image" src=' + JSON.stringify(url) + ' /></div></li>';
+      index.mo.chatLine++;
+      self.addhtml(chathtml);
+      if (cb != null) {
+        cb();
+      }
+    };
+    img.src = url;
+  };
+
   ChatBubble.prototype.background = function(data, cb) {
     var img;
     if (data) {

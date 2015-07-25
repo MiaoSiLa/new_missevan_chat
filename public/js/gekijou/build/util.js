@@ -210,13 +210,7 @@ ImageTools = (function() {
   };
 
   ImageTools.prototype.type = function() {
-    var typeid;
-    typeid = this.modal.find('input[type=radio]:checked').attr('id');
-    if (typeid.indexOf('chat') >= 0) {
-      return 'chat';
-    } else {
-      return 'background';
-    }
+    return this.modal.find('input[type=radio]:checked').val();
   };
 
   ImageTools.prototype.initImageUpload = function(cb) {

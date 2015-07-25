@@ -116,14 +116,22 @@ GAction = (function() {
           GG.bubble.text(statetext);
           return callback();
         case 'image':
-          return GG.bubble.popup({
-            msg: action.val,
-            type: 7,
-            sender: index.mo.sender
-          }, function() {
-            action.line = index.mo.chatLine - 1;
-            callback();
-          });
+          if (action.chara !== -1) {
+            return GG.bubble.popup({
+              msg: action.val,
+              type: 7,
+              sender: index.mo.sender
+            }, function() {
+              action.line = index.mo.chatLine - 1;
+              callback();
+            });
+          } else {
+            return GG.bubble.stateimage(action.val, function() {
+              action.line = index.mo.chatLine - 1;
+              callback();
+            });
+          }
+          break;
         case 'background':
           return GG.bubble.background({
             url: action.val,
