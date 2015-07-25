@@ -24,6 +24,11 @@ class ChatBubble
     @background()
     return
 
+  xss: (str) ->
+    s1 = str.replace /<img [^>]*?src=(".+?")[^>]*?\/?>/gi, "|img:$1|"
+    s2 = moTool.boardReplaceTxt s1
+    s2.replace /\|img\:&quot;(.+?)&quot;\|/gi, "<img src=\"$1\" />"
+
   showname: (@_showname) ->
 
   addhtml: (html) ->
@@ -75,7 +80,7 @@ class ChatBubble
     switch data.type
       when 1
         #公聊
-        text = moTool.boardReplaceTxt data.msg
+        text = @xss data.msg
         text = text.replace /\n/g, '<br>'
 
         chathtml = '<li id="chatline' + index.mo.chatLine + '">\n'\
@@ -119,7 +124,7 @@ class ChatBubble
           chathtml = '<li id="chatline' + index.mo.chatLine + '">\n'\
                + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
 
-          if @_showname
+          if self._showname
             # show name
             chathtml += '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n'
 

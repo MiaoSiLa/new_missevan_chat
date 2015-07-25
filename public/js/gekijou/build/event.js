@@ -255,9 +255,9 @@ GEvent = (function() {
     return -1;
   };
 
-  GEvent.prototype.parseAction = function(text) {
+  GEvent.prototype.parseAction = function(text, alltreattext) {
     var albumid, cmds, soundid, state;
-    if (text[0] !== '/') {
+    if (text[0] !== '/' || alltreattext) {
       return this.action('text', GG.chara.currentId(), text);
     } else {
       cmds = GG.util.splitcommand(text);
@@ -418,7 +418,7 @@ GEventManager = (function() {
   };
 
   GEventManager.prototype.getNeedPreload = function() {
-    var ac, ev, i, j, len, pos, res, total, tt, _ctt, _i, _j, _len, _len1, _ref, _ref1;
+    var ac, ev, i, j, k, len, m, pos, res, total, tt, url, _ctt, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
     tt = 0;
     res = [];
     total = this.totaltime();
@@ -432,6 +432,20 @@ GEventManager = (function() {
         ac = _ref1[j];
         pos = (tt + ((j + 1) * _ctt / len)) / total;
         switch (ac.type) {
+          case 'text':
+            m = ac.val.match(/<img [^>]*?src="(.+?)"[^>]*?\/?>/gi);
+            if (m) {
+              for (k = _k = 0, _len2 = m.length; _k < _len2; k = ++_k) {
+                url = m[k];
+                res.push({
+                  pos: pos,
+                  type: 'image',
+                  imgurl: url,
+                  action: ac
+                });
+              }
+            }
+            break;
           case 'image':
             res.push({
               pos: pos,

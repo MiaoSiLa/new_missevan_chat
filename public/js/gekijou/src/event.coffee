@@ -223,8 +223,8 @@ class GEvent
     return -1
 
   # parse action text
-  parseAction: (text) ->
-    if text[0] isnt '/'
+  parseAction: (text, alltreattext) ->
+    if text[0] isnt '/' or alltreattext
       @action 'text', GG.chara.currentId(), text
     else
       cmds = GG.util.splitcommand text
@@ -352,6 +352,17 @@ class GEventManager
       for ac, j in ev.actions
         pos = (tt + ((j + 1) * _ctt / len)) / total
         switch ac.type
+          when 'text'
+            # 加载文本中的图片
+            m = ac.val.match /<img [^>]*?src="(.+?)"[^>]*?\/?>/gi
+            if m
+              for url, k in m
+                res.push
+                  pos: pos,
+                  type: 'image',
+                  imgurl: url,
+                  action: ac
+
           when 'image'
             res.push
               pos: pos,

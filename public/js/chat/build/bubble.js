@@ -23,6 +23,13 @@ ChatBubble = (function() {
     this.background();
   };
 
+  ChatBubble.prototype.xss = function(str) {
+    var s1, s2;
+    s1 = str.replace(/<img [^>]*?src=(".+?")[^>]*?\/?>/gi, "|img:$1|");
+    s2 = moTool.boardReplaceTxt(s1);
+    return s2.replace(/\|img\:&quot;(.+?)&quot;\|/gi, "<img src=\"$1\" />");
+  };
+
   ChatBubble.prototype.showname = function(_showname) {
     this._showname = _showname;
   };
@@ -79,7 +86,7 @@ ChatBubble = (function() {
     }
     switch (data.type) {
       case 1:
-        text = moTool.boardReplaceTxt(data.msg);
+        text = this.xss(data.msg);
         text = text.replace(/\n/g, '<br>');
         chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
         if (this._showname) {
@@ -112,7 +119,7 @@ ChatBubble = (function() {
           }
           imghtml = '<a target="_blank" href="' + data.msg + '">' + '<img style="width:' + w + 'px;height:' + h + 'px" src="' + data.msg + '" />' + '</a>';
           chathtml = '<li id="chatline' + index.mo.chatLine + '">\n' + '  <div class="userFace"><img src="' + data.sender.icon + '" alt=""></div>\n';
-          if (this._showname) {
+          if (self._showname) {
             chathtml += '  <div class="userName" style="color:' + userNameColor + '">' + userNameHtml + '</div>\n';
           }
           chathtml += '  <div class="userChatImage">' + imghtml + '</div>\n' + '</li>';

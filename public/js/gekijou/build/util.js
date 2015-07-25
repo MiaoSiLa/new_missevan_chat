@@ -201,6 +201,10 @@ ImageTools = (function() {
     }
   };
 
+  ImageTools.prototype.isextend = function() {
+    return $('#inputbox').hasClass('full-editor');
+  };
+
   ImageTools.prototype.progress = function(str) {
     this.modal.find('#img_upload_progress').text(str);
   };
@@ -798,6 +802,7 @@ Editorbar = (function(_super) {
     this.em = this.editor.gekijou.em;
     this.pb = this.editor.gekijou.pb;
     this.imgtool = new ImageTools();
+    this._extend = false;
   }
 
   Editorbar.prototype.setId = function(_id) {
@@ -818,6 +823,36 @@ Editorbar = (function(_super) {
     _id = $('#savemodal #gekijou_id').val();
     if (_id) {
       return $('#gekijoupreviewbtn').attr('href', "/gekijou/view/" + _id).show();
+    }
+  };
+
+  Editorbar.prototype.extend = function(_ex) {
+    var $textarea, self;
+    if (_ex == null) {
+      _ex = true;
+    }
+    if (!_ex === this._extend) {
+      self = this;
+      this._extend = !this._extend;
+      $textarea = this.$('#inputboxtextarea');
+      if (this._extend) {
+        $textarea.val('');
+        this.el.addClass('full-editor');
+        setTimeout(function() {
+          $textarea.replaceWith('<div id="inputboxtextarea" contentEditable="true"></div>');
+          $textarea = self.$('#inputboxtextarea');
+          $textarea.focus();
+        }, 300);
+      } else {
+        $textarea.html('');
+        this.el.removeClass('full-editor');
+        setTimeout(function() {
+          $textarea.replaceWith('<textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>');
+          self.bindeditor();
+          $textarea = self.$('#inputboxtextarea');
+          $textarea.focus();
+        }, 300);
+      }
     }
   };
 
@@ -883,9 +918,57 @@ Editorbar = (function(_super) {
     }
   };
 
-  Editorbar.prototype.bind = function() {
-    var $gsavebtn, $inputboxcmdbox, $inputboxtextarea, $newevbtn, $settingsbtn, self;
+  Editorbar.prototype.bindeditor = function() {
+    var $inputboxcmdbox, $inputboxtextarea, self;
     self = this;
+    $inputboxtextarea = this.$('#inputboxtextarea');
+    $inputboxcmdbox = this.$('#inputboxcmdbox');
+    $inputboxtextarea.keydown(function(e) {
+      var $selp, cmd, _ref;
+      if (self._extend) {
+        return;
+      }
+      if (e.which === 8) {
+        if ((2 <= (_ref = this.value.length) && _ref <= 4)) {
+          self.showcmdbox(true);
+        } else if (this.value.length <= 1) {
+          self.showcmdbox(false);
+        }
+      } else if (e.which === 40) {
+        e.preventDefault();
+        self.showcmdbox(true);
+        self.selectcmdbox(true);
+      } else if (e.which === 38) {
+        e.preventDefault();
+        self.selectcmdbox(false);
+      } else if (e.which === 13) {
+        e.preventDefault();
+        if ($inputboxcmdbox.is(':visible')) {
+          $selp = $inputboxcmdbox.find('p.select');
+          if ($selp && $selp.length > 0) {
+            cmd = $selp.data('cmd');
+            self.setcmd(cmd);
+          }
+        } else {
+          self.$('#inputboxtextareapostbtn').click();
+        }
+      } else if (e.which === 191 || e.which === 47) {
+        self.showcmdbox(true);
+      } else {
+        if (this.value.length >= index.mo.maxLength) {
+          e.preventDefault();
+        }
+      }
+    });
+  };
+
+  Editorbar.prototype.bind = function() {
+    var $exinput, $gsavebtn, $inputboxcmdbox, $inputboxtextarea, $newevbtn, $settingsbtn, self;
+    self = this;
+    $exinput = this.$('#extend-input');
+    $exinput.click(function() {
+      self.extend(!self._extend);
+    });
     $newevbtn = this.pb.$('#mpiloop');
     $newevbtn.addClass('mpiloopa newevent');
     $newevbtn.text('');
@@ -966,63 +1049,38 @@ Editorbar = (function(_super) {
     $gsavebtn.show();
     $inputboxtextarea = this.$('#inputboxtextarea');
     $inputboxcmdbox = this.$('#inputboxcmdbox');
+    this.bindeditor();
     $inputboxcmdbox.find('p').click(function() {
       var cmd;
       cmd = $(this).data('cmd');
       self.cmdbox(cmd);
-    });
-    $inputboxtextarea.keydown(function(e) {
-      var $selp, cmd, _ref;
-      if (e.which === 8) {
-        if ((2 <= (_ref = this.value.length) && _ref <= 4)) {
-          self.showcmdbox(true);
-        } else if (this.value.length <= 1) {
-          self.showcmdbox(false);
-        }
-      } else if (e.which === 40) {
-        e.preventDefault();
-        self.showcmdbox(true);
-        self.selectcmdbox(true);
-      } else if (e.which === 38) {
-        e.preventDefault();
-        self.selectcmdbox(false);
-      } else if (e.which === 13) {
-        e.preventDefault();
-        if ($inputboxcmdbox.is(':visible')) {
-          $selp = $inputboxcmdbox.find('p.select');
-          if ($selp && $selp.length > 0) {
-            cmd = $selp.data('cmd');
-            self.setcmd(cmd);
-          }
-        } else {
-          self.$('#inputboxtextareapostbtn').click();
-        }
-      } else if (e.which === 191 || e.which === 47) {
-        self.showcmdbox(true);
-      } else {
-        if (this.value.length >= index.mo.maxLength) {
-          e.preventDefault();
-        }
-      }
     });
     this.$('#inputboxtextareapostbtn').click(function() {
       var $textbox, curev, text;
       curev = self.em.current();
       if (curev) {
         $textbox = self.$('#inputboxtextarea');
-        text = $textbox.val();
-        if (text) {
-          curev.parseAction(text);
-          $textbox.val('');
-          self.showcmdbox(false);
+        if (self._extend) {
+          text = $textbox.html();
+          if (text) {
+            curev.parseAction(text, true);
+            $textbox.html('');
+          }
+        } else {
+          text = $textbox.val();
+          if (text) {
+            curev.parseAction(text);
+            $textbox.val('');
+            self.showcmdbox(false);
+          }
         }
       } else {
         moTool.showError('请先新建一个事件！');
       }
     });
     this.imgtool.initImageUpload(function(err, type, url) {
-      var curev;
-      if (err) {
+      var $textarea, curev;
+      if (err || typeof url !== 'string') {
         moTool.showError('图片上传失败');
         return;
       }
@@ -1030,7 +1088,12 @@ Editorbar = (function(_super) {
       if (curev) {
         switch (type) {
           case 'chat':
-            curev.showImage(url);
+            if (self._extend) {
+              $textarea = self.$('#inputboxtextarea');
+              $textarea.append('<img src=' + JSON.stringify(url) + ' />');
+            } else {
+              curev.showImage(url);
+            }
             break;
           case 'background':
             curev.switchBackground(url);

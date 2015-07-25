@@ -166,6 +166,9 @@ class ImageTools
     #  @cb 'failed'
     return
 
+  isextend: ->
+    $('#inputbox').hasClass 'full-editor'
+
   progress: (str) ->
     @modal.find('#img_upload_progress').text str
     return
@@ -276,6 +279,7 @@ class ControlBar
     @el.find selector
 
   bind: ->
+
 
 # 分页工具
 class Paginationbar extends ControlBar
@@ -692,6 +696,7 @@ class Editorbar extends ControlBar
     @em = @editor.gekijou.em
     @pb = @editor.gekijou.pb
     @imgtool = new ImageTools()
+    @_extend = off
 
   setId: (_id) ->
     $modal = $ '#savemodal'
@@ -707,6 +712,33 @@ class Editorbar extends ControlBar
     _id = $('#savemodal #gekijou_id').val()
     if _id
       $('#gekijoupreviewbtn').attr('href', "/gekijou/view/#{_id}").show()
+
+  extend: (_ex = on) ->
+    if not _ex is @_extend
+      self = @
+      @_extend = not @_extend
+      $textarea = @$('#inputboxtextarea')
+      if @_extend
+        $textarea.val ''
+        @el.addClass 'full-editor'
+        setTimeout ->
+            $textarea.replaceWith '<div id="inputboxtextarea" contentEditable="true"></div>'
+            $textarea = self.$('#inputboxtextarea')
+            $textarea.focus()
+            return
+          , 300
+      else
+        $textarea.html ''
+        @el.removeClass 'full-editor'
+        setTimeout ->
+            $textarea.replaceWith '<textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>'
+            # rebind textarea
+            self.bindeditor()
+            $textarea = self.$('#inputboxtextarea')
+            $textarea.focus()
+            return
+          , 300
+    return
 
   showcmdbox: (bshow) ->
     $inputboxcmdbox = @$ '#inputboxcmdbox'
@@ -762,8 +794,58 @@ class Editorbar extends ControlBar
       $inputboxtextarea.focus()
     return
 
+  bindeditor: ->
+    self = @
+
+    $inputboxtextarea = @$ '#inputboxtextarea'
+    $inputboxcmdbox = @$ '#inputboxcmdbox'
+    # 按下按键
+    $inputboxtextarea.keydown (e) ->
+      if self._extend
+        # 完整编辑器下不响应特殊按键
+        return
+      if e.which is 8
+        # backspace
+        if 2 <= @value.length <= 4
+          self.showcmdbox on
+        else if @value.length <= 1
+          # hide cmd box
+          self.showcmdbox no
+      else if e.which is 40
+        # down
+        e.preventDefault()
+        self.showcmdbox on
+        self.selectcmdbox on
+      else if e.which is 38
+        e.preventDefault()
+        self.selectcmdbox no
+      else if e.which is 13
+        e.preventDefault()
+        if $inputboxcmdbox.is(':visible')
+          $selp = $inputboxcmdbox.find 'p.select'
+          if $selp and $selp.length > 0
+            cmd = $selp.data 'cmd'
+            self.setcmd cmd
+        else
+          self.$('#inputboxtextareapostbtn').click()
+      else if e.which is 191 or e.which is 47
+        # forward slash or '/'
+        self.showcmdbox on
+      else
+        if @value.length >= index.mo.maxLength
+          e.preventDefault()
+      return
+
+    return
+
   bind: ->
     self = @
+
+    # 扩展编辑器
+    $exinput = @$('#extend-input')
+    $exinput.click ->
+      self.extend not self._extend
+      return
 
     # 新事件
     $newevbtn = @pb.$('#mpiloop')
@@ -857,61 +939,35 @@ class Editorbar extends ControlBar
     $inputboxtextarea = @$ '#inputboxtextarea'
     $inputboxcmdbox = @$ '#inputboxcmdbox'
 
+    @bindeditor()
+
     $inputboxcmdbox.find('p').click ->
       cmd = $(this).data 'cmd'
       self.cmdbox cmd
-      return
-
-    # 按下按键
-    $inputboxtextarea.keydown (e) ->
-      if e.which is 8
-        # backspace
-        if 2 <= @value.length <= 4
-          self.showcmdbox on
-        else if @value.length <= 1
-          # hide cmd box
-          self.showcmdbox no
-      else if e.which is 40
-        # down
-        e.preventDefault()
-        self.showcmdbox on
-        self.selectcmdbox on
-      else if e.which is 38
-        e.preventDefault()
-        self.selectcmdbox no
-      else if e.which is 13
-        e.preventDefault()
-        if $inputboxcmdbox.is(':visible')
-          $selp = $inputboxcmdbox.find 'p.select'
-          if $selp and $selp.length > 0
-            cmd = $selp.data 'cmd'
-            self.setcmd cmd
-        else
-          self.$('#inputboxtextareapostbtn').click()
-      else if e.which is 191 or e.which is 47
-        # forward slash or '/'
-        self.showcmdbox on
-      else
-        if @value.length >= index.mo.maxLength
-          e.preventDefault()
       return
 
     @$('#inputboxtextareapostbtn').click ->
       curev = self.em.current()
       if curev
         $textbox = self.$('#inputboxtextarea')
-        text = $textbox.val()
-        if text
-          curev.parseAction text
-          $textbox.val ''
-          self.showcmdbox no
+        if self._extend
+          text = $textbox.html()
+          if text
+            curev.parseAction text, on
+            $textbox.html ''
+        else
+          text = $textbox.val()
+          if text
+            curev.parseAction text
+            $textbox.val ''
+            self.showcmdbox no
       else
         moTool.showError '请先新建一个事件！'
       return
 
     # 图片上传
     @imgtool.initImageUpload (err, type, url) ->
-      if err
+      if err or typeof url isnt 'string'
         moTool.showError '图片上传失败'
         return
 
@@ -919,7 +975,13 @@ class Editorbar extends ControlBar
       if curev
         switch type
           when 'chat'
-            curev.showImage url
+            if self._extend
+              $textarea = self.$ '#inputboxtextarea'
+              # TODO: check url and replace selection range
+              # class="chat-emotion"
+              $textarea.append '<img src=' + JSON.stringify(url) + ' />'
+            else
+              curev.showImage url
           when 'background'
             curev.switchBackground url
       else
