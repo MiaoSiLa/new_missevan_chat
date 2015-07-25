@@ -13,7 +13,10 @@
 ## setup 包含一些配置信息、引用状态（暂未定义）等
 #
 #  # 指定了音频专辑的 id ，用于编辑器
-#  album [albumid] 
+#  album [albumid]
+#
+#  # 指定了整个剧场是否显示角色的名称，默认为 on
+#  showname [on, off]
 #
 
 setup {
@@ -27,6 +30,9 @@ setup {
 #   # 定义角色头像，与主站头像相同定义
 #   # `iconurl` 需要加上 `http://static.missevan.cn/mimagesmini/` 或 `http://static.missevan.cn/mimages/` 的对应资源地址
 #   icon [iconid] [iconurl] [iconcolor]
+#
+#   # 显示位置，默认为 left
+#   showon [left, right]
 # }
 #
 
@@ -55,7 +61,7 @@ chara {
 #   state chara:[charaid] [string 文本]
 #
 #   # 角色发出图片操作 `image` ，角色将发出一个图片
-#   # 如果不需要角色，可在第二参数指定 nochara（网页版暂未支持）
+#   # 如果不需要角色，可在第二参数指定 nochara
 #   image chara:[charaid] [string 图片地址]
 #
 #   # 事件声音操作 `sound` ，将以角色身份发出一个声音
