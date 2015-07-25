@@ -109,13 +109,21 @@ GAction = (function() {
           });
           return callback();
         case 'state':
-          action.line = index.mo.chatLine;
-          statetext = action.val;
-          if (action.chara !== -1) {
-            statetext = '►► ' + index.mo.sender.name + ' ' + statetext;
+          if (action.stype === 'text') {
+            action.line = index.mo.chatLine;
+            statetext = action.val;
+            if (action.chara !== -1) {
+              statetext = '►► ' + index.mo.sender.name + ' ' + statetext;
+            }
+            GG.bubble.text(statetext);
+            return callback();
+          } else if (action.stype === 'image') {
+            return GG.bubble.stateimage(action.val, function() {
+              action.line = index.mo.chatLine - 1;
+              callback();
+            });
           }
-          GG.bubble.text(statetext);
-          return callback();
+          break;
         case 'image':
           if (action.chara !== -1) {
             return GG.bubble.popup({
@@ -209,10 +217,13 @@ GEvent = (function() {
         }
         break;
       case 'state':
-        an.chara = this.parseCharaId(val1);
+        if (val1.stype === 'text') {
+          an.chara = this.parseCharaId(val1.chara);
+        }
+        an.stype = val1.stype;
         an.val = val2;
         if (!norun) {
-          an.run();
+          an.run(function() {});
         }
         break;
       default:
@@ -292,14 +303,25 @@ GEvent = (function() {
         case 'state':
           state = cmds[1];
           if (state) {
-            return this.action('state', GG.chara.currentId(), state);
+            return this.action('state', {
+              type: 'text',
+              chara: GG.chara.currentId()
+            }, state);
           }
       }
     }
   };
 
   GEvent.prototype.showImage = function(url) {
-    return this.action('image', GG.chara.currentId(), url);
+    var charaid;
+    charaid = GG.chara.currentId();
+    if (charaid !== -1) {
+      return this.action('image', charaid, url);
+    } else {
+      return this.action('state', {
+        type: 'image'
+      }, url);
+    }
   };
 
   GEvent.prototype.switchBackground = function(url, effect) {
@@ -307,7 +329,7 @@ GEvent = (function() {
   };
 
   GEvent.prototype.parse = function(block) {
-    var line, lineprops, lines, _i, _len;
+    var line, lineprops, lines, stype, _i, _len;
     lines = GG.util.splitline(block);
     if (lines.length > 0) {
       for (_i = 0, _len = lines.length; _i < _len; _i++) {
@@ -316,6 +338,27 @@ GEvent = (function() {
         try {
           if (lineprops[0] === 'background') {
             lineprops[1] = JSON.parse(lineprops[1]);
+          } else if (lineprops[0] === 'state') {
+            if (/^(no)?chara/.test(lineprops[1])) {
+              stype = 'text';
+              lineprops[1] = {
+                stype: stype,
+                chara: lineprops[1]
+              };
+            } else {
+              stype = lineprops[1];
+              lineprops[1] = {
+                stype: stype
+              };
+              if (stype === 'text') {
+                if (lineprops[2][0] === '"') {
+                  lineprops[1].chara = -1;
+                } else {
+                  lineprops[1].chara = lineprops[2];
+                  lineprops[2] = lineprops[3];
+                }
+              }
+            }
           }
           this.action(lineprops[0], lineprops[1], JSON.parse(lineprops[2]), true);
         } catch (_error) {}
@@ -454,6 +497,16 @@ GEventManager = (function() {
                   action: ac
                 });
               }
+            }
+            break;
+          case 'state':
+            if (ac.stype === 'image') {
+              res.push({
+                pos: pos,
+                type: 'image',
+                imgurl: ac.val,
+                action: ac
+              });
             }
             break;
           case 'image':

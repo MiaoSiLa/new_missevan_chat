@@ -67,10 +67,23 @@ GekijouEditor = (function() {
       _ref2 = e.actions;
       for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
         a = _ref2[_k];
+        if (a.chara === -1 && a.type === 'image') {
+          a.type = 'state';
+          a.stype = 'image';
+        }
         script += "    " + a.type + " ";
         switch (a.type) {
           case 'background':
             script += "\"" + a.effect + "\" " + (JSON.stringify(a.val));
+            break;
+          case 'state':
+            if (a.stype === 'text') {
+              charastr = a.chara === -1 ? 'nochara' : "chara:" + a.chara;
+              script += "text " + charastr + " ";
+            } else {
+              script += "image ";
+            }
+            script += JSON.stringify(a.val);
             break;
           default:
             charastr = a.chara === -1 ? 'nochara' : "chara:" + a.chara;

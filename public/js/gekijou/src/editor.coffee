@@ -67,16 +67,29 @@ class GekijouEditor
     # event
     for e in em.events
       script += "  define #{e.id} #{JSON.stringify(e.name)} #{JSON.stringify(e.time)} {\n"
-      for a in e.actions
-        script += "    #{a.type} "
 
+      for a in e.actions
+        # 无角色图片修改为 state 指令
+        if a.chara is -1 and a.type is 'image'
+          a.type = 'state'
+          a.stype = 'image'
+
+        script += "    #{a.type} "
+        
         switch a.type
           #when 'unknow'
             # some other types
           when 'background'
             script += "\"#{a.effect}\" #{JSON.stringify(a.val)}"
+          when 'state'
+            if a.stype is 'text'
+              charastr = if a.chara is -1 then 'nochara' else "chara:#{a.chara}"
+              script += "text #{charastr} "
+            else
+              script += "image "
+            script += JSON.stringify a.val
           else
-            # text, state, image, sound
+            # text, image, sound
             charastr = if a.chara is -1 then 'nochara' else "chara:#{a.chara}"
             script += "#{charastr} #{JSON.stringify(a.val)}"
 

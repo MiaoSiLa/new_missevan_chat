@@ -95,20 +95,25 @@ class GAction
           callback()
         when 'state'
           # for bubble style
-          action.line = index.mo.chatLine
+          if action.stype is 'text'
+            action.line = index.mo.chatLine
 
-          statetext = action.val
-          if action.chara isnt -1
-            #chatBox.loadState action.val
-            #chatBox.loadMemberState { username: index.mo.sender.name }, action.val
-            statetext = '►► ' + index.mo.sender.name + ' ' + statetext
+            statetext = action.val
+            if action.chara isnt -1
+              #chatBox.loadState action.val
+              #chatBox.loadMemberState { username: index.mo.sender.name }, action.val
+              statetext = '►► ' + index.mo.sender.name + ' ' + statetext
 
-          GG.bubble.text statetext
+            GG.bubble.text statetext
+            callback()
+          else if action.stype is 'image'
+            GG.bubble.stateimage action.val, ->
+              action.line = index.mo.chatLine - 1
+              callback()
+              return
 
           #if GG.env is 'dev'
           #  action.attachlaststate()
-
-          callback()
         when 'image'
           if action.chara isnt -1
             GG.bubble.popup { msg: action.val, type: 7, sender: index.mo.sender, showon: GG.chara.currentShowOn()  }, ->
@@ -190,10 +195,13 @@ class GEvent
             # TODO: show some tips in stage
 
       when 'state'
-        an.chara = @parseCharaId(val1)
+        if val1.stype is 'text'
+          an.chara = @parseCharaId(val1.chara)
+        an.stype = val1.stype
         an.val = val2
         if not norun
-          an.run()
+          an.run ->
+            #image do some thing here
 
       else return
 
@@ -253,12 +261,17 @@ class GEvent
         when 'state'
           state = cmds[1]
           if state
-            @action 'state', GG.chara.currentId(), state
+            @action 'state', { type: 'text', chara: GG.chara.currentId() } , state
         # 其他特殊动作
         # do some thing
 
   showImage: (url) ->
-    @action 'image', GG.chara.currentId(), url
+    charaid = GG.chara.currentId()
+    if charaid isnt -1
+      @action 'image', charaid, url
+    else
+      # 状态图片
+      @action 'state', { type: 'image' }, url
 
   switchBackground: (url, effect) ->
     # TODO: effect?
@@ -274,6 +287,23 @@ class GEvent
         try
           if lineprops[0] is 'background'
             lineprops[1] = JSON.parse lineprops[1]
+          else if lineprops[0] is 'state'
+            if /^(no)?chara/.test lineprops[1]
+              stype = 'text'
+              lineprops[1] =
+                stype: stype
+                chara: lineprops[1]
+            else
+              stype = lineprops[1]
+              lineprops[1] =
+                stype: stype
+              if stype is 'text'
+                if lineprops[2][0] is '"'
+                  # 直接是文本
+                  lineprops[1].chara = -1
+                else
+                  lineprops[1].chara = lineprops[2]
+                  lineprops[2] = lineprops[3]
           @action lineprops[0], lineprops[1], JSON.parse(lineprops[2]), on
 
     return
@@ -371,6 +401,15 @@ class GEventManager
                   type: 'image',
                   imgurl: url,
                   action: ac
+
+          when 'state'
+            # 状态图片
+            if ac.stype is 'image'
+              res.push
+                pos: pos,
+                type: 'image',
+                imgurl: ac.val,
+                action: ac
 
           when 'image'
             res.push
