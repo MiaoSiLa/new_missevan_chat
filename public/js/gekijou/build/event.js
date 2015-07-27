@@ -82,6 +82,19 @@ GAction = (function() {
     }
   };
 
+  GAction.prototype.stop = function() {
+    var skey;
+    if (this.type === 'sound') {
+      skey = this.stype;
+      if (this.stype === 'chara') {
+        skey += ':' + this.chara;
+      }
+      GG.sound.stop(skey);
+    } else if (this.type === 'background') {
+      GG.bubble.background(null);
+    }
+  };
+
   GAction.prototype.run = function(cb) {
     var action;
     action = this;
@@ -160,7 +173,10 @@ GAction = (function() {
           soundkey = '';
           switch (action.stype) {
             case 'chara':
-              soundmsg = index.mo.sender.name + (" 播放了声音 「" + soundname + "」");
+              soundmsg = "播放了声音 「" + soundname + "」";
+              if (index.mo.sender && index.mo.sender.name) {
+                soundmsg = index.mo.sender.name + ' ' + soundmsg;
+              }
               soundkey = 'chara:' + action.chara;
               break;
             case 'effect':
@@ -259,6 +275,7 @@ GEvent = (function() {
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
       ac = _ref[i];
       if (ac.line === line) {
+        ac.stop();
         this.actions.splice(i, 1);
         found = true;
         break;
@@ -281,7 +298,14 @@ GEvent = (function() {
   };
 
   GEvent.prototype.isCharaId = function(charaid) {
-    return /^(no)?chara/.test(charaid);
+    switch (typeof charaid) {
+      case 'string':
+        return /^(no)?chara/.test(charaid);
+      case 'number':
+        return true;
+      default:
+        return false;
+    }
   };
 
   GEvent.prototype.parseCharaId = function(charaid) {
@@ -490,9 +514,13 @@ GEventManager = (function() {
     return pns;
   };
 
-  GEventManager.prototype.doAction = function(type, val) {
+  GEventManager.prototype.doAction = function(type, val1, val2) {
     if (this._event) {
-      this._event.action(type, GG.chara.currentId(), val);
+      if (!val2) {
+        val2 = val1;
+        val1 = GG.chara.currentId();
+      }
+      this._event.action(type, val1, val2);
     }
   };
 

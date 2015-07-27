@@ -92,12 +92,19 @@ SoundAlbum = (function() {
     var $music, self, soundid;
     if (!$('#sound' + s.id).length) {
       $music = $("<div id=\"sound" + s.id + "\" class=\"chatmusic\">\n  <div class=\"soundtitle\">" + s.soundstr + "</div>\n  <img title=\"标题: " + s.soundstr + "&#10;UP主: " + s.username + "&#10;声音ID: " + s.id + "\" src=\"" + s.front_cover + "\" />\n</div>");
-      $music.prependTo($('#chatmusic'));
+      $music.appendTo($('#chatmusic'));
       if (GG.env === 'dev') {
         soundid = parseInt(s.id);
         self = this;
         $music.click(function() {
-          GG.em.doAction('sound', soundid);
+          var $soundtype, stype;
+          $soundtype = $('#soundtype');
+          stype = $soundtype.find('input[name=sound_type]:checked').val();
+          if (stype === 'chara') {
+            GG.em.doAction('sound', soundid);
+          } else {
+            GG.em.doAction('sound', stype, soundid);
+          }
           return self.hideSelect();
         });
         return;

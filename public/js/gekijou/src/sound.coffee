@@ -35,3 +35,11 @@ class SoundCollection
       s.play opts
     cb() if cb?
     return
+
+  stop: (soundkey) ->
+    prevUrl = @_soundurlmap[soundkey]
+    if prevUrl
+      s = soundManager.getSoundById prevUrl
+      if s then s.stop()
+      @_soundurlmap[soundkey] = null
+    return

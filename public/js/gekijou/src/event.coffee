@@ -70,6 +70,16 @@ class GAction
         return
     return
 
+  stop: ->
+    if @type is 'sound'
+      skey = @stype
+      if @stype is 'chara'
+        skey += ':' + @chara
+      GG.sound.stop skey
+    else if @type is 'background'
+      GG.bubble.background null
+    return
+
   run: (cb) ->
     action = @
     @load ->
@@ -150,7 +160,9 @@ class GAction
           soundkey = ''
           switch action.stype
             when 'chara'
-              soundmsg = index.mo.sender.name + " 播放了声音 「#{soundname}」"
+              soundmsg = "播放了声音 「#{soundname}」"
+              if index.mo.sender and index.mo.sender.name
+                soundmsg = index.mo.sender.name + ' ' + soundmsg
               soundkey = 'chara:' + action.chara
             when 'effect'
               soundmsg = "音效 「#{soundname}」"
@@ -212,7 +224,9 @@ class GEvent
           an.chara = -1
           an.stype = val1
 
+        # soundurl
         an.val = val2
+
         if not norun
           an.run ->
             # TODO: show some tips in stage
@@ -235,6 +249,7 @@ class GEvent
     found = no
     for ac, i in @actions
       if ac.line is line
+        ac.stop()
         @actions.splice i, 1
         found = on
         break
@@ -250,7 +265,13 @@ class GEvent
     return
 
   isCharaId: (charaid) ->
-    /^(no)?chara/.test(charaid)
+    switch typeof charaid
+      when 'string'
+        /^(no)?chara/.test(charaid)
+      when 'number'
+        on
+      else
+        off
 
   parseCharaId: (charaid) ->
     if typeof charaid is 'number'
@@ -400,9 +421,12 @@ class GEventManager
 
     pns
 
-  doAction: (type, val) ->
+  doAction: (type, val1, val2) ->
     if @_event
-      @_event.action type, GG.chara.currentId(), val
+      if not val2
+        val2 = val1
+        val1 = GG.chara.currentId()
+      @_event.action type, val1, val2
     return
 
   moveToBegin: ->

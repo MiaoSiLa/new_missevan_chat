@@ -34,6 +34,10 @@ SoundCollection = (function() {
         s.stop();
       }
     }
+    if (url === 'stop' || !url) {
+      this._soundurlmap[soundkey] = null;
+      return;
+    }
     this._soundurlmap[soundkey] = url;
     s = soundManager.getSoundById(url);
     if (s) {
@@ -47,6 +51,18 @@ SoundCollection = (function() {
     }
     if (cb != null) {
       cb();
+    }
+  };
+
+  SoundCollection.prototype.stop = function(soundkey) {
+    var prevUrl, s;
+    prevUrl = this._soundurlmap[soundkey];
+    if (prevUrl) {
+      s = soundManager.getSoundById(prevUrl);
+      if (s) {
+        s.stop();
+      }
+      this._soundurlmap[soundkey] = null;
     }
   };
 

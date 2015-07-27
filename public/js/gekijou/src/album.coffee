@@ -72,13 +72,18 @@ class SoundAlbum
                     <img title="标题: #{s.soundstr}&#10;UP主: #{s.username}&#10;声音ID: #{s.id}" src="#{s.front_cover}" />
                   </div>
                   """ )
-      $music.prependTo $('#chatmusic')
+      $music.appendTo $('#chatmusic')
       if GG.env is 'dev'
         soundid = parseInt s.id
         self = @
         $music.click ->
           # play.soundBox.playChatMusic(s.soundurl, $(this), index.mo.soundPath);
-          GG.em.doAction 'sound', soundid
+          $soundtype = $ '#soundtype'
+          stype = $soundtype.find('input[name=sound_type]:checked').val()
+          if stype is 'chara'
+            GG.em.doAction 'sound', soundid
+          else
+            GG.em.doAction 'sound', stype, soundid
           self.hideSelect()
         return
     return
