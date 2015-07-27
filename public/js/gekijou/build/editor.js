@@ -85,6 +85,10 @@ GekijouEditor = (function() {
             }
             script += JSON.stringify(a.val);
             break;
+          case 'sound':
+            charastr = a.chara === -1 ? a.stype : "chara:" + a.chara;
+            script += "" + charastr + " " + (JSON.stringify(a.val));
+            break;
           default:
             charastr = a.chara === -1 ? 'nochara' : "chara:" + a.chara;
             script += "" + charastr + " " + (JSON.stringify(a.val));

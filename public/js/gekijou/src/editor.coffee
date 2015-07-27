@@ -75,7 +75,7 @@ class GekijouEditor
           a.stype = 'image'
 
         script += "    #{a.type} "
-        
+
         switch a.type
           #when 'unknow'
             # some other types
@@ -88,6 +88,9 @@ class GekijouEditor
             else
               script += "image "
             script += JSON.stringify a.val
+          when 'sound'
+            charastr = if a.chara is -1 then a.stype else "chara:#{a.chara}"
+            script += "#{charastr} #{JSON.stringify(a.val)}"
           else
             # text, image, sound
             charastr = if a.chara is -1 then 'nochara' else "chara:#{a.chara}"

@@ -17,7 +17,9 @@ pageStyles = dev_mode ? [
       <div id="inputbox">
         <textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>
         <div id="inputboxcmdbox">
-          <p data-cmd="/音频 ">/音频 [音频id]</p>
+          <p data-cmd="/音频 角色 ">/音频 角色 [音频id]</p>
+          <p data-cmd="/音频 音效 ">/音频 音效 [音频id]</p>
+          <p data-cmd="/音频 背景乐 ">/音频 背景乐 [音频id]</p>
           <p data-cmd="/专辑 ">/专辑 [专辑id]</p>
           <p data-cmd="/状态 ">/状态 [状态]</p>
         </div>
@@ -175,6 +177,7 @@ pageStyles = dev_mode ? [
   <script type="text/javascript" src="/js/gekijou/build/event.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/chara.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/album.js"></script>
+  <script type="text/javascript" src="/js/gekijou/build/sound.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/gekijou.js"></script>
   <script type="text/javascript" src="/js/gekijou/build/editor.js"></script>
 <% } else { %>

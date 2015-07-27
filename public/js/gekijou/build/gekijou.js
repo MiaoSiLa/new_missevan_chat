@@ -14,6 +14,7 @@ Gekijou = (function() {
     this.tb = new Toolbar($('#common-toolbar'));
     this.chara = new Chara($('#chara-toolbar'));
     this.album = new SoundAlbum();
+    this.sound = new SoundCollection();
     this.em = new GEventManager();
     this.util = new Util();
     this.settings = {};
@@ -25,6 +26,7 @@ Gekijou = (function() {
     GG.bubble = this.bubble;
     GG.chara = this.chara;
     GG.album = this.album;
+    GG.sound = this.sound;
     GG.em = this.em;
     GG.util = this.util;
   }
@@ -69,7 +71,7 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.init = function(cb) {
-    var gs, script;
+    var gs, script, self;
     this.initUser();
     this.initChatBox();
     this.pb.bind();
@@ -83,8 +85,9 @@ Gekijou = (function() {
       script = this.util.unescape(gs.text());
       this.parse(script);
     }
+    self = this;
     this.chara.init(function() {
-      soundManager.onready(function() {
+      self.sound.init(function() {
         if (cb != null) {
           return cb();
         }
@@ -215,7 +218,7 @@ Gekijou = (function() {
     this.pb.moveToIndex(i);
     this.em.current(i);
     this.played(i);
-    soundManager.stopAll();
+    this.sound.stopAll();
     this.em.run();
   };
 
@@ -312,7 +315,7 @@ Gekijou = (function() {
     if (this._playedtime <= 0) {
       this.em.run();
     }
-    soundManager.resumeAll();
+    this.sound.resumeAll();
   };
 
   Gekijou.prototype.pause = function() {
@@ -321,7 +324,7 @@ Gekijou = (function() {
       clearInterval(this._timer);
       this._timer = 0;
       this.pb.pause();
-      soundManager.pauseAll();
+      this.sound.pauseAll();
     }
   };
 

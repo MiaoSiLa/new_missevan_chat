@@ -139,23 +139,40 @@ class GAction
             return
 
         when 'sound'
-          msg = JSON.stringify action.Jsound
-
           # play sound
-          chatBox.loadBubble
-            msg: msg,
-            type: 6,
-            sender: index.mo.sender
+          # msg = JSON.stringify action.Jsound
+          #chatBox.loadBubble
+          #  msg: msg,
+          #  type: 6,
+          #  sender: index.mo.sender
+          soundname = if action.Jsound then action.Jsound.soundstr else ''
+          soundmsg = ''
+          soundkey = ''
+          switch action.stype
+            when 'chara'
+              soundmsg = index.mo.sender.name + " 播放了声音 「#{soundname}」"
+              soundkey = 'chara:' + action.chara
+            when 'effect'
+              soundmsg = "音效 「#{soundname}」"
+              soundkey = 'effect'
+            when 'background'
+              soundmsg = "背景乐 「#{soundname}」"
+              soundkey = 'background'
 
-          if GG.env is 'dev'
-            soundname = if action.Jsound then action.Jsound.soundstr else ''
-            #chatBox.loadMemberState { username: index.mo.sender.name }, "播放了声音「#{soundname}」"
-            #action.attachlaststate()
-            action.line = index.mo.chatLine
-            statetext = ': ' + index.mo.sender.name + ' ' + "播放了声音「#{soundname}」"
-            GG.bubble.text statetext
+          GG.sound.play soundkey, action.Jsound.soundurl, ->
+            if action.stype is 'background'
+              # 提示背景乐
+              chatBox.addInfo '声音播放提示', soundmsg
 
-          callback()
+            if GG.env is 'dev'
+              #chatBox.loadMemberState { username: index.mo.sender.name }, "播放了声音「#{soundname}」"
+              #action.attachlaststate()
+              action.line = index.mo.chatLine
+              statetext = ': ' + soundmsg
+              GG.bubble.text statetext
+
+            callback()
+            return
 
     return
 
@@ -188,7 +205,13 @@ class GEvent
           an.run()
 
       when 'sound'
-        an.chara = @parseCharaId(val1)
+        if @isCharaId val1
+          an.chara = @parseCharaId val1
+          an.stype = 'chara'
+        else
+          an.chara = -1
+          an.stype = val1
+
         an.val = val2
         if not norun
           an.run ->
@@ -226,6 +249,9 @@ class GEvent
 
     return
 
+  isCharaId: (charaid) ->
+    /^(no)?chara/.test(charaid)
+
   parseCharaId: (charaid) ->
     if typeof charaid is 'number'
       return charaid
@@ -248,9 +274,15 @@ class GEvent
       if not cmds then return
       switch cmds[0]
         when 'sound'
-          soundid = parseInt cmds[1]
+          stype = cmds[1]
+          soundid = parseInt cmds[2]
           if soundid
-            @action 'sound', GG.chara.currentId(), soundid
+            if stype is 'chara' and GG.chara.currentId() is -1
+              # showError 请选择一个角色
+              return
+            if stype is 'chara'
+              stype += ':' + GG.chara.currentId()
+            @action 'sound', stype, soundid
         when 'album'
           albumid = parseInt cmds[1]
           if albumid
@@ -288,7 +320,7 @@ class GEvent
           if lineprops[0] is 'background'
             lineprops[1] = JSON.parse lineprops[1]
           else if lineprops[0] is 'state'
-            if /^(no)?chara/.test lineprops[1]
+            if @isCharaId lineprops[1]
               stype = 'text'
               lineprops[1] =
                 stype: stype

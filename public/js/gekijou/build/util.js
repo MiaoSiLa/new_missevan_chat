@@ -154,6 +154,34 @@ Util = (function() {
     return lines;
   };
 
+  Util.prototype.splitsubcommand = function(key, val) {
+    var ckey, clist, cscmd, subcmdname, subcmds, subkey, text, _i, _len;
+    subcmds = {
+      'sound': {
+        'chara': ['chara', '角色', '人物'],
+        'effect': ['effect', '音效'],
+        'background': ['background', 'bgm', '背景乐']
+      }
+    };
+    for (ckey in subcmds) {
+      cscmd = subcmds[ckey];
+      if (key === ckey) {
+        text = val;
+        for (subkey in cscmd) {
+          clist = cscmd[subkey];
+          for (_i = 0, _len = clist.length; _i < _len; _i++) {
+            subcmdname = clist[_i];
+            if (text.substr(0, subcmdname.length).toLowerCase() === subcmdname) {
+              val = text.substr(0 + subcmdname.length).trim();
+              return [key, subkey, val];
+            }
+          }
+        }
+      }
+    }
+    return [key, val];
+  };
+
   Util.prototype.splitcommand = function(text) {
     var clist, cmdlist, cmdname, cmds, key, val, _i, _len;
     cmdlist = {
@@ -169,7 +197,7 @@ Util = (function() {
           cmdname = clist[_i];
           if (text.substr(1, cmdname.length).toLowerCase() === cmdname) {
             val = text.substr(1 + cmdname.length).trim();
-            cmds = [key, val];
+            cmds = this.splitsubcommand(key, val);
             return cmds;
           }
         }

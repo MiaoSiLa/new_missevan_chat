@@ -86,7 +86,7 @@ GAction = (function() {
     var action;
     action = this;
     this.load(function() {
-      var callback, msg, soundname, statetext;
+      var callback, soundkey, soundmsg, soundname, statetext;
       if (action.chara != null) {
         GG.chara.selectId(action.chara);
       }
@@ -155,19 +155,33 @@ GAction = (function() {
             callback();
           });
         case 'sound':
-          msg = JSON.stringify(action.Jsound);
-          chatBox.loadBubble({
-            msg: msg,
-            type: 6,
-            sender: index.mo.sender
-          });
-          if (GG.env === 'dev') {
-            soundname = action.Jsound ? action.Jsound.soundstr : '';
-            action.line = index.mo.chatLine;
-            statetext = ': ' + index.mo.sender.name + ' ' + ("播放了声音「" + soundname + "」");
-            GG.bubble.text(statetext);
+          soundname = action.Jsound ? action.Jsound.soundstr : '';
+          soundmsg = '';
+          soundkey = '';
+          switch (action.stype) {
+            case 'chara':
+              soundmsg = index.mo.sender.name + (" 播放了声音 「" + soundname + "」");
+              soundkey = 'chara:' + action.chara;
+              break;
+            case 'effect':
+              soundmsg = "音效 「" + soundname + "」";
+              soundkey = 'effect';
+              break;
+            case 'background':
+              soundmsg = "背景乐 「" + soundname + "」";
+              soundkey = 'background';
           }
-          return callback();
+          return GG.sound.play(soundkey, action.Jsound.soundurl, function() {
+            if (action.stype === 'background') {
+              chatBox.addInfo('声音播放提示', soundmsg);
+            }
+            if (GG.env === 'dev') {
+              action.line = index.mo.chatLine;
+              statetext = ': ' + soundmsg;
+              GG.bubble.text(statetext);
+            }
+            callback();
+          });
       }
     });
   };
@@ -210,7 +224,13 @@ GEvent = (function() {
         }
         break;
       case 'sound':
-        an.chara = this.parseCharaId(val1);
+        if (this.isCharaId(val1)) {
+          an.chara = this.parseCharaId(val1);
+          an.stype = 'chara';
+        } else {
+          an.chara = -1;
+          an.stype = val1;
+        }
         an.val = val2;
         if (!norun) {
           an.run(function() {});
@@ -260,6 +280,10 @@ GEvent = (function() {
     }
   };
 
+  GEvent.prototype.isCharaId = function(charaid) {
+    return /^(no)?chara/.test(charaid);
+  };
+
   GEvent.prototype.parseCharaId = function(charaid) {
     var cids;
     if (typeof charaid === 'number') {
@@ -277,7 +301,7 @@ GEvent = (function() {
   };
 
   GEvent.prototype.parseAction = function(text, alltreattext) {
-    var albumid, cmds, soundid, state;
+    var albumid, cmds, soundid, state, stype;
     if (text[0] !== '/' || alltreattext) {
       return this.action('text', GG.chara.currentId(), text);
     } else {
@@ -287,9 +311,16 @@ GEvent = (function() {
       }
       switch (cmds[0]) {
         case 'sound':
-          soundid = parseInt(cmds[1]);
+          stype = cmds[1];
+          soundid = parseInt(cmds[2]);
           if (soundid) {
-            return this.action('sound', GG.chara.currentId(), soundid);
+            if (stype === 'chara' && GG.chara.currentId() === -1) {
+              return;
+            }
+            if (stype === 'chara') {
+              stype += ':' + GG.chara.currentId();
+            }
+            return this.action('sound', stype, soundid);
           }
           break;
         case 'album':
@@ -339,7 +370,7 @@ GEvent = (function() {
           if (lineprops[0] === 'background') {
             lineprops[1] = JSON.parse(lineprops[1]);
           } else if (lineprops[0] === 'state') {
-            if (/^(no)?chara/.test(lineprops[1])) {
+            if (this.isCharaId(lineprops[1])) {
               stype = 'text';
               lineprops[1] = {
                 stype: stype,

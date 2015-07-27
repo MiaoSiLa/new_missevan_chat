@@ -131,11 +131,29 @@ class Util
 
     lines
 
+  splitsubcommand: (key, val) ->
+    subcmds =
+      'sound':
+        'chara': ['chara', '角色', '人物'],
+        'effect': ['effect', '音效'],
+        'background': ['background', 'bgm', '背景乐']
+    for ckey, cscmd of subcmds
+      if key is ckey
+        # subcmd
+        text = val
+        for subkey, clist of cscmd
+          for subcmdname in clist
+            if text.substr(0, subcmdname.length).toLowerCase() is subcmdname
+              val = text.substr(0 + subcmdname.length).trim()
+              return [key, subkey, val]
+    [key, val]
+
   splitcommand: (text) ->
     cmdlist =
       'sound': ['sound', '声音', '音频'],
       'album': ['album', '专辑']
       'state': ['state', '状态']
+
     cmds = null
 
     if text[0] is '/'
@@ -143,9 +161,8 @@ class Util
         for cmdname in clist
           if text.substr(1, cmdname.length).toLowerCase() is cmdname
             val = text.substr(1 + cmdname.length).trim()
-            cmds = [ key, val ]
+            cmds = @splitsubcommand key, val
             return cmds
-
     cmds
 
 class GGManager

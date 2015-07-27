@@ -13,6 +13,7 @@ class Gekijou
     @tb = new Toolbar $ '#common-toolbar'
     @chara = new Chara $ '#chara-toolbar'
     @album = new SoundAlbum()
+    @sound = new SoundCollection()
     @em = new GEventManager()
     @util = new Util()
     @settings = {}
@@ -27,6 +28,7 @@ class Gekijou
     GG.bubble = @bubble
     GG.chara = @chara
     GG.album = @album
+    GG.sound = @sound
     GG.em = @em
     GG.util = @util
 
@@ -90,9 +92,10 @@ class Gekijou
       script = @util.unescape gs.text()
       @parse script
 
+    self = @
     @chara.init ->
-      # 初始化 soundManager
-      soundManager.onready -> cb() if cb?
+      # 初始化声音管理
+      self.sound.init -> cb() if cb?
       return
     return
 
@@ -193,7 +196,7 @@ class Gekijou
     @pb.moveToIndex i
     @em.current i
     @played i
-    soundManager.stopAll()
+    @sound.stopAll()
     @em.run()
     return
 
@@ -270,7 +273,7 @@ class Gekijou
     if @_playedtime <= 0
       @em.run()
 
-    soundManager.resumeAll()
+    @sound.resumeAll()
     return
 
   pause: ->
@@ -279,7 +282,7 @@ class Gekijou
       clearInterval @_timer
       @_timer = 0
       @pb.pause()
-      soundManager.pauseAll()
+      @sound.pauseAll()
     return
 
   finish: ->
