@@ -926,7 +926,10 @@ class Editorbar extends ControlBar
     # 保存设置
     $('#settingsokbtn').click ->
       modal = $ '#settingsmodal'
-      GG.gekijou.setOptions showname: modal.find('#cb_show_name').prop('checked')
+      opts =
+        showname: modal.find('#cb_show_name').prop('checked'),
+        instantshow: modal.find('#cb_instant_show').prop('checked')
+      GG.gekijou.setOptions opts
       moTool.hideModalBox modal
       return
 

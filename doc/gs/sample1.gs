@@ -18,6 +18,9 @@
 #  # 指定了整个剧场是否显示角色的名称，默认为 `on`
 #  showname [on, off]
 #
+#  # 指定了剧场呈现方式，是否为立即展示，默认为 `off`
+#  instantshow [on, off]
+#
 
 setup {
   album 55690

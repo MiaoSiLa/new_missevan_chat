@@ -1047,11 +1047,13 @@ Editorbar = (function(_super) {
       moTool.showModalBox(modal);
     });
     $('#settingsokbtn').click(function() {
-      var modal;
+      var modal, opts;
       modal = $('#settingsmodal');
-      GG.gekijou.setOptions({
-        showname: modal.find('#cb_show_name').prop('checked')
-      });
+      opts = {
+        showname: modal.find('#cb_show_name').prop('checked'),
+        instantshow: modal.find('#cb_instant_show').prop('checked')
+      };
+      GG.gekijou.setOptions(opts);
       moTool.hideModalBox(modal);
     });
     $gsavebtn = this.pb.$('#mpisave');

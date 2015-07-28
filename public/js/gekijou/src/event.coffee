@@ -430,8 +430,8 @@ class GEventManager
     return
 
   moveToBegin: ->
-    @_currentIndex = 0
-    @_event = @events[0]
+    @_currentIndex = -1
+    @_event = null
     return
 
   getNeedPreload: ->
@@ -544,6 +544,13 @@ class GEventManager
 
     @_curtime = time
     @_currentIndex
+
+  runAll: ->
+    while @next()
+      @run()
+
+    GG.gekijou.emit 'end'
+    return
 
   run: ->
     if @_event

@@ -154,11 +154,14 @@ class Gekijou
       switch lineprops[0]
         when 'album'
           @album.set lineprops[1]
-        when 'showname'
+        when 'showname', 'instantshow'
+          opt = {}
           if lineprops[1] is 'off'
-            @setOptions 'showname': off
-          else
-            @setOptions 'showname': on
+            opt[lineprops[0]] = off
+            @setOptions opt
+          else if lineprops[1] is 'on'
+            opt[lineprops[0]] = on
+            @setOptions opt
     return
 
   reset: ->
@@ -256,24 +259,30 @@ class Gekijou
     @_lastplaytime = new Date().valueOf()
     self = @
 
-    @_timer = setInterval ->
-        curtime = new Date().valueOf()
-        self._playedtime += curtime - self._lastplaytime
-        self._lastplaytime = curtime
-        i = self.em.runAtTime self._playedtime
+    if @opts['instantshow'] and @opts['env'] isnt 'dev'
+      # 全部展示
+      @sound.resumeAll()
+      @em.runAll()
+    else
+      @_timer = setInterval ->
+          curtime = new Date().valueOf()
+          self._playedtime += curtime - self._lastplaytime
+          self._lastplaytime = curtime
+          i = self.em.runAtTime self._playedtime
 
-        pos = self._playedtime / self.em.totaltime()
-        if pos > 1 then pos = 1
-        self.pb.pos pos
+          pos = self._playedtime / self.em.totaltime()
+          if pos > 1 then pos = 1
+          self.pb.pos pos
 
-        if i is untilIndex
-          self.pause()
-      , 100
+          if i is untilIndex
+            self.pause()
+        , 100
 
-    if @_playedtime <= 0
-      @em.run()
+      if @_playedtime <= 0
+        @em.run()
 
-    @sound.resumeAll()
+      @sound.resumeAll()
+
     return
 
   pause: ->

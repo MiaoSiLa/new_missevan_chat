@@ -44,6 +44,8 @@ class GekijouEditor
 
     if @gekijou.opts['showname'] is off
       script += "  showname off\n"
+    if @gekijou.opts['instantshow'] is on
+      script += "  instantshow on\n"
 
     script += '}\n\n'
     script += 'chara {\n'

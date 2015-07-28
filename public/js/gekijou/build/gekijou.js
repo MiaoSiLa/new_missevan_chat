@@ -152,7 +152,7 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.parseSetup = function(block) {
-    var i, line, lineprops, lines, _i, _len;
+    var i, line, lineprops, lines, opt, _i, _len;
     lines = this.util.splitline(block);
     for (i = _i = 0, _len = lines.length; _i < _len; i = ++_i) {
       line = lines[i];
@@ -162,14 +162,14 @@ Gekijou = (function() {
           this.album.set(lineprops[1]);
           break;
         case 'showname':
+        case 'instantshow':
+          opt = {};
           if (lineprops[1] === 'off') {
-            this.setOptions({
-              'showname': false
-            });
-          } else {
-            this.setOptions({
-              'showname': true
-            });
+            opt[lineprops[0]] = false;
+            this.setOptions(opt);
+          } else if (lineprops[1] === 'on') {
+            opt[lineprops[0]] = true;
+            this.setOptions(opt);
           }
       }
     }
@@ -297,25 +297,30 @@ Gekijou = (function() {
     this.pb.start();
     this._lastplaytime = new Date().valueOf();
     self = this;
-    this._timer = setInterval(function() {
-      var curtime, i, pos;
-      curtime = new Date().valueOf();
-      self._playedtime += curtime - self._lastplaytime;
-      self._lastplaytime = curtime;
-      i = self.em.runAtTime(self._playedtime);
-      pos = self._playedtime / self.em.totaltime();
-      if (pos > 1) {
-        pos = 1;
+    if (this.opts['instantshow'] && this.opts['env'] !== 'dev') {
+      this.sound.resumeAll();
+      this.em.runAll();
+    } else {
+      this._timer = setInterval(function() {
+        var curtime, i, pos;
+        curtime = new Date().valueOf();
+        self._playedtime += curtime - self._lastplaytime;
+        self._lastplaytime = curtime;
+        i = self.em.runAtTime(self._playedtime);
+        pos = self._playedtime / self.em.totaltime();
+        if (pos > 1) {
+          pos = 1;
+        }
+        self.pb.pos(pos);
+        if (i === untilIndex) {
+          return self.pause();
+        }
+      }, 100);
+      if (this._playedtime <= 0) {
+        this.em.run();
       }
-      self.pb.pos(pos);
-      if (i === untilIndex) {
-        return self.pause();
-      }
-    }, 100);
-    if (this._playedtime <= 0) {
-      this.em.run();
+      this.sound.resumeAll();
     }
-    this.sound.resumeAll();
   };
 
   Gekijou.prototype.pause = function() {

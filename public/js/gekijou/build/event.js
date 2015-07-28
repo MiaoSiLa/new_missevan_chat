@@ -525,8 +525,8 @@ GEventManager = (function() {
   };
 
   GEventManager.prototype.moveToBegin = function() {
-    this._currentIndex = 0;
-    this._event = this.events[0];
+    this._currentIndex = -1;
+    this._event = null;
   };
 
   GEventManager.prototype.getNeedPreload = function() {
@@ -678,6 +678,13 @@ GEventManager = (function() {
     }
     this._curtime = time;
     return this._currentIndex;
+  };
+
+  GEventManager.prototype.runAll = function() {
+    while (this.next()) {
+      this.run();
+    }
+    GG.gekijou.emit('end');
   };
 
   GEventManager.prototype.run = function() {

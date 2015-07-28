@@ -43,6 +43,9 @@ GekijouEditor = (function() {
     if (this.gekijou.opts['showname'] === false) {
       script += "  showname off\n";
     }
+    if (this.gekijou.opts['instantshow'] === true) {
+      script += "  instantshow on\n";
+    }
     script += '}\n\n';
     script += 'chara {\n';
     _ref = chara.charas;
