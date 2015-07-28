@@ -40,6 +40,8 @@ class Gekijou
           GG.env = v
         when 'showname'
           @bubble.showname v
+        when 'instantshow'
+          @pb.show not v
       @opts[k] = v
     @opts
 

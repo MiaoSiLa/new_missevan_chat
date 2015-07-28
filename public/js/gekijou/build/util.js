@@ -473,6 +473,14 @@ Playbar = (function(_super) {
     this._data = [];
   }
 
+  Playbar.prototype.show = function(bshow) {
+    if (bshow) {
+      this.el.show();
+    } else {
+      this.el.hide();
+    }
+  };
+
   Playbar.prototype.bind = function() {
     var $mpo;
     this.$('.mpi').click(function() {

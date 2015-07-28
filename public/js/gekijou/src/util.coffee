@@ -384,6 +384,13 @@ class Playbar extends ControlBar
     super @el
     @_data = []
 
+  show: (bshow) ->
+    if bshow
+      @el.show()
+    else
+      @el.hide()
+    return
+
   bind: ->
     @$('.mpi').click ->
       GG.gekijou.emit 'play'

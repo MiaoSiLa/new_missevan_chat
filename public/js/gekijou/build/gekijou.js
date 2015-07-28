@@ -41,6 +41,9 @@ Gekijou = (function() {
           break;
         case 'showname':
           this.bubble.showname(v);
+          break;
+        case 'instantshow':
+          this.pb.show(!v);
       }
       this.opts[k] = v;
     }
