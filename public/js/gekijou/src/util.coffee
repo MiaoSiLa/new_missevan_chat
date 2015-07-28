@@ -452,51 +452,81 @@ class Playbar extends ControlBar
       #$('#commentCanvas').scroll (e) ->
       #  console.log @scrollTop
       #  return
+      if chatBox.isMobile
+        @bindMobile()
+      else
+        @bindDesktop()
 
-      # TODO: firefox
-      self = @
-      #$('#commentCanvas')[0].addEventListener 'DOMMouseScroll', (e) ->
-      $('#commentCanvas')[0].onmousewheel = (e) ->
-        wheeltype = off
-        if e.deltaY < 0
-          wheeltype = 'up'
-        else if e.deltaY > 0
-          wheeltype = 'down'
-
-        if wheeltype
-          if self._wheelstatus.type isnt wheeltype \
-          or new Date().valueOf() - self._wheelstatus.lasttime > 800
-            self._wheelstatus =
-              type: wheeltype,
-              lasttime: new Date().valueOf(),
-              deltaY: 0,
-              tigger: off
-          else
-            self._wheelstatus.deltaY += e.deltaY
-            if not self._wheelstatus.tigger
-              if self._wheelstatus.deltaY < -10
-                # up
-                self._wheelstatus.tigger = on
-                if GG.gekijou.isplaying()
-                  GG.gekijou.emit 'pause'
-
-              else if self._wheelstatus.deltaY > 10
-                # down
-                if GG.bubble.isbottom()
-                  if not GG.gekijou.isplaying()
-                    self._wheelstatus.tigger = on
-                    if not GG.gekijou.isfinished()
-                      GG.gekijou.emit 'play'
-                  else if self._wheelstatus.deltaY > 100
-                    # playnext
-                    self._wheelstatus.tigger = on
-                    GG.gekijou.emit 'next'
-
-          #self._lastwheeltime
-        # console.log e.detail, e.deltaY
-        return
 
     return
+
+  bindDesktop: ->
+    # TODO: firefox
+    self = @
+    #$('#commentCanvas')[0].addEventListener 'DOMMouseScroll', (e) ->
+    $('#commentCanvas')[0].onmousewheel = (e) ->
+      wheeltype = off
+      if e.deltaY < 0
+        wheeltype = 'up'
+      else if e.deltaY > 0
+        wheeltype = 'down'
+
+      if wheeltype
+        if self._wheelstatus.type isnt wheeltype \
+        or new Date().valueOf() - self._wheelstatus.lasttime > 800
+          self._wheelstatus =
+            type: wheeltype,
+            lasttime: new Date().valueOf(),
+            deltaY: 0,
+            tigger: off
+        else
+          self._wheelstatus.deltaY += e.deltaY
+          self.onscroll()
+
+        #self._lastwheeltime
+      # console.log e.detail, e.deltaY
+      return
+
+    return
+
+  bindMobile: ->
+    self = @
+    document.addEventListener 'touchstart', (e) ->
+        # touchmove
+        self._wheelstatus =
+          touches: e.touches[0]
+      , off
+    document.addEventListener 'touchend', (e) ->
+        # touchmove
+        deltaY = self._wheelstatus.touches.clientY - e.changedTouches[0].clientY
+        self._wheelstatus =
+          tigger: off,
+          deltaY: deltaY
+        self.onscroll()
+      , off
+    return
+
+  onscroll: ->
+    if not @_wheelstatus.tigger
+      if @_wheelstatus.deltaY < -10
+        # up
+        @_wheelstatus.tigger = on
+        if GG.gekijou.isplaying()
+          GG.gekijou.emit 'pause'
+
+      else if @_wheelstatus.deltaY > 10
+        # down
+        if GG.bubble.isbottom()
+          if not GG.gekijou.isplaying()
+            @_wheelstatus.tigger = on
+            if not GG.gekijou.isfinished()
+              GG.gekijou.emit 'play'
+          else if @_wheelstatus.deltaY > 100
+            # playnext
+            @_wheelstatus.tigger = on
+            GG.gekijou.emit 'next'
+    return
+
 
   # 预加载 0~1
   preload: (p) ->

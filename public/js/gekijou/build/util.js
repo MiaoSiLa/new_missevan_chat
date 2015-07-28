@@ -483,7 +483,7 @@ Playbar = (function(_super) {
   };
 
   Playbar.prototype.bind = function() {
-    var $mpo, self;
+    var $mpo;
     this.$('.mpi').click(function() {
       GG.gekijou.emit('play');
     });
@@ -537,48 +537,80 @@ Playbar = (function(_super) {
             }
         }
       });
-      self = this;
-      $('#commentCanvas')[0].onmousewheel = function(e) {
-        var wheeltype;
-        wheeltype = false;
-        if (e.deltaY < 0) {
-          wheeltype = 'up';
-        } else if (e.deltaY > 0) {
-          wheeltype = 'down';
+      if (chatBox.isMobile) {
+        this.bindMobile();
+      } else {
+        this.bindDesktop();
+      }
+    }
+  };
+
+  Playbar.prototype.bindDesktop = function() {
+    var self;
+    self = this;
+    $('#commentCanvas')[0].onmousewheel = function(e) {
+      var wheeltype;
+      wheeltype = false;
+      if (e.deltaY < 0) {
+        wheeltype = 'up';
+      } else if (e.deltaY > 0) {
+        wheeltype = 'down';
+      }
+      if (wheeltype) {
+        if (self._wheelstatus.type !== wheeltype || new Date().valueOf() - self._wheelstatus.lasttime > 800) {
+          self._wheelstatus = {
+            type: wheeltype,
+            lasttime: new Date().valueOf(),
+            deltaY: 0,
+            tigger: false
+          };
+        } else {
+          self._wheelstatus.deltaY += e.deltaY;
+          self.onscroll();
         }
-        if (wheeltype) {
-          if (self._wheelstatus.type !== wheeltype || new Date().valueOf() - self._wheelstatus.lasttime > 800) {
-            self._wheelstatus = {
-              type: wheeltype,
-              lasttime: new Date().valueOf(),
-              deltaY: 0,
-              tigger: false
-            };
-          } else {
-            self._wheelstatus.deltaY += e.deltaY;
-            if (!self._wheelstatus.tigger) {
-              if (self._wheelstatus.deltaY < -10) {
-                self._wheelstatus.tigger = true;
-                if (GG.gekijou.isplaying()) {
-                  GG.gekijou.emit('pause');
-                }
-              } else if (self._wheelstatus.deltaY > 10) {
-                if (GG.bubble.isbottom()) {
-                  if (!GG.gekijou.isplaying()) {
-                    self._wheelstatus.tigger = true;
-                    if (!GG.gekijou.isfinished()) {
-                      GG.gekijou.emit('play');
-                    }
-                  } else if (self._wheelstatus.deltaY > 100) {
-                    self._wheelstatus.tigger = true;
-                    GG.gekijou.emit('next');
-                  }
-                }
-              }
+      }
+    };
+  };
+
+  Playbar.prototype.bindMobile = function() {
+    var self;
+    self = this;
+    document.addEventListener('touchstart', function(e) {
+      return self._wheelstatus = {
+        touches: e.touches[0]
+      };
+    }, false);
+    document.addEventListener('touchend', function(e) {
+      var deltaY;
+      deltaY = self._wheelstatus.touches.clientY - e.changedTouches[0].clientY;
+      self._wheelstatus = {
+        tigger: false,
+        deltaY: deltaY
+      };
+      return self.onscroll();
+    }, false);
+  };
+
+  Playbar.prototype.onscroll = function() {
+    if (!this._wheelstatus.tigger) {
+      if (this._wheelstatus.deltaY < -10) {
+        this._wheelstatus.tigger = true;
+        if (GG.gekijou.isplaying()) {
+          GG.gekijou.emit('pause');
+        }
+      } else if (this._wheelstatus.deltaY > 10) {
+        if (GG.bubble.isbottom()) {
+          if (!GG.gekijou.isplaying()) {
+            this._wheelstatus.tigger = true;
+            if (!GG.gekijou.isfinished()) {
+              GG.gekijou.emit('play');
             }
+          } else if (this._wheelstatus.deltaY > 100) {
+            this._wheelstatus.tigger = true;
+            GG.gekijou.emit('next');
           }
         }
-      };
+      }
     }
   };
 
