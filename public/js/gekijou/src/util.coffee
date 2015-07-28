@@ -383,6 +383,7 @@ class Playbar extends ControlBar
   constructor: (@el) ->
     super @el
     @_data = []
+    @_wheelstatus = {}
 
   show: (bshow) ->
     if bshow
@@ -429,6 +430,72 @@ class Playbar extends ControlBar
           GG.gekijou.autoReplay on
           $this.addClass 'mpiloopa'
         return
+
+      # 播放中的按键
+      $(document).keydown (e) ->
+        switch e.which
+          when 32
+            # space
+            GG.gekijou.emit 'play'
+          when 38
+            # up
+            GG.gekijou.emit 'pause'
+          when 40
+            # down
+            if GG.gekijou.isplaying() and GG.bubble.isbottom()
+              # need jump next
+              GG.gekijou.emit 'next'
+              return
+        return
+
+      # 滚动条事件
+      #$('#commentCanvas').scroll (e) ->
+      #  console.log @scrollTop
+      #  return
+
+      # TODO: firefox
+      self = @
+      #$('#commentCanvas')[0].addEventListener 'DOMMouseScroll', (e) ->
+      $('#commentCanvas')[0].onmousewheel = (e) ->
+        wheeltype = off
+        if e.deltaY < 0
+          wheeltype = 'up'
+        else if e.deltaY > 0
+          wheeltype = 'down'
+
+        if wheeltype
+          if self._wheelstatus.type isnt wheeltype \
+          or new Date().valueOf() - self._wheelstatus.lasttime > 800
+            self._wheelstatus =
+              type: wheeltype,
+              lasttime: new Date().valueOf(),
+              deltaY: 0,
+              tigger: off
+          else
+            self._wheelstatus.deltaY += e.deltaY
+            if not self._wheelstatus.tigger
+              if self._wheelstatus.deltaY < -10
+                # up
+                self._wheelstatus.tigger = on
+                if GG.gekijou.isplaying()
+                  GG.gekijou.emit 'pause'
+
+              else if self._wheelstatus.deltaY > 10
+                # down
+                if GG.bubble.isbottom()
+                  if not GG.gekijou.isplaying()
+                    self._wheelstatus.tigger = on
+                    if not GG.gekijou.isfinished()
+                      GG.gekijou.emit 'play'
+                  else if self._wheelstatus.deltaY > 100
+                    # playnext
+                    self._wheelstatus.tigger = on
+                    GG.gekijou.emit 'next'
+
+          #self._lastwheeltime
+        # console.log e.detail, e.deltaY
+        return
+
     return
 
   # 预加载 0~1

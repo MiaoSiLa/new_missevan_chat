@@ -164,5 +164,10 @@ class ChatBubble
     return
 
   tobottom: ->
-    @stage.animate { scrollTop: @el.height() }, 1000
+    @stage.clearQueue().stop().animate { scrollTop: @el.height() }, 1000
     return
+
+  isbottom: ->
+    stage_height = @stage.height()
+    height = @el.height()
+    height - stage_height < @stage.scrollTop()

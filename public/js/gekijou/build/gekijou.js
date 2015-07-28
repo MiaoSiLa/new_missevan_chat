@@ -251,6 +251,11 @@ Gekijou = (function() {
           this.play();
         }
         break;
+      case 'next':
+        if (!this._finished) {
+          this.playNext();
+        }
+        break;
       case 'step':
         this.scrollToBottom();
         break;
@@ -280,8 +285,18 @@ Gekijou = (function() {
     });
   };
 
+  Gekijou.prototype.playNext = function() {
+    if (this.em._currentIndex < this.em.events.length - 1) {
+      this.played(this.em._currentIndex + 1);
+    }
+  };
+
   Gekijou.prototype.isplaying = function() {
     return this._playing;
+  };
+
+  Gekijou.prototype.isfinished = function() {
+    return this._finished;
   };
 
   Gekijou.prototype.played = function(i) {

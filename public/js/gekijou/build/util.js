@@ -471,6 +471,7 @@ Playbar = (function(_super) {
     this.el = el;
     Playbar.__super__.constructor.call(this, this.el);
     this._data = [];
+    this._wheelstatus = {};
   }
 
   Playbar.prototype.show = function(bshow) {
@@ -482,7 +483,7 @@ Playbar = (function(_super) {
   };
 
   Playbar.prototype.bind = function() {
-    var $mpo;
+    var $mpo, self;
     this.$('.mpi').click(function() {
       GG.gekijou.emit('play');
     });
@@ -521,6 +522,63 @@ Playbar = (function(_super) {
           $this.addClass('mpiloopa');
         }
       });
+      $(document).keydown(function(e) {
+        switch (e.which) {
+          case 32:
+            GG.gekijou.emit('play');
+            break;
+          case 38:
+            GG.gekijou.emit('pause');
+            break;
+          case 40:
+            if (GG.gekijou.isplaying() && GG.bubble.isbottom()) {
+              GG.gekijou.emit('next');
+              return;
+            }
+        }
+      });
+      self = this;
+      $('#commentCanvas')[0].onmousewheel = function(e) {
+        var wheeltype;
+        wheeltype = false;
+        if (e.deltaY < 0) {
+          wheeltype = 'up';
+        } else if (e.deltaY > 0) {
+          wheeltype = 'down';
+        }
+        if (wheeltype) {
+          if (self._wheelstatus.type !== wheeltype || new Date().valueOf() - self._wheelstatus.lasttime > 800) {
+            self._wheelstatus = {
+              type: wheeltype,
+              lasttime: new Date().valueOf(),
+              deltaY: 0,
+              tigger: false
+            };
+          } else {
+            self._wheelstatus.deltaY += e.deltaY;
+            if (!self._wheelstatus.tigger) {
+              if (self._wheelstatus.deltaY < -10) {
+                self._wheelstatus.tigger = true;
+                if (GG.gekijou.isplaying()) {
+                  GG.gekijou.emit('pause');
+                }
+              } else if (self._wheelstatus.deltaY > 10) {
+                if (GG.bubble.isbottom()) {
+                  if (!GG.gekijou.isplaying()) {
+                    self._wheelstatus.tigger = true;
+                    if (!GG.gekijou.isfinished()) {
+                      GG.gekijou.emit('play');
+                    }
+                  } else if (self._wheelstatus.deltaY > 100) {
+                    self._wheelstatus.tigger = true;
+                    GG.gekijou.emit('next');
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
     }
   };
 

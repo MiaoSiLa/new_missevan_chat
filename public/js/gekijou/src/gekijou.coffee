@@ -228,6 +228,9 @@ class Gekijou
             # or GG.env is 'dev'
             @reset()
           @play()
+      when 'next'
+        if not @_finished
+          @playNext()
       when 'step'
         @scrollToBottom()
       when 'pos'
@@ -249,8 +252,16 @@ class Gekijou
     @setOptions autoReplay: enable
     return
 
+  playNext: ->
+    if @em._currentIndex < @em.events.length - 1
+      @played @em._currentIndex + 1
+    return
+
   isplaying: ->
-    return @_playing
+    @_playing
+
+  isfinished: ->
+    @_finished
 
   played: (i) ->
     @_playedtime = @em.totaltime i

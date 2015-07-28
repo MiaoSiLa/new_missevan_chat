@@ -159,9 +159,16 @@ ChatBubble = (function() {
   };
 
   ChatBubble.prototype.tobottom = function() {
-    this.stage.animate({
+    this.stage.clearQueue().stop().animate({
       scrollTop: this.el.height()
     }, 1000);
+  };
+
+  ChatBubble.prototype.isbottom = function() {
+    var height, stage_height;
+    stage_height = this.stage.height();
+    height = this.el.height();
+    return height - stage_height < this.stage.scrollTop();
   };
 
   return ChatBubble;
