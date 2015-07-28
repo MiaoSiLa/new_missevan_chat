@@ -29,6 +29,10 @@ GAction = (function() {
         self.img = img;
         break;
       case 'sound':
+        if (GG.env !== 'dev' && GG.opts['instantshow']) {
+          cb();
+          return;
+        }
         moTool.getAjax({
           url: "/sound/getsound?soundid=" + this.val,
           showLoad: false,
@@ -168,6 +172,10 @@ GAction = (function() {
             callback();
           });
         case 'sound':
+          if (GG.env !== 'dev' && GG.opts['instantshow']) {
+            callback();
+            return;
+          }
           soundname = action.Jsound ? action.Jsound.soundstr : '';
           soundmsg = '';
           soundkey = '';
@@ -284,16 +292,24 @@ GEvent = (function() {
     return found;
   };
 
-  GEvent.prototype.run = function(i) {
+  GEvent.prototype.run = function(i, cb) {
     var self;
     if (i == null) {
+      i = 0;
+    }
+    if (typeof i === 'function') {
+      cb = i;
       i = 0;
     }
     if (i < this.actions.length) {
       self = this;
       this.actions[i].run(function() {
-        self.run(i + 1);
+        self.run(i + 1, cb);
       });
+    } else {
+      if (cb != null) {
+        cb();
+      }
     }
   };
 
@@ -681,16 +697,22 @@ GEventManager = (function() {
   };
 
   GEventManager.prototype.runAll = function() {
-    while (this.next()) {
-      this.run();
-    }
-    GG.gekijou.emit('end');
+    var nextAndRun, self;
+    self = this;
+    nextAndRun = function() {
+      if (self.next()) {
+        self.run(nextAndRun);
+      } else {
+        GG.gekijou.emit('end');
+      }
+    };
+    nextAndRun();
   };
 
-  GEventManager.prototype.run = function() {
+  GEventManager.prototype.run = function(cb) {
     if (this._event) {
       this.setVolume();
-      this._event.run();
+      this._event.run(cb);
     }
   };
 

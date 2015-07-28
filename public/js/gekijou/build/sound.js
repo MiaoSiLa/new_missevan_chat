@@ -3,6 +3,7 @@ var SoundCollection;
 SoundCollection = (function() {
   function SoundCollection() {
     this._soundurlmap = {};
+    this._bmute = false;
   }
 
   SoundCollection.prototype.init = function(cb) {
@@ -25,6 +26,10 @@ SoundCollection = (function() {
     return soundManager.resumeAll();
   };
 
+  SoundCollection.prototype.mute = function(_bmute) {
+    this._bmute = _bmute;
+  };
+
   SoundCollection.prototype.play = function(soundkey, url, cb) {
     var opts, prevUrl, s;
     prevUrl = this._soundurlmap[soundkey];
@@ -38,16 +43,20 @@ SoundCollection = (function() {
       this._soundurlmap[soundkey] = null;
       return;
     }
-    this._soundurlmap[soundkey] = url;
-    s = soundManager.getSoundById(url);
-    if (s) {
-      opts = {};
-      if (soundkey === 'background') {
-        opts.onfinish = function() {
-          return s.play(opts);
-        };
+    if (this._bmute) {
+      this._soundurlmap[soundkey] = null;
+    } else {
+      this._soundurlmap[soundkey] = url;
+      s = soundManager.getSoundById(url);
+      if (s) {
+        opts = {};
+        if (soundkey === 'background') {
+          opts.onfinish = function() {
+            return s.play(opts);
+          };
+        }
+        s.play(opts);
       }
-      s.play(opts);
     }
     if (cb != null) {
       cb();

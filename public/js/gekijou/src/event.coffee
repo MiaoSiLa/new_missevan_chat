@@ -21,6 +21,11 @@ class GAction
         img.src = @val
         self.img = img
       when 'sound'
+        # 立即展示下不加载音频
+        if GG.env isnt 'dev' and GG.opts['instantshow']
+          cb()
+          return
+
         moTool.getAjax
           url: "/sound/getsound?soundid=" + @val,
           showLoad: no,
@@ -155,6 +160,12 @@ class GAction
           #  msg: msg,
           #  type: 6,
           #  sender: index.mo.sender
+
+          if GG.env isnt 'dev' and GG.opts['instantshow']
+            # 非开发模式立即展示下不加载/提示/播放音频
+            callback()
+            return
+
           soundname = if action.Jsound then action.Jsound.soundstr else ''
           soundmsg = ''
           soundkey = ''
@@ -255,12 +266,19 @@ class GEvent
         break
     found
 
-  run: (i = 0) ->
+  run: (i = 0, cb) ->
+    if typeof i is 'function'
+      # swap i and cb
+      cb = i
+      i = 0
+
     if i < @actions.length
       self = @
       @actions[i].run ->
-        self.run i + 1
+        self.run i + 1, cb
         return
+    else
+      cb() if cb?
 
     return
 
@@ -546,16 +564,21 @@ class GEventManager
     @_currentIndex
 
   runAll: ->
-    while @next()
-      @run()
+    self = @
+    nextAndRun = ->
+      if self.next()
+        self.run nextAndRun
+      else
+        GG.gekijou.emit 'end'
+      return
 
-    GG.gekijou.emit 'end'
+    nextAndRun()
     return
 
-  run: ->
+  run: (cb) ->
     if @_event
       @setVolume()
-      @_event.run()
+      @_event.run cb
     return
 
   length: ->

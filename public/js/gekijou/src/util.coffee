@@ -927,6 +927,8 @@ class Editorbar extends ControlBar
     $settingsbtn = @pb.$('#mpisettings')
     $settingsbtn.click ->
       modal = $ '#settingsmodal'
+      modal.find('#cb_show_name').prop 'checked', GG.opts['showname']
+      modal.find('#cb_instant_show').prop 'checked', GG.opts['instantshow']
       moTool.showModalBox modal
       return
 

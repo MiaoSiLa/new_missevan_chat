@@ -25,6 +25,7 @@ class Gekijou
     # 全局管理器
     new GGManager()
     GG.gekijou = @
+    GG.opts = @opts
     GG.bubble = @bubble
     GG.chara = @chara
     GG.album = @album
@@ -41,7 +42,11 @@ class Gekijou
         when 'showname'
           @bubble.showname v
         when 'instantshow'
-          @pb.show not v
+          # 开启静音
+          @sound.mute v
+          if @opts['env'] isnt 'dev'
+            # 隐藏播放条
+            @pb.show not v
       @opts[k] = v
     @opts
 

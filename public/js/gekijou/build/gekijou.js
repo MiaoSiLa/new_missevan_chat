@@ -23,6 +23,7 @@ Gekijou = (function() {
     this._playedtime = 0;
     new GGManager();
     GG.gekijou = this;
+    GG.opts = this.opts;
     GG.bubble = this.bubble;
     GG.chara = this.chara;
     GG.album = this.album;
@@ -43,7 +44,10 @@ Gekijou = (function() {
           this.bubble.showname(v);
           break;
         case 'instantshow':
-          this.pb.show(!v);
+          this.sound.mute(v);
+          if (this.opts['env'] !== 'dev') {
+            this.pb.show(!v);
+          }
       }
       this.opts[k] = v;
     }
