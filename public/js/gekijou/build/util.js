@@ -836,18 +836,6 @@ Toolbar = (function(_super) {
       self.setVolume(100 - e.offsetX);
       e.stopPropagation();
     });
-    this.$('.mppm').click(function(e) {
-      var $this;
-      $this = $(this);
-      if (!$this.hasClass('mppmis')) {
-        $this.addClass('mppmis');
-        GG.gekijou.setOptions({
-          instantshow: true
-        });
-        GG.gekijou.pause();
-        GG.gekijou.play();
-      }
-    });
 
     /* Deprecated: danmaku button
     @$('.mpcdm').click ->
@@ -867,7 +855,20 @@ Toolbar = (function(_super) {
     if (GG.env === 'dev') {
       this.$('.mpcz').hide();
       this.$('.mpcs').hide();
+      this.$('.mppm').hide();
     } else {
+      this.$('.mppm').click(function(e) {
+        var $this;
+        $this = $(this);
+        if (!$this.hasClass('mppmis')) {
+          $this.addClass('mppmis');
+          GG.gekijou.setOptions({
+            instantshow: true
+          });
+          GG.gekijou.pause();
+          GG.gekijou.play();
+        }
+      });
       statusUpdate = function(stype, st, fn) {
         var staction;
         if (!GG.user) {
