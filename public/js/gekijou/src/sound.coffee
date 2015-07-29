@@ -18,6 +18,8 @@ class SoundCollection
     soundManager.resumeAll()
 
   mute: (@_bmute) ->
+    if @_bmute then @stopAll()
+    return
 
   play: (soundkey, url, cb) ->
     prevUrl = @_soundurlmap[soundkey]

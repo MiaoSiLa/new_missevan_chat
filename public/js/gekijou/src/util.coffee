@@ -644,6 +644,13 @@ class Toolbar extends ControlBar
   switch: (item) ->
     @_display[item] = not @_display[item]
 
+  refresh: ->
+    $mppm = @$ '.mppm'
+    if GG.opts['instantshow']
+      $mppm.addClass 'mppmis'
+    else
+      $mppm.removeClass 'mppmis'
+
   setVolume: (volume) ->
     @$('.mpsvbl').css 'width', volume
 
@@ -732,6 +739,16 @@ class Toolbar extends ControlBar
       $mpsvblrClass.css 'left', (e.offsetX / 100 * 88)
       self.setVolume (100 - e.offsetX)
       e.stopPropagation()
+      return
+
+    # playmode: instantshow
+    @$('.mppm').click (e) ->
+      $this = $ @
+      if not $this.hasClass 'mppmis'
+        $this.addClass 'mppmis'
+        GG.gekijou.setOptions instantshow: on
+        GG.gekijou.pause()
+        GG.gekijou.play()
       return
 
     ### Deprecated: danmaku button

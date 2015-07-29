@@ -35,19 +35,21 @@ class Gekijou
 
   setOptions: (opts) ->
     for k, v of opts
-      # set env to GG
+      @opts[k] = v
       switch k
         when 'env'
+          # set env to GG
           GG.env = v
         when 'showname'
           @bubble.showname v
         when 'instantshow'
           # 开启静音
           @sound.mute v
+          @tb.refresh()
           if @opts['env'] isnt 'dev'
             # 隐藏播放条
             @pb.show not v
-      @opts[k] = v
+
     @opts
 
   initChatBox: ->

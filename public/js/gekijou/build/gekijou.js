@@ -36,6 +36,7 @@ Gekijou = (function() {
     var k, v;
     for (k in opts) {
       v = opts[k];
+      this.opts[k] = v;
       switch (k) {
         case 'env':
           GG.env = v;
@@ -45,11 +46,11 @@ Gekijou = (function() {
           break;
         case 'instantshow':
           this.sound.mute(v);
+          this.tb.refresh();
           if (this.opts['env'] !== 'dev') {
             this.pb.show(!v);
           }
       }
-      this.opts[k] = v;
     }
     return this.opts;
   };

@@ -28,6 +28,9 @@ SoundCollection = (function() {
 
   SoundCollection.prototype.mute = function(_bmute) {
     this._bmute = _bmute;
+    if (this._bmute) {
+      this.stopAll();
+    }
   };
 
   SoundCollection.prototype.play = function(soundkey, url, cb) {

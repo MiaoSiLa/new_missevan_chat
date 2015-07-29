@@ -738,6 +738,16 @@ Toolbar = (function(_super) {
     return this._display[item] = !this._display[item];
   };
 
+  Toolbar.prototype.refresh = function() {
+    var $mppm;
+    $mppm = this.$('.mppm');
+    if (GG.opts['instantshow']) {
+      return $mppm.addClass('mppmis');
+    } else {
+      return $mppm.removeClass('mppmis');
+    }
+  };
+
   Toolbar.prototype.setVolume = function(volume) {
     this.$('.mpsvbl').css('width', volume);
     if (volume > 0) {
@@ -825,6 +835,18 @@ Toolbar = (function(_super) {
       $mpsvblrClass.css('left', e.offsetX / 100 * 88);
       self.setVolume(100 - e.offsetX);
       e.stopPropagation();
+    });
+    this.$('.mppm').click(function(e) {
+      var $this;
+      $this = $(this);
+      if (!$this.hasClass('mppmis')) {
+        $this.addClass('mppmis');
+        GG.gekijou.setOptions({
+          instantshow: true
+        });
+        GG.gekijou.pause();
+        GG.gekijou.play();
+      }
     });
 
     /* Deprecated: danmaku button
