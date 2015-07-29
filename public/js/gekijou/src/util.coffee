@@ -645,11 +645,12 @@ class Toolbar extends ControlBar
     @_display[item] = not @_display[item]
 
   refresh: ->
-    $mppm = @$ '.mppm'
-    if GG.opts['instantshow']
-      $mppm.addClass 'mppmis'
-    else
-      $mppm.removeClass 'mppmis'
+    if GG.env isnt 'dev'
+      $mppm = @$ '.mppm'
+      if GG.opts['instantshow']
+        $mppm.addClass 'mppmis'
+      else
+        $mppm.removeClass 'mppmis'
 
   setVolume: (volume) ->
     @$('.mpsvbl').css 'width', volume
@@ -760,7 +761,7 @@ class Toolbar extends ControlBar
     if GG.env is 'dev'
       @$('.mpcz').hide()
       @$('.mpcs').hide()
-      @$('.mppm').hide()
+      @$('.mppm').remove()
     else
       # playmode: instantshow
       @$('.mppm').click (e) ->
