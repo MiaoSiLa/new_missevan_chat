@@ -36,6 +36,7 @@ class Gekijou
   setOptions: (opts) ->
     for k, v of opts
       @opts[k] = v
+
       switch k
         when 'env'
           # set env to GG

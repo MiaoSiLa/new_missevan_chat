@@ -741,16 +741,6 @@ class Toolbar extends ControlBar
       e.stopPropagation()
       return
 
-    # playmode: instantshow
-    @$('.mppm').click (e) ->
-      $this = $ @
-      if not $this.hasClass 'mppmis'
-        $this.addClass 'mppmis'
-        GG.gekijou.setOptions instantshow: on
-        GG.gekijou.pause()
-        GG.gekijou.play()
-      return
-
     ### Deprecated: danmaku button
     @$('.mpcdm').click ->
       if self.switch('dm')
@@ -759,7 +749,6 @@ class Toolbar extends ControlBar
         $(@).addClass('mpcdmc')
       return
     ###
-
 
     @$('.mpcf').click ->
       if self.switch('f')
@@ -771,7 +760,18 @@ class Toolbar extends ControlBar
     if GG.env is 'dev'
       @$('.mpcz').hide()
       @$('.mpcs').hide()
+      @$('.mppm').hide()
     else
+      # playmode: instantshow
+      @$('.mppm').click (e) ->
+        $this = $ @
+        if not $this.hasClass 'mppmis'
+          $this.addClass 'mppmis'
+          GG.gekijou.setOptions instantshow: on
+          GG.gekijou.pause()
+          GG.gekijou.play()
+        return
+
       statusUpdate = (stype, st, fn) ->
         if not GG.user
           fn no if fn?
