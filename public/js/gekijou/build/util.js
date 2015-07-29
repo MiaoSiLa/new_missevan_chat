@@ -740,11 +740,13 @@ Toolbar = (function(_super) {
 
   Toolbar.prototype.refresh = function() {
     var $mppm;
-    $mppm = this.$('.mppm');
-    if (GG.opts['instantshow']) {
-      return $mppm.addClass('mppmis');
-    } else {
-      return $mppm.removeClass('mppmis');
+    if (GG.env !== 'dev') {
+      $mppm = this.$('.mppm');
+      if (GG.opts['instantshow']) {
+        return $mppm.addClass('mppmis');
+      } else {
+        return $mppm.removeClass('mppmis');
+      }
     }
   };
 
@@ -855,7 +857,7 @@ Toolbar = (function(_super) {
     if (GG.env === 'dev') {
       this.$('.mpcz').hide();
       this.$('.mpcs').hide();
-      this.$('.mppm').hide();
+      this.$('.mppm').remove();
     } else {
       this.$('.mppm').click(function(e) {
         var $this;
