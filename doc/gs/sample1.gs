@@ -29,7 +29,7 @@ setup {
 #
 ## chara 包含在剧本中使用的角色信息
 #
-# define [charaid] [string 角色名] [string 角色称呼] {
+# define [charaid] [string 角色名] {
 #   # 定义角色头像，与主站头像相同定义
 #   # `iconurl` 需要加上 `http://static.missevan.cn/mimagesmini/` 或 `http://static.missevan.cn/mimages/` 的对应资源地址
 #   icon [iconid] [iconurl] [iconcolor]
