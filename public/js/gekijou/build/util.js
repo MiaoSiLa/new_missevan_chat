@@ -1225,7 +1225,7 @@ Editorbar = (function(_super) {
     $inputboxcmdbox.find('p').click(function() {
       var cmd;
       cmd = $(this).data('cmd');
-      self.cmdbox(cmd);
+      self.setcmd(cmd);
     });
     this.$('#inputboxtextareapostbtn').click(function() {
       var $textbox, curev, text;

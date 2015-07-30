@@ -1102,7 +1102,7 @@ class Editorbar extends ControlBar
 
     $inputboxcmdbox.find('p').click ->
       cmd = $(this).data 'cmd'
-      self.cmdbox cmd
+      self.setcmd cmd
       return
 
     @$('#inputboxtextareapostbtn').click ->
