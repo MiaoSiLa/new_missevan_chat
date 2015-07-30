@@ -259,7 +259,7 @@ ImageTools = (function() {
       var p, strp;
       p = data.progress();
       if (p.loaded === p.total) {
-        self.progress('上传完成');
+        self.progress('上传完成，等待响应');
       } else {
         strp = (p.loaded * 100 / p.total).toFixed(1);
         self.progress(strp + '%');

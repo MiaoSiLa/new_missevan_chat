@@ -342,7 +342,7 @@ class GEvent
       @action 'image', charaid, url
     else
       # 状态图片
-      @action 'state', { type: 'image' }, url
+      @action 'state', { stype: 'image' }, url
 
   switchBackground: (url, effect) ->
     # TODO: effect?

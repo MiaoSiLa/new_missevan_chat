@@ -32,7 +32,8 @@ setup {
 # define [charaid] [string 角色名] {
 #   # 定义角色头像，与主站头像相同定义
 #   # `iconurl` 需要加上 `http://static.missevan.cn/mimagesmini/` 或 `http://static.missevan.cn/mimages/` 的对应资源地址
-#   icon [iconid] [iconurl] [iconcolor]
+#   # `iconcolor` 为可选参数
+#   icon [iconid] [iconurl] [iconcolor?]
 #
 #   # 角色称号
 #   subtitle [string 角色称号]

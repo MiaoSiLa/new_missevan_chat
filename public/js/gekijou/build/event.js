@@ -390,7 +390,7 @@ GEvent = (function() {
       return this.action('image', charaid, url);
     } else {
       return this.action('state', {
-        type: 'image'
+        stype: 'image'
       }, url);
     }
   };

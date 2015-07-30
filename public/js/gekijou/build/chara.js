@@ -301,10 +301,12 @@ Chara = (function() {
             lineprops = GG.util.splitprop(line);
             switch (lineprops[0]) {
               case 'icon':
-                if (lineprops.length >= 4) {
+                if (lineprops.length >= 3) {
                   c.iconid = parseInt(lineprops[1]);
                   c.iconurl = JSON.parse(lineprops[2]);
-                  c.iconcolor = JSON.parse(lineprops[3]);
+                  if (lineprops[3]) {
+                    c.iconcolor = JSON.parse(lineprops[3]);
+                  }
                 }
                 break;
               case 'showon':

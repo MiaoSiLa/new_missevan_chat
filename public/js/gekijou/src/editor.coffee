@@ -53,7 +53,10 @@ class GekijouEditor
     # chara
     for c in chara.charas
       script += "  define #{c.id} #{JSON.stringify(c.username)} {\n"
-      script += "    icon #{c.iconid} #{JSON.stringify(c.iconurl)} #{JSON.stringify(c.iconcolor)}\n"
+      script += "    icon #{c.iconid} #{JSON.stringify(c.iconurl)}"
+      if c.iconcolor
+        script += ' ' + JSON.stringify(c.iconcolor)
+      script += "\n"
       if c.subtitle
         script += "    subtitle #{JSON.stringify(c.subtitle)}\n"
       if c.showon is 'right'

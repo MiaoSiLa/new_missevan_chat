@@ -296,10 +296,10 @@ class Chara
             lineprops = GG.util.splitprop line
             switch lineprops[0]
               when 'icon'
-                if lineprops.length >= 4
+                if lineprops.length >= 3
                   c.iconid = parseInt lineprops[1]
                   c.iconurl = JSON.parse lineprops[2]
-                  c.iconcolor = JSON.parse lineprops[3]
+                  if lineprops[3] then c.iconcolor = JSON.parse lineprops[3]
               when 'showon'
                 if lineprops.length >= 2
                   c.showon = if lineprops[1] is 'right' then 'right' else 'left'
