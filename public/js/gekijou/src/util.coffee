@@ -170,6 +170,16 @@ class GGManager
   constructor: ->
     window.GG = @
 
+class ActionForm
+  # dev only
+  constructor: ->
+
+  bind: ->
+
+    $('form').submit (e) ->
+      off
+
+    return
 
 # Image Tools
 
@@ -847,6 +857,7 @@ class Editorbar extends ControlBar
     _id = $('#savemodal #gekijou_id').val()
     if _id
       $('#gekijoupreviewbtn').attr('href', "/gekijou/view/#{_id}").show()
+      $('#gekijoudelbtn').show()
 
   extend: (_ex = on) ->
     if not _ex is @_extend
@@ -1072,6 +1083,14 @@ class Editorbar extends ControlBar
         moTool.hideModalBox $modal
         self.editor.save title, intro
 
+      return
+
+    $('#gekijoudelbtn').click ->
+      self.editor.delete (success) ->
+        if success
+          setTimeout ->
+              window.location.href = '/gekijou/'
+            , 1000
       return
 
     $gsavebtn.show()

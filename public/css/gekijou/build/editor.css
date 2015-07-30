@@ -172,6 +172,9 @@
   background: #000;
   cursor: pointer;
 }
+.formbtn.delbtn {
+  background-color: red;
+}
 #m #mpiloop.newevent {
   width: 18px;
   background: url(/images/gekijou/editor/add.png) no-repeat;

@@ -10,6 +10,7 @@ GekijouEditor = (function() {
   function GekijouEditor(gekijou) {
     this.gekijou = gekijou;
     this.eb = new Editorbar($('#inputbox'), this);
+    this.af = new ActionForm();
     GG.editor = this;
   }
 
@@ -17,6 +18,7 @@ GekijouEditor = (function() {
     var self;
     self = this;
     this.eb.bind();
+    this.af.bind();
     this._id = this.eb.getId();
     this.gekijou.setOptions({
       env: 'dev'
@@ -111,6 +113,39 @@ GekijouEditor = (function() {
   GekijouEditor.prototype.setId = function(_id) {
     this._id = _id;
     this.eb.setId(this._id);
+  };
+
+  GekijouEditor.prototype["delete"] = function(cb) {
+    var self, vgeki;
+    self = this;
+    vgeki = {
+      _id: this._id
+    };
+    moTool.postAjax({
+      url: '/gekijou/delete',
+      value: vgeki,
+      callBack: function(data) {
+        var success;
+        success = false;
+        if (data) {
+          success = data.code === 0;
+        }
+        if (success) {
+          moTool.showError('删除成功');
+        } else if (data.message) {
+          moTool.showError(data.message);
+        } else {
+          moTool.showError('删除失败');
+        }
+        if (cb != null) {
+          cb(success);
+        }
+      },
+      showLoad: true,
+      success: false,
+      error: false,
+      json: false
+    });
   };
 
   GekijouEditor.prototype.save = function(title, intro, cb) {

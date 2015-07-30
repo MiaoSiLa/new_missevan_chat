@@ -100,6 +100,10 @@ GekijouStatus.prototype.setGood = function *(gekijou_id, user_id, goo) {
   return r;
 };
 
+GekijouStatus.prototype.removeByGekijouId = function *(gekijou_id) {
+  return yield this.collection.remove({ gekijou_id: new ObjectID(gekijou_id) });
+};
+
 module.exports = GekijouStatus;
 
 ModelBase.register('gekijoustatus', GekijouStatus);

@@ -7,6 +7,7 @@
 class GekijouEditor
   constructor: (@gekijou) ->
     @eb = new Editorbar $('#inputbox'), @
+    @af = new ActionForm()
     GG.editor = @
 
   # stage & element init
@@ -14,6 +15,7 @@ class GekijouEditor
     self = @
 
     @eb.bind()
+    @af.bind()
     @_id = @eb.getId()
 
     @gekijou.setOptions env: 'dev'
@@ -110,6 +112,35 @@ class GekijouEditor
 
   setId: (@_id) ->
     @eb.setId @_id
+    return
+
+  # 删除
+  delete: (cb) ->
+    self = @
+
+    vgeki =
+      _id: @_id
+
+    moTool.postAjax
+      url: '/gekijou/delete',
+      value: vgeki,
+      callBack: (data) ->
+        success = off
+        success = data.code is 0 if data
+        if success
+          moTool.showError '删除成功'
+        else if data.message
+          moTool.showError data.message
+        else
+          moTool.showError '删除失败'
+        cb(success) if cb?
+        return
+      ,
+      showLoad: true,
+      success: false,
+      error: false,
+      json: false
+
     return
 
   # 保存

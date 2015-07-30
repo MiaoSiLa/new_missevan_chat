@@ -55,7 +55,7 @@ gekijou.get('/list', function *() {
   var g = new Gekijou();
   var gekis = yield g.getByPage(p);
   var pagecount = yield g.getPageCount();
-  
+
   this.body = {
     code: 0,
     page: p,
@@ -230,7 +230,7 @@ gekijou.get('/edit/:gekijou_id', function *() {
   if (this.params && this.params.gekijou_id) {
     var g = new Gekijou({ _id: this.params.gekijou_id });
     geki = yield g.find();
-    if (geki.user_id === this.user.id) {
+    if (geki && geki.user_id === this.user.id) {
       title = geki.title + '_' + title;
     } else {
       geki = null;
@@ -238,7 +238,7 @@ gekijou.get('/edit/:gekijou_id', function *() {
   }
 
   if (!geki) {
-    this.status = 403;
+    this.status = 404;
     return;
   }
 
@@ -322,6 +322,44 @@ gekijou.post('/save', function *() {
         r.code = 0;
       } else {
         r.message = '错误的脚本';
+      }
+    } else {
+      r.message = '错误的参数';
+    }
+  }
+
+  this.body = r;
+});
+
+gekijou.post('/delete', function *() {
+  var r = { code: -1 };
+
+  if (this.user && this.request.body) {
+    var body = this.request.body;
+    if (body._id && typeof body._id === 'string') {
+      var gekijou_id = body._id;
+      var geki;
+      var g = new Gekijou({ _id: gekijou_id });
+      geki = yield g.find();
+
+      if (!geki) {
+        r.code = 1;
+        r.message = '没有找到该剧场';
+        this.body = r;
+        return;
+      }
+
+      if (geki.user_id !== this.user.id) {
+        r.code = 2;
+        r.message = '非作者不能进行编辑';
+        this.body = r;
+        return;
+      }
+
+      if (yield g.remove()) {
+        var gs = new GekijouStatus()
+        yield gs.removeByGekijouId(gekijou_id);
+        r.code = 0;
       }
     } else {
       r.message = '错误的参数';

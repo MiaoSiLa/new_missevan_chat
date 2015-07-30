@@ -1,4 +1,4 @@
-var ControlBar, Editorbar, GGManager, ImageTools, Paginationbar, Playbar, Toolbar, Util,
+var ActionForm, ControlBar, Editorbar, GGManager, ImageTools, Paginationbar, Playbar, Toolbar, Util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -216,6 +216,19 @@ GGManager = (function() {
   }
 
   return GGManager;
+
+})();
+
+ActionForm = (function() {
+  function ActionForm() {}
+
+  ActionForm.prototype.bind = function() {
+    $('form').submit(function(e) {
+      return false;
+    });
+  };
+
+  return ActionForm;
 
 })();
 
@@ -967,7 +980,8 @@ Editorbar = (function(_super) {
     var _id;
     _id = $('#savemodal #gekijou_id').val();
     if (_id) {
-      return $('#gekijoupreviewbtn').attr('href', "/gekijou/view/" + _id).show();
+      $('#gekijoupreviewbtn').attr('href', "/gekijou/view/" + _id).show();
+      return $('#gekijoudelbtn').show();
     }
   };
 
@@ -1194,6 +1208,15 @@ Editorbar = (function(_super) {
         moTool.hideModalBox($modal);
         self.editor.save(title, intro);
       }
+    });
+    $('#gekijoudelbtn').click(function() {
+      self.editor["delete"](function(success) {
+        if (success) {
+          return setTimeout(function() {
+            return window.location.href = '/gekijou/';
+          }, 1000);
+        }
+      });
     });
     $gsavebtn.show();
     $inputboxtextarea = this.$('#inputboxtextarea');

@@ -67,7 +67,7 @@ pageStyles = dev_mode ? [
           <input class="label_input pie" name="newevent[time]" id="newevent_time" type="text" placeholder="毫秒" value="2000">
         </div>
         <div class="formactions">
-          <input id="neweventokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+          <input id="neweventokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="submit" value="确定">
         </div>
       </form>
     </div>
@@ -86,7 +86,7 @@ pageStyles = dev_mode ? [
         </div>
         <div class="formactions">
           <input id="editeventdelbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="删除">
-          <input id="editeventokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+          <input id="editeventokbtn" class="formbtn boxbtn pie btn delbtn" style="float:right;" type="submit" value="确定">
         </div>
       </form>
     </div>
@@ -110,7 +110,7 @@ pageStyles = dev_mode ? [
           <input type="radio" name="rd_chara_showon" id="cb_chara_showon_right" value="right"><label class="label pie label-radio" for="cb_chara_showon_right">右</label>
         </div>
         <div class="formactions">
-          <input id="newcharaokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+          <input id="newcharaokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="submit" value="确定">
         </div>
       </form>
     </div>
@@ -130,7 +130,7 @@ pageStyles = dev_mode ? [
           <!-- <input type="radio" name="img_type" id="rd_img_nochara" value="nochara"> <label class="label-radio" for="rd_img_nochara">状态图</label> -->
         </div>
         <div class="formactions">
-          <input id="imageokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+          <input id="imageokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="submit" value="确定">
         </div>
       </form>
     </div>
@@ -140,15 +140,15 @@ pageStyles = dev_mode ? [
     <div class="e_t">
       <form id="settingsform" class="modalform">
         <div class="inputgroup">
-          <input type="checkbox" id="cb_show_name" checked>
+          <input type="checkbox" name="gekijou[showname]" id="cb_show_name" checked>
           <label class="label pie label-radio" for="cb_show_name">显示名称</label>
         </div>
         <div class="inputgroup">
-          <input type="checkbox" id="cb_instant_show">
+          <input type="checkbox" name="gekijou[instantshow]" id="cb_instant_show">
           <label class="label pie label-radio" for="cb_instant_show">立即展示</label>
         </div>
         <div class="formactions">
-          <input id="settingsokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="确定">
+          <input id="settingsokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="submit" value="确定">
         </div>
       </form>
     </div>
@@ -168,8 +168,9 @@ pageStyles = dev_mode ? [
           <div class="clear"></div>
         </div>
         <div class="formactions">
-          <input id="gekijouokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="button" value="保存">
-          <a id="gekijoupreviewbtn" class="formbtn boxbtn pie btn" href="/gekijou/view/<% if (gekijou) { %><%= gekijou._id %><% } %>" target="_blank" style="float:right;margin-right:8px;<% if (!gekijou) { %>display:none;<% } %>">预览</a>
+          <input id="gekijouokbtn" class="formbtn boxbtn pie btn" style="float:right;" type="submit" value="保存">
+          <input id="gekijoudelbtn" class="formbtn boxbtn pie btn delbtn" style="float:right;<% if (!gekijou) { %>display:none;<% } %>" type="button" value="删除">
+          <a id="gekijoupreviewbtn" class="formbtn boxbtn pie btn" href="/gekijou/view/<% if (gekijou) { %><%= gekijou._id %><% } %>" target="_blank" style="float:right;<% if (!gekijou) { %>display:none;<% } %>">预览</a>
         </div>
       </form>
     </div>
