@@ -173,7 +173,7 @@
   cursor: pointer;
 }
 .formbtn.delbtn {
-  background-color: red;
+  background-color: #cd3333;
 }
 #m #mpiloop.newevent {
   width: 18px;
