@@ -55,7 +55,7 @@ class SoundAlbum
         showLoad: no,
         callBack: (data) ->
           if data and data.state is 'success'
-            if data.info and data.info.sounds.length > 0
+            if data.info and data.info.sounds and data.info.sounds.length > 0
               for s in data.info.sounds
                 self.addSound s
           if cb? then cb()

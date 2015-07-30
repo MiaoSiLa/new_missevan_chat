@@ -68,7 +68,7 @@ SoundAlbum = (function() {
         callBack: function(data) {
           var s, _i, _len, _ref;
           if (data && data.state === 'success') {
-            if (data.info && data.info.sounds.length > 0) {
+            if (data.info && data.info.sounds && data.info.sounds.length > 0) {
               _ref = data.info.sounds;
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 s = _ref[_i];
