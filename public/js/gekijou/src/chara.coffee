@@ -19,12 +19,23 @@ class Chara
     @charas.push
       id: id,
       username: c.username,
-      subtitle: c.subtitle,
       showon: c.showon,
       iconid: c.iconid,
-      iconurl: c.iconurl,
-      iconcolor: c.iconcolor
+      iconurl: c.iconurl
+    #subtitle: c.subtitle,
+    #iconcolor: c.iconcolor
     id
+
+  sender: (user) ->
+    if user
+      iconUrlPrefix = 'http://static.missevan.cn/avatars/'
+      s =
+        id: user.id,
+        name: user.username,
+        icon: iconUrlPrefix + user.iconurl
+    else
+      s = null
+    s
 
   currentId: ->
     if @_sel >= 0
@@ -53,7 +64,7 @@ class Chara
 
       if i >= 0
         @el.find(".charabox:eq(#{i})").addClass 'selected'
-        index.mo.sender = chatBox.sender @charas[i]
+        index.mo.sender = @sender @charas[i]
       else
         index.mo.sender = null
 
@@ -71,26 +82,28 @@ class Chara
       return
 
     for c, i in @charas
-      sender = chatBox.sender c
+      sender = @sender c
       name = GG.util.escape c.username
-      subtitle = GG.util.escape c.subtitle
+      #subtitle = GG.util.escape c.subtitle
       html += "<div id=\"chara#{c.id}\" class=\"charabox"
       html += ' selected' if i is @_sel
       html += """
               \">
                 <div class="chaticonbox">
-                  <img alt="#{subtitle}" src="#{sender.icon}">
+                  <img alt="#{name}" title="#{name}" src="#{sender.icon}">
                 </div>
                 <div class="clear"></div>
                 <div class="chatusername" style="color:#ffffff;">
                   <span>#{name}</span>
                 </div>
-                <div class="chatsubtitle">
-                  <span style="color:#91c0ed;">#{subtitle}</span>
-                </div>
                 <div class="delbtn"></div>
               </div>
               """
+      ###
+      <div class="chatsubtitle">
+        <span style="color:#91c0ed;">#{subtitle}</span>
+      </div>
+      ###
 
     $modal.html html
 
@@ -105,22 +118,21 @@ class Chara
 
   searchIcon: () ->
     self = @
-    url = '/person/iconlist?pagesize=12'
+    url = '/theatre/actor/iconlist?pagesize=12'
 
-    # title
-    title = @el.find('#soundsearchinput').val()
-    url += '&title=' + encodeURIComponent(title) if title
+    # query
+    query = @el.find('#soundsearchinput').val()
+    url += '&name=' + encodeURIComponent(query) if query
 
-    # profiletype
+    # catalog
     bs = @el.find '.s_m_t_r_b'
     type = 0
     for b, i in bs
       if $(b).hasClass 's_m_t_r_b_a'
-        type = i
+        type = $(b).data 'catalog'
         break
     if type > 0
-      type = 4 if type > 2
-      url += "&profiletype=#{type}"
+      url += "&catalog=#{type}"
 
     # page
     p = @pagination.page()
@@ -134,12 +146,12 @@ class Chara
         pagecount = 0
         if data.state is 'success' and data.info
           iconusers = for c in data.info
-            id: parseInt(c.user_id),
-            username: c.username,
-            subtitle: c.title,
+            username: c.name,
             iconid: parseInt(c.id),
-            iconurl: c.save_name,
-            iconcolor: c.iconcolor
+            iconurl: c.avatar
+          #id: parseInt(c.user_id),
+          #iconcolor: c.iconcolor
+          #subtitle: c.title,
 
           if p then page = p
           pagecount = data.pagecount
@@ -163,13 +175,13 @@ class Chara
       return
 
     for c in iconusers
-      sender = chatBox.sender c
+      sender = @sender c
       strc = JSON.stringify(c)
-      subtitle = GG.util.escape c.subtitle
+      name = GG.util.escape c.username
       html += """
               <div data-user='#{strc}' class="charaicon">
                 <div class="chaticonbox">
-                  <img alt="#{subtitle}" src="#{sender.icon}">
+                  <img alt="#{name}" title="#{name}" src="#{sender.icon}">
                 </div>
                 <div class="clear"></div>
               </div>
@@ -188,7 +200,7 @@ class Chara
     $modal = $ '#newcharamodal'
     $modal.find('#newchara_user').data 'user', user
     $modal.find('#newchara_username').val user.username
-    $modal.find('#newchara_subtitle').val ''
+    #$modal.find('#newchara_subtitle').val ''
     moTool.showModalBox $modal
     return
 
@@ -241,7 +253,7 @@ class Chara
         showon = $modal.find('input[name=rd_chara_showon]:checked').val()
         user.username = name
         user.showon = if showon is 'right' then 'right' else 'left'
-        user.subtitle = $modal.find('#newchara_subtitle').val()
+        #user.subtitle = $modal.find('#newchara_subtitle').val()
 
         self.add user
         self.refresh()

@@ -26,13 +26,26 @@ Chara = (function() {
     this.charas.push({
       id: id,
       username: c.username,
-      subtitle: c.subtitle,
       showon: c.showon,
       iconid: c.iconid,
-      iconurl: c.iconurl,
-      iconcolor: c.iconcolor
+      iconurl: c.iconurl
     });
     return id;
+  };
+
+  Chara.prototype.sender = function(user) {
+    var iconUrlPrefix, s;
+    if (user) {
+      iconUrlPrefix = 'http://static.missevan.cn/avatars/';
+      s = {
+        id: user.id,
+        name: user.username,
+        icon: iconUrlPrefix + user.iconurl
+      };
+    } else {
+      s = null;
+    }
+    return s;
   };
 
   Chara.prototype.currentId = function() {
@@ -71,7 +84,7 @@ Chara = (function() {
       }
       if (i >= 0) {
         this.el.find(".charabox:eq(" + i + ")").addClass('selected');
-        index.mo.sender = chatBox.sender(this.charas[i]);
+        index.mo.sender = this.sender(this.charas[i]);
       } else {
         index.mo.sender = null;
       }
@@ -80,7 +93,7 @@ Chara = (function() {
   };
 
   Chara.prototype.refresh = function() {
-    var $modal, c, html, i, name, self, sender, subtitle, _i, _len, _ref;
+    var $modal, c, html, i, name, self, sender, _i, _len, _ref;
     html = '';
     $modal = this.el.find('#charamodal #charauserlist');
     $modal.html('');
@@ -90,14 +103,19 @@ Chara = (function() {
     _ref = this.charas;
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
       c = _ref[i];
-      sender = chatBox.sender(c);
+      sender = this.sender(c);
       name = GG.util.escape(c.username);
-      subtitle = GG.util.escape(c.subtitle);
       html += "<div id=\"chara" + c.id + "\" class=\"charabox";
       if (i === this._sel) {
         html += ' selected';
       }
-      html += "\">\n  <div class=\"chaticonbox\">\n    <img alt=\"" + subtitle + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n  <div class=\"chatusername\" style=\"color:#ffffff;\">\n    <span>" + name + "</span>\n  </div>\n  <div class=\"chatsubtitle\">\n    <span style=\"color:#91c0ed;\">" + subtitle + "</span>\n  </div>\n  <div class=\"delbtn\"></div>\n</div>";
+      html += "\">\n  <div class=\"chaticonbox\">\n    <img alt=\"" + name + "\" title=\"" + name + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n  <div class=\"chatusername\" style=\"color:#ffffff;\">\n    <span>" + name + "</span>\n  </div>\n  <div class=\"delbtn\"></div>\n</div>";
+
+      /*
+      <div class="chatsubtitle">
+        <span style="color:#91c0ed;">#{subtitle}</span>
+      </div>
+       */
     }
     $modal.html(html);
     self = this;
@@ -110,27 +128,24 @@ Chara = (function() {
   };
 
   Chara.prototype.searchIcon = function() {
-    var b, bs, i, p, self, title, type, url, _i, _len;
+    var b, bs, i, p, query, self, type, url, _i, _len;
     self = this;
-    url = '/person/iconlist?pagesize=12';
-    title = this.el.find('#soundsearchinput').val();
-    if (title) {
-      url += '&title=' + encodeURIComponent(title);
+    url = '/theatre/actor/iconlist?pagesize=12';
+    query = this.el.find('#soundsearchinput').val();
+    if (query) {
+      url += '&name=' + encodeURIComponent(query);
     }
     bs = this.el.find('.s_m_t_r_b');
     type = 0;
     for (i = _i = 0, _len = bs.length; _i < _len; i = ++_i) {
       b = bs[i];
       if ($(b).hasClass('s_m_t_r_b_a')) {
-        type = i;
+        type = $(b).data('catalog');
         break;
       }
     }
     if (type > 0) {
-      if (type > 2) {
-        type = 4;
-      }
-      url += "&profiletype=" + type;
+      url += "&catalog=" + type;
     }
     p = this.pagination.page();
     if (p) {
@@ -151,12 +166,9 @@ Chara = (function() {
             for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
               c = _ref[_j];
               _results.push({
-                id: parseInt(c.user_id),
-                username: c.username,
-                subtitle: c.title,
+                username: c.name,
                 iconid: parseInt(c.id),
-                iconurl: c.save_name,
-                iconcolor: c.iconcolor
+                iconurl: c.avatar
               });
             }
             return _results;
@@ -177,7 +189,7 @@ Chara = (function() {
   };
 
   Chara.prototype.showIcons = function(iconusers) {
-    var $modal, c, html, self, sender, strc, subtitle, _i, _len;
+    var $modal, c, html, name, self, sender, strc, _i, _len;
     html = '';
     $modal = this.el.find('#charamodal #selecticonlist');
     $modal.html('');
@@ -186,10 +198,10 @@ Chara = (function() {
     }
     for (_i = 0, _len = iconusers.length; _i < _len; _i++) {
       c = iconusers[_i];
-      sender = chatBox.sender(c);
+      sender = this.sender(c);
       strc = JSON.stringify(c);
-      subtitle = GG.util.escape(c.subtitle);
-      html += "<div data-user='" + strc + "' class=\"charaicon\">\n  <div class=\"chaticonbox\">\n    <img alt=\"" + subtitle + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n</div>";
+      name = GG.util.escape(c.username);
+      html += "<div data-user='" + strc + "' class=\"charaicon\">\n  <div class=\"chaticonbox\">\n    <img alt=\"" + name + "\" title=\"" + name + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n</div>";
     }
     $modal.html(html);
     self = this;
@@ -203,7 +215,6 @@ Chara = (function() {
     $modal = $('#newcharamodal');
     $modal.find('#newchara_user').data('user', user);
     $modal.find('#newchara_username').val(user.username);
-    $modal.find('#newchara_subtitle').val('');
     moTool.showModalBox($modal);
   };
 
@@ -252,7 +263,6 @@ Chara = (function() {
         showon = $modal.find('input[name=rd_chara_showon]:checked').val();
         user.username = name;
         user.showon = showon === 'right' ? 'right' : 'left';
-        user.subtitle = $modal.find('#newchara_subtitle').val();
         self.add(user);
         self.refresh();
         moTool.hideModalBox($modal);
