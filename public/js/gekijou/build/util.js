@@ -1002,6 +1002,16 @@ Editorbar = (function(_super) {
           $textarea.replaceWith('<div id="inputboxtextarea" contentEditable="true"></div>');
           $textarea = self.$('#inputboxtextarea');
           $textarea.focus();
+          $textarea.blur(function() {
+            var html, s1, s2;
+            html = $textarea.html();
+            if (html.indexOf('<') !== -1) {
+              s1 = html.replace(/<img [^>]*?src=(".+?")[^>]*?\/?>/gi, "|img:$1|");
+              s2 = html.replace(/<.*?>/, '');
+              html = s2.replace(/\|img\:"(.+?)"\|/gi, "<img src=\"$1\" />");
+              $textarea.html(html);
+            }
+          });
         }, 300);
       } else {
         $textarea.html('');

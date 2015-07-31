@@ -872,6 +872,15 @@ class Editorbar extends ControlBar
             $textarea.replaceWith '<div id="inputboxtextarea" contentEditable="true"></div>'
             $textarea = self.$('#inputboxtextarea')
             $textarea.focus()
+            $textarea.blur ->
+              html = $textarea.html()
+              if html.indexOf('<') isnt -1
+                # need process html
+                s1 = html.replace /<img [^>]*?src=(".+?")[^>]*?\/?>/gi, "|img:$1|"
+                s2 = html.replace /<.*?>/, ''
+                html = s2.replace /\|img\:"(.+?)"\|/gi, "<img src=\"$1\" />"
+                $textarea.html html
+              return
             return
           , 300
       else

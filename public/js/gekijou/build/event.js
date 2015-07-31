@@ -375,7 +375,7 @@ GEvent = (function() {
           state = cmds[1];
           if (state) {
             return this.action('state', {
-              type: 'text',
+              stype: 'text',
               chara: GG.chara.currentId()
             }, state);
           }

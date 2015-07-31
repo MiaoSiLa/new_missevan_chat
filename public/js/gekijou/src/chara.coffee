@@ -16,6 +16,9 @@ class Chara
   add: (c, id = -1) ->
     if id is -1
       id = @_lastid++
+    else
+      @_lastid = Math.max @_lastid, id + 1
+
     @charas.push
       id: id,
       username: c.username,

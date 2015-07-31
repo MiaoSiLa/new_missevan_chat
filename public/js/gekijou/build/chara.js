@@ -22,6 +22,8 @@ Chara = (function() {
     }
     if (id === -1) {
       id = this._lastid++;
+    } else {
+      this._lastid = Math.max(this._lastid, id + 1);
     }
     this.charas.push({
       id: id,

@@ -332,7 +332,7 @@ class GEvent
         when 'state'
           state = cmds[1]
           if state
-            @action 'state', { type: 'text', chara: GG.chara.currentId() } , state
+            @action 'state', { stype: 'text', chara: GG.chara.currentId() } , state
         # 其他特殊动作
         # do some thing
 
