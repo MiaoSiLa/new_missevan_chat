@@ -137,12 +137,13 @@
   width: 206px;
   height: 86px;
   padding: 3px;
+  opacity: 0;
   z-index: 101;
 }
 #emotion-list .rbarrow1 {
   left: -28px;
   top: 7px;
-  border-right-color: #666;
+  border-right-color: #7a7a7a;
 }
 #emotion-list .rbarrow2 {
   left: -23px;
