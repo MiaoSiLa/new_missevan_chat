@@ -118,7 +118,7 @@ class Chara
 
   searchIcon: () ->
     self = @
-    url = '/theatre/actor/iconlist?pagesize=12'
+    url = '/theatre/api/iconlist?pagesize=12'
 
     # query
     query = @el.find('#soundsearchinput').val()

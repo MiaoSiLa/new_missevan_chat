@@ -130,7 +130,7 @@ Chara = (function() {
   Chara.prototype.searchIcon = function() {
     var b, bs, i, p, query, self, type, url, _i, _len;
     self = this;
-    url = '/theatre/actor/iconlist?pagesize=12';
+    url = '/theatre/api/iconlist?pagesize=12';
     query = this.el.find('#soundsearchinput').val();
     if (query) {
       url += '&name=' + encodeURIComponent(query);

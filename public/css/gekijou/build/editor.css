@@ -43,8 +43,10 @@
 }
 #inputbox.full-editor #extend-input {
   z-index: 102;
-  right: 10px;
   background-image: url(/images/gekijou/editor/shrink.png);
+}
+#inputbox.full-editor #insert-emotion {
+  display: block;
 }
 #inputboxneweventbtn {
   position: absolute;
@@ -111,6 +113,66 @@
   height: 20px;
   background: url(/images/gekijou/editor/extend.png) no-repeat;
   background-position: 3px 3px;
+}
+#insert-emotion {
+  display: none;
+  z-index: 101;
+  position: absolute;
+  top: 25px;
+  right: 10px;
+  cursor: pointer;
+  padding: 3px;
+  width: 20px;
+  height: 20px;
+  background: url(/images/gekijou/editor/emotion.png) no-repeat;
+  background-position: 3px 3px;
+}
+#emotion-list {
+  display: none;
+  position: absolute;
+  top: 15px;
+  border: 2px solid #7a7a7a;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #666;
+  width: 206px;
+  height: 86px;
+  padding: 3px;
+  z-index: 101;
+}
+#emotion-list .rbarrow1 {
+  left: -28px;
+  top: 7px;
+  border-right-color: #666;
+}
+#emotion-list .rbarrow2 {
+  left: -23px;
+  top: 9px;
+}
+#emotion-list .searchinput {
+  font-size: 14px;
+  height: 20px;
+  width: 150px;
+}
+#emotion-list .searchbtn {
+  width: 50px;
+  height: 20px;
+  text-align: center;
+  color: #fff;
+  font-size: 13px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#emotion-list .emotions {
+  margin-top: 3px;
+  overflow-y: auto;
+  height: 60px;
+}
+#emotion-list .emotions > img {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 .modalform {
   padding-left: 200px;

@@ -961,6 +961,7 @@ Editorbar = (function(_super) {
     this.pb = this.editor.gekijou.pb;
     this.imgtool = new ImageTools();
     this._extend = false;
+    this._emotion_display = false;
   }
 
   Editorbar.prototype.setId = function(_id) {
@@ -1004,6 +1005,7 @@ Editorbar = (function(_super) {
         }, 300);
       } else {
         $textarea.html('');
+        this.showemotion(false);
         this.el.removeClass('full-editor');
         setTimeout(function() {
           $textarea.replaceWith('<textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>');
@@ -1121,12 +1123,81 @@ Editorbar = (function(_super) {
     });
   };
 
+  Editorbar.prototype.searchemotion = function() {
+    var $input, query, self, url;
+    self = this;
+    url = '/theatre/api/emojilist';
+    $input = $('#emotion-list .searchinput');
+    query = $input.val();
+    if (query) {
+      url += '?name=' + query;
+    }
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      success: function(data) {
+        var $el, em, html, _i, _len, _ref;
+        self._emotion_load = true;
+        if (data && data.state === 'success') {
+          if (data.info) {
+            $el = $('#emotion-list .emotions');
+            html = '';
+            _ref = data.info;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              em = _ref[_i];
+              html += '<img src="' + em.front_cover + '" title="' + GG.util.escape(em.title) + '" />';
+            }
+            $el.html(html);
+            if (html) {
+              $el.find('img').click(function() {
+                var $textarea;
+                if (self._extend) {
+                  $textarea = self.$('#inputboxtextarea');
+                  $textarea.append('<img src="' + $(this).attr('src') + '" />');
+                }
+              });
+            }
+          }
+        }
+      }
+    });
+  };
+
+  Editorbar.prototype.showemotion = function(bshow) {
+    var $elist, offset;
+    if (bshow == null) {
+      bshow = true;
+    }
+    $elist = $('#emotion-list');
+    if (bshow) {
+      if (!this._emotion_load) {
+        this.searchemotion();
+      }
+      offset = this.$('#insert-emotion').offset();
+      $elist.css('left', offset.left + 40).show().animate({
+        left: offset.left + 50,
+        opacity: 1
+      });
+      this._emotion_display = true;
+    } else {
+      $elist.hide();
+      this._emotion_display = false;
+    }
+  };
+
   Editorbar.prototype.bind = function() {
-    var $exinput, $gsavebtn, $inputboxcmdbox, $inputboxtextarea, $newevbtn, $settingsbtn, self;
+    var $exinput, $gsavebtn, $inputboxcmdbox, $inputboxtextarea, $insemotion, $newevbtn, $settingsbtn, self;
     self = this;
     $exinput = this.$('#extend-input');
     $exinput.click(function() {
       self.extend(!self._extend);
+    });
+    $insemotion = this.$('#insert-emotion');
+    $insemotion.click(function() {
+      self.showemotion(!self._emotion_display);
+    });
+    $('#emotion-list .searchbtn').click(function() {
+      self.searchemotion();
     });
     $newevbtn = this.pb.$('#mpiloop');
     $newevbtn.addClass('mpiloopa newevent');

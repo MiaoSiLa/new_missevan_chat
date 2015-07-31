@@ -842,6 +842,7 @@ class Editorbar extends ControlBar
     @pb = @editor.gekijou.pb
     @imgtool = new ImageTools()
     @_extend = off
+    @_emotion_display = off
 
   setId: (_id) ->
     $modal = $ '#savemodal'
@@ -875,6 +876,7 @@ class Editorbar extends ControlBar
           , 300
       else
         $textarea.html ''
+        @showemotion off
         @el.removeClass 'full-editor'
         setTimeout ->
             $textarea.replaceWith '<textarea id="inputboxtextarea" class="pie" placeholder="文字,弹幕,音频,中二咒语" maxlength="200"></textarea>'
@@ -984,6 +986,55 @@ class Editorbar extends ControlBar
 
     return
 
+  searchemotion: () ->
+    self = @
+    url = '/theatre/api/emojilist'
+
+    $input = $ '#emotion-list .searchinput'
+    query = $input.val()
+    if query
+      url += '?name=' + query
+
+    $.ajax
+      url: url,
+      dataType: 'json',
+      success: (data) ->
+        self._emotion_load = on
+        if data and data.state is 'success'
+          if data.info
+            $el = $ '#emotion-list .emotions'
+            html = ''
+            for em in data.info
+              html += '<img src="' + em.front_cover + '" title="' + GG.util.escape(em.title) + '" />'
+            $el.html html
+            if html
+              $el.find('img').click ->
+                if self._extend
+                  $textarea = self.$ '#inputboxtextarea'
+                  # TODO: check url and replace selection range
+                  # class="chat-emotion"
+                  $textarea.append '<img src="' + $(@).attr('src') + '" />'
+                return
+        return
+    return
+
+  showemotion: (bshow = on) ->
+    $elist = $ '#emotion-list'
+    if bshow
+      if not @_emotion_load
+        @searchemotion()
+
+      offset = @$('#insert-emotion').offset()
+      $elist.css('left', offset.left + 40).show().animate
+        left: offset.left + 50,
+        opacity: 1
+      @_emotion_display = on
+    else
+      $elist.hide()
+      @_emotion_display = off
+
+    return
+
   bind: ->
     self = @
 
@@ -991,6 +1042,14 @@ class Editorbar extends ControlBar
     $exinput = @$('#extend-input')
     $exinput.click ->
       self.extend not self._extend
+      return
+
+    $insemotion = @$('#insert-emotion')
+    $insemotion.click ->
+      self.showemotion not self._emotion_display
+      return
+    $('#emotion-list .searchbtn').click ->
+      self.searchemotion()
       return
 
     # 新事件
