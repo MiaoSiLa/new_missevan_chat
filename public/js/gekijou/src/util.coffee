@@ -457,6 +457,28 @@ class Playbar extends ControlBar
               GG.gekijou.emit 'next'
               return
         return
+    else
+      # 编辑中的按键
+      $(document).keydown (e) ->
+        switch e.which
+          when 38
+            # up
+            if GG.gekijou.isplaying() then return
+            i = GG.em.currentIndex()
+            if i + 1 >= GG.em.length()
+              return
+            GG.gekijou.reset()
+            GG.gekijou.moveTo i + 1
+          when 40
+            # down
+            if GG.gekijou.isplaying() then return
+            i = GG.em.currentIndex()
+            if i - 1 < 0
+              return
+            GG.gekijou.reset()
+            GG.gekijou.moveTo i - 1
+        return
+
 
       # 滚动条事件
       #$('#commentCanvas').scroll (e) ->

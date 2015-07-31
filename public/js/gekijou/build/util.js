@@ -550,6 +550,33 @@ Playbar = (function(_super) {
             }
         }
       });
+    } else {
+      $(document).keydown(function(e) {
+        var i;
+        switch (e.which) {
+          case 38:
+            if (GG.gekijou.isplaying()) {
+              return;
+            }
+            i = GG.em.currentIndex();
+            if (i + 1 >= GG.em.length()) {
+              return;
+            }
+            GG.gekijou.reset();
+            GG.gekijou.moveTo(i + 1);
+            break;
+          case 40:
+            if (GG.gekijou.isplaying()) {
+              return;
+            }
+            i = GG.em.currentIndex();
+            if (i - 1 < 0) {
+              return;
+            }
+            GG.gekijou.reset();
+            GG.gekijou.moveTo(i - 1);
+        }
+      });
       if (chatBox.isMobile) {
         this.bindMobile();
       } else {
