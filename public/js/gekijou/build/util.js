@@ -1034,7 +1034,7 @@ Editorbar = (function(_super) {
             html = $textarea.html();
             if (html.indexOf('<') !== -1) {
               s1 = html.replace(/<img [^>]*?src=(".+?")[^>]*?\/?>/gi, "|img:$1|");
-              s2 = html.replace(/<.*?>/, '');
+              s2 = s1.replace(/<.*?>/g, '');
               html = s2.replace(/\|img\:"(.+?)"\|/gi, "<img src=\"$1\" />");
               $textarea.html(html);
             }
