@@ -1217,7 +1217,7 @@ Editorbar = (function(_super) {
       });
       this._emotion_display = true;
     } else {
-      $elist.hide();
+      $elist.hide().css('opacity', 0);
       this._emotion_display = false;
     }
   };

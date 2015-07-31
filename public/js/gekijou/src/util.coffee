@@ -1061,7 +1061,7 @@ class Editorbar extends ControlBar
         opacity: 1
       @_emotion_display = on
     else
-      $elist.hide()
+      $elist.hide().css 'opacity', 0
       @_emotion_display = off
 
     return
