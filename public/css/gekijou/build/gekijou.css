@@ -320,13 +320,13 @@
   background-color: rgba(0, 0, 0, 0.3);
 }
 @media screen and (max-width: 768px) {
-  #m #mp {
+  .desktop #m #mp {
     padding-left: 30px;
   }
-  #m #mp #mpi {
+  .desktop #m #mp #mpi {
     left: 16px;
   }
-  #m #mp #mpiloop {
+  .desktop #m #mp #mpiloop {
     left: 60px;
   }
 }

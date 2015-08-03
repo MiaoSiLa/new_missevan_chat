@@ -171,7 +171,7 @@
   margin-top: -8px;
 }
 @media screen and (max-width: 768px) {
-  #chatbubble {
+  .desktop #chatbubble {
     width: auto;
     margin: 0 50px;
   }

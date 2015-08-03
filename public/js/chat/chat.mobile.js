@@ -11,6 +11,8 @@ $(function() {
   play.soundBox.playChatStr = function () {};
   // bg is black
   index.mo.bgType = 1;
+
+  $('body').addClass('mobile');
 });
 
 chatBox.loadRoomBarDown = function(el) {
