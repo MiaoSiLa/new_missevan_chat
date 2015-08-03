@@ -3,6 +3,7 @@
   background-attachment: fixed;
   background-size: auto 100%;
   background-position: center;
+  background-repeat: no-repeat;
 }
 #chatbubble {
   position: relative;
@@ -168,4 +169,10 @@
   border-left-color: rgba(189, 189, 189, 0.7);
   border-width: 10px;
   margin-top: -8px;
+}
+@media screen and (max-width: 768px) {
+  #chatbubble {
+    width: auto;
+    margin: 0 50px;
+  }
 }

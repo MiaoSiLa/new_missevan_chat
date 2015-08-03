@@ -30,6 +30,11 @@ module.exports = function(grunt) {
           'public/js/gekijou/build/gekijou.js': 'public/js/gekijou/src/gekijou.coffee',
           'public/js/gekijou/build/event.js': 'public/js/gekijou/src/event.coffee',
         }
+      },
+      embed: {
+        files: {
+          'public/js/gekijou/build/embed.js': 'public/js/gekijou/src/embed.coffee',
+        }
       }
     },
     cssmin: {
@@ -79,6 +84,13 @@ module.exports = function(grunt) {
             "public/js/gekijou/build/gekijou.js",
           ]
         }
+      },
+      embed: {
+        files: {
+          'public/js/gekijou/embed.min.js': [
+            "public/js/gekijou/build/embed.js"
+          ],
+        }
       }
     }
   });
@@ -88,8 +100,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', ['less', 'coffee', 'cssmin', 'uglify']);
-  grunt.registerTask('js', ['coffee']);
+  grunt.registerTask('default', ['less', 'coffee', 'cssmin', 'uglify:release']);
+  grunt.registerTask('js', ['coffee:compile']);
+  grunt.registerTask('embed', ['coffee:embed', 'uglify:embed']);
   grunt.registerTask('css', ['less']);
 
   /*

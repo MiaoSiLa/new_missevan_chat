@@ -319,3 +319,14 @@
   display: block;
   background-color: rgba(0, 0, 0, 0.3);
 }
+@media screen and (max-width: 768px) {
+  #m #mp {
+    padding-left: 30px;
+  }
+  #m #mp #mpi {
+    left: 16px;
+  }
+  #m #mp #mpiloop {
+    left: 60px;
+  }
+}
