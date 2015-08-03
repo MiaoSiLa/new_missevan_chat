@@ -82,6 +82,7 @@ class GekijouEmbed
       chat_box.find('.box_bd').html '<iframe class="gekijou-embed" src="/gekijou/view/' + chatid + '"></iframe>'
       share_box.hide()
       chat_box.show()
+      chat_box.find('iframe').focus()
     else
       chat_box.find('.box_bd').html ''
       chat_box.hide()

@@ -235,7 +235,7 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.on = function(event, val) {
-    var i;
+    var i, self;
     switch (event) {
       case 'pause':
         if (this._playing) {
@@ -274,8 +274,11 @@ Gekijou = (function() {
       case 'end':
         this.finish();
         if (this.opts.autoReplay) {
-          this.reset();
-          this.play();
+          self = this;
+          setTimeout(function() {
+            self.reset();
+            return self.play();
+          }, 0);
         }
     }
   };

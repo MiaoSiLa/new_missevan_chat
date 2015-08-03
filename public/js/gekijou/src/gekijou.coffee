@@ -247,8 +247,11 @@ class Gekijou
       when 'end'
         @finish()
         if @opts.autoReplay
-          @reset()
-          @play()
+          self = @
+          setTimeout ->
+              self.reset()
+              self.play()
+            , 0
     return
 
   autoReplay: (enable) ->
@@ -294,7 +297,6 @@ class Gekijou
           pos = self._playedtime / self.em.totaltime()
           if pos > 1 then pos = 1
           self.pb.pos pos
-
           if i is untilIndex
             self.pause()
         , 100
