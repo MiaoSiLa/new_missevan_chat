@@ -10,17 +10,75 @@ class DScrollbar
       return
 
     sw.find('.scroll-content').scroll ->
-      $this = $ @
-      $sb = $this.parent().find '.scroll-bar'
+      $content = $ @
+      $sb = $content.parent().find '.scroll-bar'
+      if $sb.hasClass 'draggable'
+        return
 
-      h = $this.height()
+      h = $content.height()
       h_sb = $sb.height()
-      h_content = $this.find('div').height()
+      h_content = $content.find('div').height()
 
       ratio = @.scrollTop / (h_content - h)
       top = (h - h_sb) * ratio
 
       $sb.css 'top', top
+      return
+
+    sb = sw.find '.scroll-bar'
+    if sb.draggable
+      sb.draggable
+        axis: 'y',
+        cursor: 'default',
+        containParent: true
+      sb.mousemove (e) ->
+        if e.buttons is 1
+          $sb = $ @
+          $sw = $this.parents '.scroll-wrapper'
+          $content = $sw.find '.scroll-content'
+          if $content.length <= 0
+            return
+
+          h = $content.height()
+          h_sb = $sb.height()
+          h_content = $content.find('div').height()
+
+          top = parseInt $sb.css('top').replace('px', '')
+          ratio = top / (h - h_sb)
+          scrollTop = (h_content - h) * ratio
+
+          $content[0].scrollTop = scrollTop
+
+        return
+
+    sb.parent().click (e) ->
+      $this = $ @
+      $sw = $this.parents '.scroll-wrapper'
+      $content = $sw.find '.scroll-content'
+      $sb = $this.find '.scroll-bar'
+      if $content.length <= 0
+        return
+
+      h = $content.height()
+      h_sb = $sb.height()
+      h_content = $content.find('div').height()
+
+      top = parseInt $sb.css('top').replace('px', '')
+      offsetY = e.offsetY
+      if offsetY < top
+        scrollTop = $content[0].scrollTop - 50
+      else if offsetY > top + h_sb
+        scrollTop = $content[0].scrollTop + 50
+      else
+        return
+
+      if scrollTop < 0
+        scrollTop = 0
+      else if scrollTop > h_content - h
+        scrollTop = h_content - h
+
+      $content[0].scrollTop = scrollTop
+
       return
 
     return

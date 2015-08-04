@@ -6,21 +6,78 @@ DScrollbar = (function() {
   function DScrollbar() {}
 
   DScrollbar.prototype.init = function() {
-    var sw;
+    var sb, sw;
     sw = $('.scroll-wrapper');
     if (!(sw && sw.length)) {
       return;
     }
     sw.find('.scroll-content').scroll(function() {
-      var $sb, $this, h, h_content, h_sb, ratio, top;
-      $this = $(this);
-      $sb = $this.parent().find('.scroll-bar');
-      h = $this.height();
+      var $content, $sb, h, h_content, h_sb, ratio, top;
+      $content = $(this);
+      $sb = $content.parent().find('.scroll-bar');
+      if ($sb.hasClass('draggable')) {
+        return;
+      }
+      h = $content.height();
       h_sb = $sb.height();
-      h_content = $this.find('div').height();
+      h_content = $content.find('div').height();
       ratio = this.scrollTop / (h_content - h);
       top = (h - h_sb) * ratio;
       $sb.css('top', top);
+    });
+    sb = sw.find('.scroll-bar');
+    if (sb.draggable) {
+      sb.draggable({
+        axis: 'y',
+        cursor: 'default',
+        containParent: true
+      });
+      sb.mousemove(function(e) {
+        var $content, $sb, $sw, h, h_content, h_sb, ratio, scrollTop, top;
+        if (e.buttons === 1) {
+          $sb = $(this);
+          $sw = $this.parents('.scroll-wrapper');
+          $content = $sw.find('.scroll-content');
+          if ($content.length <= 0) {
+            return;
+          }
+          h = $content.height();
+          h_sb = $sb.height();
+          h_content = $content.find('div').height();
+          top = parseInt($sb.css('top').replace('px', ''));
+          ratio = top / (h - h_sb);
+          scrollTop = (h_content - h) * ratio;
+          $content[0].scrollTop = scrollTop;
+        }
+      });
+    }
+    sb.parent().click(function(e) {
+      var $content, $sb, $sw, $this, h, h_content, h_sb, offsetY, scrollTop, top;
+      $this = $(this);
+      $sw = $this.parents('.scroll-wrapper');
+      $content = $sw.find('.scroll-content');
+      $sb = $this.find('.scroll-bar');
+      if ($content.length <= 0) {
+        return;
+      }
+      h = $content.height();
+      h_sb = $sb.height();
+      h_content = $content.find('div').height();
+      top = parseInt($sb.css('top').replace('px', ''));
+      offsetY = e.offsetY;
+      if (offsetY < top) {
+        scrollTop = $content[0].scrollTop - 50;
+      } else if (offsetY > top + h_sb) {
+        scrollTop = $content[0].scrollTop + 50;
+      } else {
+        return;
+      }
+      if (scrollTop < 0) {
+        scrollTop = 0;
+      } else if (scrollTop > h_content - h) {
+        scrollTop = h_content - h;
+      }
+      $content[0].scrollTop = scrollTop;
     });
   };
 
