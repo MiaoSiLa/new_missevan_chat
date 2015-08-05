@@ -191,12 +191,17 @@ Gekijou = (function() {
     this.pb.moveToBegin();
   };
 
+  Gekijou.prototype.ready = function() {
+    this._ready = true;
+    $('#chatmain').addClass('gekijou-ready');
+  };
+
   Gekijou.prototype.preload = function(cb) {
     var preload_step, res, self;
     res = this.em.getNeedPreload();
     if (res.length <= 0) {
       this.pb.preload(1);
-      this._ready = true;
+      this.ready();
       if (cb != null) {
         cb();
       }
@@ -214,7 +219,7 @@ Gekijou = (function() {
       };
       preload_step(0, function() {
         self.pb.preload(1);
-        self._ready = true;
+        self.ready();
         if (cb != null) {
           return cb();
         }

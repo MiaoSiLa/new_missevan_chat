@@ -5,8 +5,24 @@ console.log('gekijou embed');
 DScrollbar = (function() {
   function DScrollbar() {}
 
+  DScrollbar.prototype.update = function($sb) {
+    var $content, $sw, h, h_content, h_sb, ratio, scrollTop, top;
+    $sw = $sb.parents('.scroll-wrapper');
+    $content = $sw.find('.scroll-content');
+    if ($content.length <= 0) {
+      return;
+    }
+    h = $content.height();
+    h_sb = $sb.height();
+    h_content = $content.find('div').height();
+    top = parseInt($sb.css('top').replace('px', ''));
+    ratio = top / (h - h_sb);
+    scrollTop = (h_content - h) * ratio;
+    $content[0].scrollTop = scrollTop;
+  };
+
   DScrollbar.prototype.init = function() {
-    var sb, sw;
+    var sb, self, sw;
     sw = $('.scroll-wrapper');
     if (!(sw && sw.length)) {
       return;
@@ -32,22 +48,10 @@ DScrollbar = (function() {
         cursor: 'default',
         containParent: true
       });
+      self = this;
       sb.mousemove(function(e) {
-        var $content, $sb, $sw, h, h_content, h_sb, ratio, scrollTop, top;
-        if (e.buttons === 1) {
-          $sb = $(this);
-          $sw = $this.parents('.scroll-wrapper');
-          $content = $sw.find('.scroll-content');
-          if ($content.length <= 0) {
-            return;
-          }
-          h = $content.height();
-          h_sb = $sb.height();
-          h_content = $content.find('div').height();
-          top = parseInt($sb.css('top').replace('px', ''));
-          ratio = top / (h - h_sb);
-          scrollTop = (h_content - h) * ratio;
-          $content[0].scrollTop = scrollTop;
+        if (e.button === 0 && e.buttons === 1) {
+          self.update($(this));
         }
       });
     }
@@ -143,14 +147,21 @@ GekijouEmbed = (function() {
   function GekijouEmbed() {}
 
   GekijouEmbed.prototype.load = function(chatid) {
-    var chat_box, share_box;
+    var chat_box, ifr, share_box;
     share_box = $('#share_box');
     chat_box = $('#chat_box');
+    if (share_box.hasClass('box_active')) {
+      return;
+    }
     if (chatid) {
+      share_box.addClass('box_active');
       chat_box.find('.box_bd').html('<iframe class="gekijou-embed" src="/gekijou/view/' + chatid + '"></iframe>');
-      share_box.hide();
-      chat_box.show();
-      chat_box.find('iframe').focus();
+      ifr = chat_box.find('iframe');
+      ifr.load(function() {
+        share_box.hide().removeClass('box_active');
+        chat_box.show();
+        ifr.focus();
+      });
     } else {
       chat_box.find('.box_bd').html('');
       chat_box.hide();

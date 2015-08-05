@@ -182,12 +182,17 @@ class Gekijou
     @pb.moveToBegin()
     return
 
+  ready: ->
+    @_ready = on
+    $('#chatmain').addClass 'gekijou-ready'
+    return
+
   # 预加载
   preload: (cb) ->
     res = @em.getNeedPreload()
     if res.length <= 0
       @pb.preload 1
-      @_ready = on
+      @ready()
       cb() if cb?
     else
       self = @
@@ -201,7 +206,7 @@ class Gekijou
 
       preload_step 0, ->
         self.pb.preload 1
-        self._ready = on
+        self.ready()
         cb() if cb?
     return
 

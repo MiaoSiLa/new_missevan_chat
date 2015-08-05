@@ -4,6 +4,24 @@ class DScrollbar
 
   constructor: ->
 
+  update: ($sb) ->
+    #$sb = $ @
+    $sw = $sb.parents '.scroll-wrapper'
+    $content = $sw.find '.scroll-content'
+    if $content.length <= 0
+      return
+
+    h = $content.height()
+    h_sb = $sb.height()
+    h_content = $content.find('div').height()
+
+    top = parseInt $sb.css('top').replace('px', '')
+    ratio = top / (h - h_sb)
+    scrollTop = (h_content - h) * ratio
+
+    $content[0].scrollTop = scrollTop
+    return
+
   init: ->
     sw = $ '.scroll-wrapper'
     if not (sw and sw.length)
@@ -31,24 +49,10 @@ class DScrollbar
         axis: 'y',
         cursor: 'default',
         containParent: true
+      self = @
       sb.mousemove (e) ->
-        if e.buttons is 1
-          $sb = $ @
-          $sw = $this.parents '.scroll-wrapper'
-          $content = $sw.find '.scroll-content'
-          if $content.length <= 0
-            return
-
-          h = $content.height()
-          h_sb = $sb.height()
-          h_content = $content.find('div').height()
-
-          top = parseInt $sb.css('top').replace('px', '')
-          ratio = top / (h - h_sb)
-          scrollTop = (h_content - h) * ratio
-
-          $content[0].scrollTop = scrollTop
-
+        if e.button is 0 and e.buttons is 1
+          self.update $(@)
         return
 
     sb.parent().click (e) ->
@@ -136,11 +140,18 @@ class GekijouEmbed
   load: (chatid) ->
     share_box = $ '#share_box'
     chat_box = $ '#chat_box'
+    if share_box.hasClass 'box_active'
+      return
     if chatid
+      share_box.addClass 'box_active'
       chat_box.find('.box_bd').html '<iframe class="gekijou-embed" src="/gekijou/view/' + chatid + '"></iframe>'
-      share_box.hide()
-      chat_box.show()
-      chat_box.find('iframe').focus()
+      ifr = chat_box.find 'iframe'
+      ifr.load ->
+        # $cm = ifr.contents().find '#chatmain'
+        share_box.hide().removeClass 'box_active'
+        chat_box.show()
+        ifr.focus()
+        return
     else
       chat_box.find('.box_bd').html ''
       chat_box.hide()
