@@ -16,6 +16,7 @@ var util = require('util'),
   _ = require('underscore'),
   validator = require('validator');
 var ModelBase = require('./../lib/base');
+var GekijouScript = require('./../lib/gekijouscript');
 var ObjectID = require('mongodb').ObjectID;
 
 const ONE_PAGE = 30;
@@ -65,6 +66,20 @@ Gekijou.prototype.ensureIndex = function *() {
 };
 
 Gekijou.prototype.checkScript = function () {
+  if (!this.script) {
+    return false;
+  }
+  var pass = false;
+  try {
+    var gs = new GekijouScript();
+    pass = gs.parse(this.script);
+  } catch (e) {
+    pass = false;
+  }
+  return pass;
+};
+
+Gekijou.prototype.getCharaIds = function () {
   if (!this.script) {
     return false;
   }

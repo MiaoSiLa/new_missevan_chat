@@ -11,7 +11,7 @@ class Util
       return
 
   escape: (str) ->
-    str.replace(/&/g,'&amp;' ).replace(/</g,'&lt;').replace(/>/g,'&gt;').
+    str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').
       replace(/"/g,'&quot;').replace(/'/g,'&#039;')
 
   unescape: (str) ->

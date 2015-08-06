@@ -6,6 +6,7 @@ var Router = require('koa-router'),
   validator = require('validator'),
   view = require('./../lib/view');
 
+var GekijouScript = require('./../lib/gekijouscript');
 var Model = require('./../model'),
   Gekijou = Model.Gekijou,
   GekijouStatus = Model.GekijouStatus;
@@ -215,9 +216,47 @@ gekijou.post('/addplaytimes', function *() {
   this.body = r;
 });
 
+gekijou.get('/stats/:gekijou_id', function *() {
+  if (this.params && this.params.gekijou_id) {
+    var g = new Gekijou({ _id: this.params.gekijou_id });
+    var geki = yield g.find();
+    if (!geki) {
+      this.status = 404;
+      return
+    }
+
+    var gs = new GekijouScript();
+    try {
+      gs.parse(geki.script);
+    } catch (e) {
+      this.body = {
+        code: 1,
+        message: e.message()
+      };
+      return;
+    }
+
+    this.body = {
+      code: 0,
+      stats: {
+        event: {
+          count: gs.event.length,
+          duration: gs.duration
+        },
+        chara: {
+          count: gs.chara.length,
+          iconids: gs.get_chara_iconids()
+        }
+      }
+    };
+    return;
+  }
+  this.status = 404;
+});
+
 gekijou.get('/edit/:gekijou_id', function *() {
   if (!this.user) {
-    if (this.params.gekijou_id) {
+    if (this.params && this.params.gekijou_id) {
       this.redirect('/member/login?backurl=/gekijou/edit/' + this.params.gekijou_id);
     } else {
       this.status = 403;
