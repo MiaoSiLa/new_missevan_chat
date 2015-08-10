@@ -16,7 +16,7 @@ class Gekijou
     @sound = new SoundCollection()
     @em = new GEventManager()
     @util = new Util()
-    @settings = {}
+    #@settings = {}
 
     @_playing = no
     @_ready = no

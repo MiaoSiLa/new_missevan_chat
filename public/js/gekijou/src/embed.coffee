@@ -94,6 +94,7 @@ class ContactList
     cl = $ '.contact_list'
     if not (cl and cl.length)
       return
+    @init_state()
     self = @
     cl.find('.contact_item').click ->
       actorid = $(@).data 'actorid'
@@ -103,33 +104,93 @@ class ContactList
         dataType: 'json',
         success: (data) ->
           if data and data.state is 'success'
-            self.load data.info
+            self.load data
           return
       return
     # end of init
     return
 
-  load: (actor) ->
+  init_state: ->
+    @pushState = window.history and window.history.pushState
+    if @pushState
+      self = @
+      window.onpopstate = (e) ->
+        if e.state and e.state.actor
+          self.load e.state.actor, on
+        else
+          window.location.reload()
+        return
+
+    return
+
+  update_url: (actor_id, actor) ->
+    if @pushState
+      if actor_id
+        window.history.pushState {actor: actor}, '', "/theatre/actor/profile?actorid=#{actor_id}"
+      else
+        window.history.pushState {actor: actor}, '', '/theatre/actor'
+    return
+
+  load: (actor, popstate) ->
     box_bd = $ '.box .box_bd'
     empty = box_bd.find '.empty'
     profile = box_bd.find '.profile'
-    if not actor
+    actor_id = null
+    if not actor or not actor.info
       profile.hide()
       empty.show()
     else
-      profile.find('img').attr 'src', actor.front_cover
-      profile.find('.nickname').text actor.name
-      profile.find('.signature').text actor.signature
+      info = actor.info
+      actor_id = info.id
+      profile.find('.nickname').text info.name
+      profile.find('.signature').text info.signature
+      profile.find('#profile-intro .detail').text (if info.intro then info.intro else '还没有填写')
 
-      aa = profile.find '.action_area'
-      if parseInt actor.homepage
-        aa.find('.button').attr 'href', '/theatre/actor/space?actorid=' + actor.id
-        aa.show()
+      # 头像
+      profile.find('.avatar img').attr 'src', info.avatar_url
+      $more_avatars = profile.find '.profile_more_avatars'
+      if actor.avatars and actor.avatars.length
+        html = '\n'
+        for a in actor.avatars
+          html += '<img class="img lazy" src="' + a.avatar_url + '" />\n'
+        html += '<img class="img lazy img-first" src="' + info.avatar_url + '" style="display:none" />'
+        $more_avatars.html html
+        $more_avatars.show()
+        $more_avatars.find('img').click ->
+          $this = $ @
+          $this.parent().find('.img-first').show()
+          $profile = $this.parents '.profile'
+          $profile.find('.avatar img').attr 'src', $this.attr('src')
+          return
       else
-        aa.hide()
+        $more_avatars.html ''
+        $more_avatars.hide()
+
+      gekijou_count = if actor.scripts then actor.scripts.length else 0
+      shares_count = if actor.shares then actor.shares.length else 0
+
+      # 小剧场经历
+      $anal = profile.find '.profile_analytics span strong'
+      $($anal[0]).text gekijou_count.toString()
+      $($anal[1]).text shares_count.toString()
+
+      # 描述
+      profile.find('#profile-gekijou a').attr 'href', '/theatre/actor/scripts?actorid=' + info.id
+      profile.find('#profile-shares a').attr 'href', '/theatre/actor/space?actorid=' + info.id
+
+      profile.find('#profile-shares .detail').text (if shares_count > 0 then "共 #{shares_count} 条" else '还没有朋友圈')
+      if gekijou_count
+        html = '\n'
+        for script in actor.scripts
+          html += '<img class="profile_script_img" src="' + script.cover_url + '" />\n'
+        profile.find('#profile-gekijou .detail').html html
+      else
+        profile.find('#profile-gekijou .detail').text '还没有演过剧本'
 
       empty.hide()
       profile.show()
+
+    @update_url(actor_id, actor) if not popstate
 
     # end of load
     return
