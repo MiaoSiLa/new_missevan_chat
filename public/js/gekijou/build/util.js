@@ -1318,13 +1318,15 @@ Editorbar = (function(_super) {
       }
     });
     $('#gekijoudelbtn').click(function() {
-      self.editor["delete"](function(success) {
-        if (success) {
-          return setTimeout(function() {
-            return window.location.href = '/gekijou/';
-          }, 1000);
-        }
-      });
+      if (confirm('确认删除该剧场？')) {
+        self.editor["delete"](function(success) {
+          if (success) {
+            return setTimeout(function() {
+              return window.location.href = '/gekijou/';
+            }, 1000);
+          }
+        });
+      }
     });
     $gsavebtn.show();
     $inputboxtextarea = this.$('#inputboxtextarea');

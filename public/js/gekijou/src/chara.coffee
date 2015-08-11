@@ -108,9 +108,10 @@ class Chara
       #subtitle = GG.util.escape c.subtitle
       html += "<div id=\"chara#{c.id}\" class=\"charabox"
       html += ' selected' if i is @_sel
+      html += '\">\n'
+      if GG.env is 'dev'
+        html += '<div class="delbtn">x</div>\n'
       html += """
-              \">
-                <div class="delbtn">x</div>
                 <div class="chaticonbox">
                   <img alt="#{name}" title="#{name}" src="#{sender.icon}">
                 </div>

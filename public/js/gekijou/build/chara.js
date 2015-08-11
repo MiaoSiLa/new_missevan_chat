@@ -137,7 +137,11 @@ Chara = (function() {
       if (i === this._sel) {
         html += ' selected';
       }
-      html += "\">\n  <div class=\"delbtn\">x</div>\n  <div class=\"chaticonbox\">\n    <img alt=\"" + name + "\" title=\"" + name + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n  <div class=\"chatusername\" style=\"color:#ffffff;\">\n    <span>" + name + "</span>\n  </div>\n</div>";
+      html += '\">\n';
+      if (GG.env === 'dev') {
+        html += '<div class="delbtn">x</div>\n';
+      }
+      html += "  <div class=\"chaticonbox\">\n    <img alt=\"" + name + "\" title=\"" + name + "\" src=\"" + sender.icon + "\">\n  </div>\n  <div class=\"clear\"></div>\n  <div class=\"chatusername\" style=\"color:#ffffff;\">\n    <span>" + name + "</span>\n  </div>\n</div>";
 
       /*
       <div class="chatsubtitle">

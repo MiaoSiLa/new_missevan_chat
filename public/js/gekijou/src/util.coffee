@@ -1176,11 +1176,12 @@ class Editorbar extends ControlBar
       return
 
     $('#gekijoudelbtn').click ->
-      self.editor.delete (success) ->
-        if success
-          setTimeout ->
-              window.location.href = '/gekijou/'
-            , 1000
+      if confirm('确认删除该剧场？')
+        self.editor.delete (success) ->
+          if success
+            setTimeout ->
+                window.location.href = '/gekijou/'
+              , 1000
       return
 
     $gsavebtn.show()
