@@ -88,9 +88,10 @@ class GAction
   run: (cb) ->
     action = @
     @load ->
+      hasChara = off
       if action.chara?
         # 切换角色
-        GG.chara.selectId action.chara
+        hasChara = GG.chara.selectId action.chara
 
       callback = ->
         if GG.env is 'dev'
@@ -100,6 +101,13 @@ class GAction
 
       switch action.type
         when 'text'
+          if not hasChara
+            if GG.env is 'dev'
+              moTool.showError '请先选择一个角色'
+
+            callback()
+            return
+
           action.line = index.mo.chatLine
           #chatBox.loadBubble
           GG.bubble.popup

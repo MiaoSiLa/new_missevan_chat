@@ -7,6 +7,7 @@
 class Chara
 
   constructor: (@el) ->
+    @iconUrlPrefix = 'http://static.missevan.cn/avatars/'
     @charas = []
     @_lastid = 0
     @_showmodal = no
@@ -31,11 +32,10 @@ class Chara
 
   sender: (user) ->
     if user
-      iconUrlPrefix = 'http://static.missevan.cn/avatars/'
       s =
         id: user.id,
         name: user.username,
-        icon: iconUrlPrefix + user.iconurl
+        icon: @iconUrlPrefix + user.iconurl
     else
       s = null
     s
@@ -51,9 +51,20 @@ class Chara
     null
 
   selectId: (id) ->
+    found = off
     for c, i in @charas
       if c.id is id
+        found = on
         @select i
+        break
+    if not found
+      @select -1
+    found
+
+  removeId: (id) ->
+    for c, i in @charas
+      if c.id is id
+        @remove i
         break
     return
 
@@ -75,6 +86,13 @@ class Chara
 
     return
 
+  remove: (i) ->
+    if i is @_sel
+      @select -1
+    @charas.splice i, 1
+    @refresh()
+    return
+
   refresh: ->
     html = ''
 
@@ -92,6 +110,7 @@ class Chara
       html += ' selected' if i is @_sel
       html += """
               \">
+                <div class="delbtn">x</div>
                 <div class="chaticonbox">
                   <img alt="#{name}" title="#{name}" src="#{sender.icon}">
                 </div>
@@ -99,7 +118,6 @@ class Chara
                 <div class="chatusername" style="color:#ffffff;">
                   <span>#{name}</span>
                 </div>
-                <div class="delbtn"></div>
               </div>
               """
       ###
@@ -116,6 +134,12 @@ class Chara
       id = parseInt sid.replace('chara', '')
       self.selectId id
       return
+
+    $modal.find('.delbtn').click ->
+      sid = $(this).parent().attr 'id'
+      id = parseInt sid.replace('chara', '')
+      self.removeId id
+      off
 
     return
 
@@ -199,10 +223,51 @@ class Chara
 
     return
 
+  appendCandidateIcons: (avatars, mainIconUrl) ->
+    $modal = $ '#newcharamodal'
+    $ci = $modal.find '.candidate-icons'
+    if not avatars or avatars.length <= 0
+      $ci.html ''
+      return
+
+    html = '<img data-iconurl="' + mainIconUrl + '" src="' + @iconUrlPrefix + mainIconUrl + '" />\n'
+    for ava in avatars
+      html += '<img data-iconurl="' + ava.avatar + '" src="' + @iconUrlPrefix + ava.avatar + '" />\n'
+    $ci.html html
+
+    self = @
+    # bind click
+    $ci.find('img').click ->
+      $this = $ @
+      $il = $this.parents '#newchara_iconlist'
+      $mi = $il.find '.main-icon'
+      iconurl = $this.data 'iconurl'
+      $mi.data 'iconurl', iconurl
+      $mi.attr 'src', self.iconUrlPrefix + iconurl
+      return
+    return
+
   showCreateModal: (user) ->
     $modal = $ '#newcharamodal'
     $modal.find('#newchara_user').data 'user', user
     $modal.find('#newchara_username').val user.username
+
+    self = @
+    mainIconUrl = user.iconurl
+    url = '/theatre/api/actor?id=' + user.iconid
+    $.ajax
+      url: url,
+      dataType: 'json',
+      success: (data) ->
+        if data and data.state is 'success'
+          self.appendCandidateIcons data.avatars, mainIconUrl
+        return
+
+    $il = $modal.find '#newchara_iconlist'
+    html = '<img data-iconurl="' + mainIconUrl + '" class="main-icon" src="' + @iconUrlPrefix + mainIconUrl + '" />'
+    html += '<div class="candidate-icons">加载中…</div>'
+    $il.html html
+
     #$modal.find('#newchara_subtitle').val ''
     moTool.showModalBox $modal
     return
@@ -248,13 +313,22 @@ class Chara
       self.searchIcon()
       return
 
+    @el.find('#soundsearchinput').keydown (e) ->
+      if e.which is 13
+        # enter
+        self.pagination.page 1
+        self.searchIcon()
+      return
+
     $('#newcharaokbtn').click ->
       $modal = $ '#newcharamodal'
       name = $modal.find('#newchara_username').val()
       if name
         user = $modal.find('#newchara_user').data 'user'
+        iconurl = $modal.find('#newchara_iconlist .main-icon').data 'iconurl'
         showon = $modal.find('input[name=rd_chara_showon]:checked').val()
         user.username = name
+        user.iconurl = iconurl
         user.showon = if showon is 'right' then 'right' else 'left'
         #user.subtitle = $modal.find('#newchara_subtitle').val()
 
@@ -310,11 +384,18 @@ class Chara
           for line, i in lines
             lineprops = GG.util.splitprop line
             switch lineprops[0]
-              when 'icon'
-                if lineprops.length >= 3
+              when 'actor'
+                if lineprops.length >= 2
                   c.iconid = parseInt lineprops[1]
-                  c.iconurl = JSON.parse lineprops[2]
-                  if lineprops[3] then c.iconcolor = JSON.parse lineprops[3]
+              when 'icon'
+                if lineprops.length >= 2
+                  iconi = 1
+                  reg_num = /^[0-9]+$/
+                  if reg_num.test(lineprops[1])
+                    c.iconid = parseInt lineprops[1]
+                    iconi++
+                  c.iconurl = JSON.parse lineprops[iconi]
+                  if lineprops[iconi + 1] then c.iconcolor = JSON.parse lineprops[iconi + 1]
               when 'showon'
                 if lineprops.length >= 2
                   c.showon = if lineprops[1] is 'right' then 'right' else 'left'

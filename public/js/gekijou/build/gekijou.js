@@ -17,7 +17,6 @@ Gekijou = (function() {
     this.sound = new SoundCollection();
     this.em = new GEventManager();
     this.util = new Util();
-    this.settings = {};
     this._playing = false;
     this._ready = false;
     this._playedtime = 0;

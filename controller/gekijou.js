@@ -245,7 +245,7 @@ gekijou.get('/stats/:gekijou_id', function *() {
         },
         chara: {
           count: gs.chara.length,
-          iconids: gs.get_chara_iconids()
+          charas: gs.get_charas()
         }
       }
     };

@@ -103,9 +103,10 @@ GAction = (function() {
     var action;
     action = this;
     this.load(function() {
-      var callback, soundkey, soundmsg, soundname, statetext;
+      var callback, hasChara, soundkey, soundmsg, soundname, statetext;
+      hasChara = false;
       if (action.chara != null) {
-        GG.chara.selectId(action.chara);
+        hasChara = GG.chara.selectId(action.chara);
       }
       callback = function() {
         if (GG.env === 'dev') {
@@ -117,6 +118,13 @@ GAction = (function() {
       };
       switch (action.type) {
         case 'text':
+          if (!hasChara) {
+            if (GG.env === 'dev') {
+              moTool.showError('请先选择一个角色');
+            }
+            callback();
+            return;
+          }
           action.line = index.mo.chatLine;
           GG.bubble.popup({
             msg: action.val,

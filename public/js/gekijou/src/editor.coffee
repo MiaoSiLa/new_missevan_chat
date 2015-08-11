@@ -55,7 +55,8 @@ class GekijouEditor
     # chara
     for c in chara.charas
       script += "  define #{c.id} #{JSON.stringify(c.username)} {\n"
-      script += "    icon #{c.iconid} #{JSON.stringify(c.iconurl)}"
+      script += "    actor #{c.iconid}\n"
+      script += "    icon #{JSON.stringify(c.iconurl)}"
       if c.iconcolor
         script += ' ' + JSON.stringify(c.iconcolor)
       script += "\n"

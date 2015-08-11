@@ -33,10 +33,14 @@ setup {
 ## chara 包含在剧本中使用的角色信息
 #
 # define [charaid] [string 角色名] {
-#   # 定义角色头像，与主站头像相同定义
+#   # 定义角色头像 actorid，可选
+#   actor [actorid]
+#
+#   # 定义角色头像链接
+#   # `actorid` 可选
 #   # `iconurl` 需要加上 `'http://static.missevan.cn/avatars/'` 的对应资源地址前缀
 #   # `iconcolor` 为可选参数
-#   icon [iconid] [iconurl] [iconcolor?]
+#   icon [actorid?] [iconurl] [iconcolor?]
 #
 #   # 角色称号
 #   subtitle [string 角色称号]

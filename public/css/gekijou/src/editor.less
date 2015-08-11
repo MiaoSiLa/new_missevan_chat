@@ -311,6 +311,33 @@
   }
 }
 
+#newchara_iconlist {
+  margin-top: -30px;
+
+  .candidate-icons {
+    display: inline-block;
+    font-size: 15px;
+    margin-left: 10px;
+
+    img {
+      width: 56px;
+      height: 56px;
+      cursor: pointer;
+    }
+  }
+
+  img.main-icon {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+#newcharamodal {
+  .e_t {
+    margin-top: 60px;
+  }
+}
+
 #charamodal {
   #selecticon {
     margin-top: 30px;
@@ -364,20 +391,38 @@
   }
 }
 
+.inline_delete_button() {
+  color: white;
+  background-color: red;
+
+  text-align: center;
+  line-height: 16px;
+  font-size: 16px;
+
+  width: 20px;
+  height: 20px;
+
+  cursor: pointer;
+}
+
 .line-editor {
   position: absolute;
   z-index: 50;
 
   .line-del {
-    background-color: red;
+    .inline_delete_button();
+  }
+}
 
-    text-align: center;
-    line-height: 16px;
-    font-size: 16px;
+.charabox {
+  position: relative;
 
-    width: 20px;
-    height: 20px;
+  .delbtn {
+    position: absolute;
+    z-index: 101;
+    top: 3px;
+    left: 3px;
 
-    cursor: pointer;
+    .inline_delete_button();
   }
 }
