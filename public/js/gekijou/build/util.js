@@ -483,6 +483,7 @@ Playbar = (function(_super) {
   function Playbar(el) {
     this.el = el;
     Playbar.__super__.constructor.call(this, this.el);
+    this._lasthighlight = -1;
     this._data = [];
     this._wheelstatus = {};
   }
@@ -716,13 +717,28 @@ Playbar = (function(_super) {
           moTool.showModalBox(modal);
         }
         e.stopPropagation();
+        return false;
       });
+    }
+  };
+
+  Playbar.prototype.highlight = function(i) {
+    var eventid;
+    if (GG.env === 'dev') {
+      if (this._lasthighlight >= 0) {
+        eventid = '#event' + this._lasthighlight;
+        this.$(eventid).removeClass('highlight');
+      }
+      eventid = '#event' + i;
+      this.$(eventid).addClass('highlight');
+      this._lasthighlight = i;
     }
   };
 
   Playbar.prototype.moveToIndex = function(i) {
     if ((0 <= i && i < this._data.length)) {
       this.pos(this._data[i].pos);
+      this.highlight(i);
     }
   };
 
@@ -1279,9 +1295,13 @@ Editorbar = (function(_super) {
       modal = $('#editeventmodal');
       i = modal.data('event-index');
       if (i >= 0) {
-        ev = self.em.del(i);
-        self.gekijou.reset();
-        self.gekijou.rearrange();
+        if (confirm('确认删除该事件吗？')) {
+          ev = self.em.del(i);
+          self.gekijou.reset();
+          self.gekijou.rearrange();
+        } else {
+          return;
+        }
       }
       moTool.hideModalBox(modal);
     });

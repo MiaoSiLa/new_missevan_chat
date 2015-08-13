@@ -53,6 +53,9 @@
   border: none;
   pointer-events: auto;
 }
+#m .mpfo .mpf.highlight {
+  z-index: 1001;
+}
 #m .mpfo .mpfl {
   margin-left: -10px;
   border: 6px solid transparent;

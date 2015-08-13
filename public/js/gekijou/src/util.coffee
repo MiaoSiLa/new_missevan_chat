@@ -392,6 +392,7 @@ class Playbar extends ControlBar
 
   constructor: (@el) ->
     super @el
+    @_lasthighlight = -1
     @_data = []
     @_wheelstatus = {}
 
@@ -626,13 +627,24 @@ class Playbar extends ControlBar
           modal.find('#editevent_time').val ev.time
           moTool.showModalBox modal
         e.stopPropagation()
-        return
+        off
 
+    return
+
+  highlight: (i) ->
+    if GG.env is 'dev'
+      if @_lasthighlight >= 0
+        eventid = '#event' + @_lasthighlight
+        @$(eventid).removeClass 'highlight'
+      eventid = '#event' + i
+      @$(eventid).addClass 'highlight'
+      @_lasthighlight = i
     return
 
   moveToIndex: (i) ->
     if 0 <= i < @_data.length
       @pos @_data[i].pos
+      @highlight i
     return
 
   moveToLast: ->
@@ -1132,9 +1144,12 @@ class Editorbar extends ControlBar
       i = modal.data 'event-index'
 
       if i >= 0
-        ev = self.em.del i
-        self.gekijou.reset()
-        self.gekijou.rearrange()
+        if confirm('确认删除该事件吗？')
+          ev = self.em.del i
+          self.gekijou.reset()
+          self.gekijou.rearrange()
+        else
+          return
 
       moTool.hideModalBox modal
       return
