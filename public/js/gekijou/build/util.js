@@ -502,9 +502,12 @@ Playbar = (function(_super) {
       GG.gekijou.emit('play');
     });
     this.$('.mpfo').click(function(e) {
-      var pos;
-      pos = 1 - e.offsetY / $(this).height();
+      var $this, offsetY, pos;
+      $this = $(this);
+      offsetY = e.clientY - $this.offset().top;
+      pos = 1 - offsetY / $(this).height();
       GG.gekijou.emit('pos', pos);
+      return false;
     });
     $mpo = this.$('.mpo');
     this.$('.mplr').draggable({

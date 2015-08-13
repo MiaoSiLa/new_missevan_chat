@@ -409,9 +409,12 @@ class Playbar extends ControlBar
       return
 
     @$('.mpfo').click (e) ->
-      pos = 1 - e.offsetY / $(this).height()
+      $this = $ @
+      # FIX: e.offsetY ref to e.srcElement event offsetY
+      offsetY = e.clientY - $this.offset().top
+      pos = 1 - offsetY / $(@).height()
       GG.gekijou.emit 'pos', pos
-      return
+      off
 
     $mpo = @$ '.mpo'
     @$('.mplr').draggable
