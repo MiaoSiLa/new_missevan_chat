@@ -58,25 +58,33 @@
 
     <% if (user) { %>
     <div id="t_p">
-      <a target='_blank' href="/<%= user.id %>">
-        <img <% if (user.iconurl) { %>src='http://static.missevan.cn/mimages/<%= user.iconurl %>'<% } else { %>src='/images/index/toppointer1.png'<% } %>/>
-        <span><%= user.username %> (<%= user.id %>)</span>
-      </a>
+			<a target="_blank" href="http://www.missevan.cn/10">
+				<img <% if (user.iconurl) { %>src="<%= user.iconurl %>"<% } else { %>src="/images/index/toppointer1.png"<% } %> />
+				<span> <%= user.username %></span>
+			</a>
 
-      <div class="t_h_l_b pie" style="display:none;">
-        <div class="t_h">
-          <a target='_self' href="/<%= user.id %>">个人主页</a>
-        </div>
-        <div class="t_h">
-          <a target='_self' href="/person/msg?mtype=1&userid=<%= user.id %>">站内信</a>
-        </div>
-        <div class="t_h">
-          <a target='_self' href="/person/task?ttype=1&userid=<%= user.id %>">猫耳</a>
-        </div>
-        <div class="t_h">
-          <a target='_self' href="/member/logout">退出</a>
-        </div>
-      </div>
+			<div class="t_h_l_b pie" style="display:none;">
+			  <div class="t_h_ar"></div>
+			  <div class="t_h_ho"></div>
+
+
+			  <div class="t_h_t">M号: <%= user.id %>, 猫耳: <span id='t_h_m'>0</span></div>
+				<div class="t_h t_h_fl">
+					<a target='_self' href="/<%= user.id %>">个人主页</a>
+				</div>
+				<div class="t_h t_h_fl">
+					<a target='_self' href="/person/msg?mtype=1&userid=<%= user.id %>">站内信</a>
+				</div>
+				<div class="t_h t_h_fl">
+					<a target='_self' href="/person/task?ttype=1&userid=<%= user.id %>">每日任务</a>
+				</div>
+			    <div class="t_h t_h_fl">
+					<a target='_self' href="/member/exam">答题升级</a>
+				</div>
+				<div class="t_h t_h_fl">
+					<a target='_self' href="/member/logout">退出</a>
+				</div>
+			</div>
     </div>
     <% } else { %>
     <div class="t_h t_h_r">

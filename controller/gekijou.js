@@ -269,15 +269,18 @@ gekijou.get('/edit/:gekijou_id', function *() {
   if (this.params && this.params.gekijou_id) {
     var g = new Gekijou({ _id: this.params.gekijou_id });
     geki = yield g.find();
-    if (geki && geki.user_id === this.user.id) {
+    if (geki) {
       title = geki.title + '_' + title;
-    } else {
-      geki = null;
     }
   }
 
   if (!geki) {
     this.status = 404;
+    return;
+  }
+
+  if (geki.user_id !== this.user.id) {
+    this.status = 403;
     return;
   }
 
