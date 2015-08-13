@@ -49,6 +49,11 @@ Gekijou = (function() {
           if (this.opts['env'] !== 'dev') {
             this.pb.show(!v);
           }
+          break;
+        case 'editormode':
+          this.setOptions({
+            instantshow: v === 'simple'
+          });
       }
     }
     return this.opts;

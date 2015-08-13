@@ -214,7 +214,7 @@ pageStyles = dev_mode ? [
   <script type="text/javascript">
     $(function () {
       var gekijou = new Gekijou();
-      var editor = new GekijouEditor(gekijou);
+      var editor = new GekijouEditor(gekijou<% if (mode === 'simple') { %>, 'simple'<% } %>);
       editor.init();
     });
   </script>

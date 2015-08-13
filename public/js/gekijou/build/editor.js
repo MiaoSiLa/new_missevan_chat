@@ -7,8 +7,9 @@
 var GekijouEditor;
 
 GekijouEditor = (function() {
-  function GekijouEditor(gekijou) {
+  function GekijouEditor(gekijou, mode) {
     this.gekijou = gekijou;
+    this.mode = mode != null ? mode : 'default';
     this.eb = new Editorbar($('#inputbox'), this);
     this.af = new ActionForm();
     GG.editor = this;
@@ -23,6 +24,11 @@ GekijouEditor = (function() {
     this.gekijou.setOptions({
       env: 'dev'
     });
+    if (this.mode === 'simple') {
+      this.gekijou.setOptions({
+        editormode: 'simple'
+      });
+    }
     this.gekijou.init(function() {
       self.gekijou.preload();
       chatBox.addInfo('我是M娘', '欢迎使用小剧场编辑器');
@@ -47,6 +53,9 @@ GekijouEditor = (function() {
     }
     if (this.gekijou.opts['instantshow'] === true) {
       script += "  instantshow on\n";
+    }
+    if (this.gekijou.opts['editormode'] === 'simple') {
+      script += "  editormode simple\n";
     }
     script += '}\n\n';
     script += 'chara {\n';

@@ -5,7 +5,7 @@
 ###
 
 class GekijouEditor
-  constructor: (@gekijou) ->
+  constructor: (@gekijou, @mode = 'default') ->
     @eb = new Editorbar $('#inputbox'), @
     @af = new ActionForm()
     GG.editor = @
@@ -19,6 +19,9 @@ class GekijouEditor
     @_id = @eb.getId()
 
     @gekijou.setOptions env: 'dev'
+    if @mode is 'simple'
+      @gekijou.setOptions editormode: 'simple'
+
     @gekijou.init () ->
       # editor init
       self.gekijou.preload()
@@ -48,6 +51,8 @@ class GekijouEditor
       script += "  showname off\n"
     if @gekijou.opts['instantshow'] is on
       script += "  instantshow on\n"
+    if @gekijou.opts['editormode'] is 'simple'
+      script += "  editormode simple\n"
 
     script += '}\n\n'
     script += 'chara {\n'

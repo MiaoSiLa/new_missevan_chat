@@ -50,6 +50,8 @@ class Gekijou
           if @opts['env'] isnt 'dev'
             # 隐藏播放条
             @pb.show not v
+        when 'editormode'
+          @setOptions instantshow: (v is 'simple')
 
     @opts
 

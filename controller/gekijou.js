@@ -71,10 +71,16 @@ gekijou.get('/new', function *() {
     return;
   }
 
+  var mode = 'default';
+  if (this.query && this.query.mode === 'simple') {
+    mode = 'simple';
+  }
+
   yield this.render('gekijou/new', {
     title: '创建_小剧场_MissEvan',
     user: this.user,
-    gekijou: null
+    gekijou: null,
+    mode: mode
   });
 });
 
@@ -287,7 +293,8 @@ gekijou.get('/edit/:gekijou_id', function *() {
   yield this.render('gekijou/new', {
     title: title,
     user: this.user,
-    gekijou: geki
+    gekijou: geki,
+    mode: 'default'
   });
 });
 
