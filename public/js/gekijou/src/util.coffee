@@ -639,9 +639,13 @@ class Playbar extends ControlBar
       if @_lasthighlight >= 0
         eventid = '#event' + @_lasthighlight
         @$(eventid).removeClass 'highlight'
-      eventid = '#event' + i
-      @$(eventid).addClass 'highlight'
-      @_lasthighlight = i
+      ev = GG.em.get i
+      if ev
+        eventid = '#event' + ev.id
+        @$(eventid).addClass 'highlight'
+        @_lasthighlight = ev.id
+      else
+        @_lasthighlight = -1
     return
 
   moveToIndex: (i) ->

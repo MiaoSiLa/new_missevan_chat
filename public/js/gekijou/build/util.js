@@ -726,15 +726,20 @@ Playbar = (function(_super) {
   };
 
   Playbar.prototype.highlight = function(i) {
-    var eventid;
+    var ev, eventid;
     if (GG.env === 'dev') {
       if (this._lasthighlight >= 0) {
         eventid = '#event' + this._lasthighlight;
         this.$(eventid).removeClass('highlight');
       }
-      eventid = '#event' + i;
-      this.$(eventid).addClass('highlight');
-      this._lasthighlight = i;
+      ev = GG.em.get(i);
+      if (ev) {
+        eventid = '#event' + ev.id;
+        this.$(eventid).addClass('highlight');
+        this._lasthighlight = ev.id;
+      } else {
+        this._lasthighlight = -1;
+      }
     }
   };
 
