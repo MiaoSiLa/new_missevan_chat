@@ -554,6 +554,11 @@ Playbar = (function(_super) {
             }
         }
       });
+      if (chatBox.isMobile) {
+        this.bindMobile();
+      } else {
+        this.bindDesktop();
+      }
     } else {
       $(document).keydown(function(e) {
         var i;
@@ -581,17 +586,13 @@ Playbar = (function(_super) {
             GG.gekijou.moveTo(i - 1);
         }
       });
-      if (chatBox.isMobile) {
-        this.bindMobile();
-      } else {
-        this.bindDesktop();
-      }
     }
   };
 
   Playbar.prototype.bindDesktop = function() {
     var self;
     self = this;
+    console.log('bindDesktop');
     $('#commentCanvas')[0].onmousewheel = function(e) {
       var wheeltype;
       wheeltype = false;

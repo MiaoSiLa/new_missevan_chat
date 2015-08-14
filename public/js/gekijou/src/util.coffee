@@ -461,6 +461,16 @@ class Playbar extends ControlBar
               GG.gekijou.emit 'next'
               return
         return
+
+      # 滚动条事件
+      #$('#commentCanvas').scroll (e) ->
+      #  console.log @scrollTop
+      #  return
+      if chatBox.isMobile
+        @bindMobile()
+      else
+        @bindDesktop()
+      
     else
       # 编辑中的按键
       $(document).keydown (e) ->
@@ -484,21 +494,12 @@ class Playbar extends ControlBar
         return
 
 
-      # 滚动条事件
-      #$('#commentCanvas').scroll (e) ->
-      #  console.log @scrollTop
-      #  return
-      if chatBox.isMobile
-        @bindMobile()
-      else
-        @bindDesktop()
-
-
     return
 
   bindDesktop: ->
     # TODO: firefox
     self = @
+    console.log 'bindDesktop'
     #$('#commentCanvas')[0].addEventListener 'DOMMouseScroll', (e) ->
     $('#commentCanvas')[0].onmousewheel = (e) ->
       wheeltype = off
