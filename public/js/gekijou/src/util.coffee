@@ -470,7 +470,7 @@ class Playbar extends ControlBar
         @bindMobile()
       else
         @bindDesktop()
-      
+
     else
       # 编辑中的按键
       $(document).keydown (e) ->
@@ -499,7 +499,6 @@ class Playbar extends ControlBar
   bindDesktop: ->
     # TODO: firefox
     self = @
-    console.log 'bindDesktop'
     #$('#commentCanvas')[0].addEventListener 'DOMMouseScroll', (e) ->
     $('#commentCanvas')[0].onmousewheel = (e) ->
       wheeltype = off
@@ -514,12 +513,12 @@ class Playbar extends ControlBar
           self._wheelstatus =
             type: wheeltype,
             lasttime: new Date().valueOf(),
-            deltaY: 0,
+            deltaY: e.deltaY,
             tigger: off
         else
           self._wheelstatus.deltaY += e.deltaY
-          self.onscroll()
 
+        self.onscroll()
         #self._lastwheeltime
       # console.log e.detail, e.deltaY
       return
@@ -545,13 +544,13 @@ class Playbar extends ControlBar
 
   onscroll: ->
     if not @_wheelstatus.tigger
-      if @_wheelstatus.deltaY < -10
+      if @_wheelstatus.deltaY <= -3
         # up
         @_wheelstatus.tigger = on
         if GG.gekijou.isplaying()
           GG.gekijou.emit 'pause'
 
-      else if @_wheelstatus.deltaY > 10
+      else if @_wheelstatus.deltaY >= 3
         # down
         if GG.bubble.isbottom()
           if not GG.gekijou.isplaying()

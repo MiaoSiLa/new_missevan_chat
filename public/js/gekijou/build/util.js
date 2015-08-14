@@ -592,7 +592,6 @@ Playbar = (function(_super) {
   Playbar.prototype.bindDesktop = function() {
     var self;
     self = this;
-    console.log('bindDesktop');
     $('#commentCanvas')[0].onmousewheel = function(e) {
       var wheeltype;
       wheeltype = false;
@@ -606,13 +605,13 @@ Playbar = (function(_super) {
           self._wheelstatus = {
             type: wheeltype,
             lasttime: new Date().valueOf(),
-            deltaY: 0,
+            deltaY: e.deltaY,
             tigger: false
           };
         } else {
           self._wheelstatus.deltaY += e.deltaY;
-          self.onscroll();
         }
+        self.onscroll();
       }
     };
   };
@@ -638,12 +637,12 @@ Playbar = (function(_super) {
 
   Playbar.prototype.onscroll = function() {
     if (!this._wheelstatus.tigger) {
-      if (this._wheelstatus.deltaY < -10) {
+      if (this._wheelstatus.deltaY <= -3) {
         this._wheelstatus.tigger = true;
         if (GG.gekijou.isplaying()) {
           GG.gekijou.emit('pause');
         }
-      } else if (this._wheelstatus.deltaY > 10) {
+      } else if (this._wheelstatus.deltaY >= 3) {
         if (GG.bubble.isbottom()) {
           if (!GG.gekijou.isplaying()) {
             this._wheelstatus.tigger = true;
