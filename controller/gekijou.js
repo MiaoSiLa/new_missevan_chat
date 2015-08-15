@@ -4,7 +4,8 @@ var config = require('./../config');
 
 var Router = require('koa-router'),
   validator = require('validator'),
-  view = require('./../lib/view');
+  view = require('./../lib/view'),
+  common = require('./../lib/common');
 
 var GekijouScript = require('./../lib/gekijouscript');
 var Model = require('./../model'),
@@ -208,7 +209,11 @@ gekijou.post('/addplaytimes', function *() {
   if (this.request.body) {
     var _id = this.request.body._id;
     if (_id && validator.isMongoId(_id)) {
-      // TODO: add limit
+      // ip limit
+      if (yield common.ipflowcontrol('addplaytimes', this.ip, 5)) {
+          this.body = {code: 2, message: 'too frequently'};
+          return;
+      }
       var g = new Gekijou({ _id: _id });
       var geki = yield g.find();
       if (geki && geki._id && geki.checked) {
