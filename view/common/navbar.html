@@ -88,7 +88,7 @@
     </div>
     <% } else { %>
     <div class="t_h t_h_r">
-      <a href="/member/login?backurl=/chat/">登录/注册</a>
+      <a href="/member/login?backurl=<%= request.originalUrl %>">登录/注册</a>
     </div>
     <% } %>
 
