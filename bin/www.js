@@ -3,11 +3,14 @@
 var config = require('./../config');
 
 var koa = require('koa'),
+  cache = require('./../lib/cache'),
   middlewares = require('./../lib/middlewares'),
   controller = require('./../controller');
 
-var app = koa();
+//init cache
+cache.init();
 
+var app = koa();
 //wrap middlewares & controller
 middlewares(app);
 var server = controller(app);

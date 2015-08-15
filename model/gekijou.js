@@ -145,7 +145,9 @@ Gekijou.prototype.update = function *(v) {
     delete g._id;
   }
   g.updated_time = new Date();
-  return yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: g });
+  let r = yield this.collection.update({ _id: new ObjectID(this._id) }, { $set: g });
+  yield this.cache.del('id/' + this._id.toString());
+  return r;
 };
 
 Gekijou.prototype.playCount = function *() {

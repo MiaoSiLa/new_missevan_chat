@@ -86,7 +86,11 @@ var config = {
     password: ''
   },
   cache: {
-    enable: false
+    enable: false,
+    service: 'redis',
+    host: '127.0.0.1',
+    port: 6379,
+    ttl: 180
   }
 };
 
