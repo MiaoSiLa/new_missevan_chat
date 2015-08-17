@@ -817,7 +817,16 @@ class Toolbar extends ControlBar
       # playmode: instantshow
       @$('.mppm').click (e) ->
         $this = $ @
-        if not $this.hasClass 'mppmis'
+        if $this.hasClass 'mppmis'
+          $this.removeClass 'mppmis'
+          GG.gekijou.setOptions instantshow: off
+          GG.gekijou.pause()
+          setTimeout ->
+              GG.gekijou.reset()
+              GG.gekijou.emit 'play'
+              return
+            , 0
+        else
           $this.addClass 'mppmis'
           GG.gekijou.setOptions instantshow: on
           GG.gekijou.pause()

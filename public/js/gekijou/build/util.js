@@ -926,7 +926,17 @@ Toolbar = (function(_super) {
       this.$('.mppm').click(function(e) {
         var $this;
         $this = $(this);
-        if (!$this.hasClass('mppmis')) {
+        if ($this.hasClass('mppmis')) {
+          $this.removeClass('mppmis');
+          GG.gekijou.setOptions({
+            instantshow: false
+          });
+          GG.gekijou.pause();
+          setTimeout(function() {
+            GG.gekijou.reset();
+            GG.gekijou.emit('play');
+          }, 0);
+        } else {
           $this.addClass('mppmis');
           GG.gekijou.setOptions({
             instantshow: true
