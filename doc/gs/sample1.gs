@@ -69,6 +69,7 @@ chara {
 #
 #   # 角色对话操作 `text` ，角色将以文本形式说出一句话
 #   text chara:[charaid] [string 文本]
+#   text chara:[charaid] "我是约翰·华生。<img src=\"http://static.missevan.cn/emojis/3.png\" />"
 #
 #   # 文本状态操作 `state` ，角色将发出一个文本状态
 #   # 第二个参数指定是文本或是图片，可以忽略
