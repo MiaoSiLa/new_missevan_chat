@@ -34,6 +34,17 @@ util.inherits(Gekijou, ModelBase);
 Gekijou.fields = ['_id', 'user_id', 'username', 'title', 'intro', 'cover', 'script',
   'checked', 'created_time', 'updated_time', 'plays', 'goods', 'favorites'];
 
+(function () {
+  let i_scr = Gekijou.fields.indexOf('script');
+  let lfields = Gekijou.fields.slice();
+  lfields.splice(i_scr, 1);
+  let list_fields = {};
+  for (let i = 0; i < lfields.length; i++) {
+    list_fields[lfields[i]] = true;
+  }
+  Gekijou.list_fields = list_fields;
+})();
+
 Gekijou.prototype.set = function (data) {
   if (data) {
     for (let field of Gekijou.fields) {
@@ -98,7 +109,8 @@ Gekijou.prototype.getByPage = function *(page) {
   page--; //for index
   var r = yield this.cache.get('page/' + page);
   if (r === null) {
-    r = yield this.collection.find({checked: 1})
+    var lf
+    r = yield this.collection.find({checked: 1}, Gekijou.list_fields)
       .sort({created_time: -1}).skip(page * ONE_PAGE).limit(ONE_PAGE).toArray();
     yield this.cache.set('page/' + page, r);
   }
@@ -108,7 +120,7 @@ Gekijou.prototype.getByPage = function *(page) {
 Gekijou.prototype.getPop = function *() {
   var r = yield this.cache.get('pop');
   if (r === null) {
-    r = yield this.collection.find({checked: 1})
+    r = yield this.collection.find({checked: 1}, Gekijou.list_fields)
       .sort({plays: -1}).limit(5).toArray();
     yield this.cache.set('pop', r);
   }
