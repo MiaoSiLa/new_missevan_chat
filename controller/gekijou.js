@@ -71,6 +71,10 @@ gekijou.get('/new', function *() {
     this.redirect('/member/login?backurl=/gekijou/new');
     return;
   }
+  if (!this.user.isAdmin) {
+    this.status = 403;
+    return;
+  }
 
   var mode = 'default';
   if (this.query && this.query.mode === 'simple') {

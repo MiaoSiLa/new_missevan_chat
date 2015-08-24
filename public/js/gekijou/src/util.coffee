@@ -1047,7 +1047,7 @@ class Editorbar extends ControlBar
 
   searchemotion: () ->
     self = @
-    url = '/theatre/api/emojilist'
+    url = '/api/emojilist'
 
     $input = $ '#emotion-list .searchinput'
     query = $input.val()

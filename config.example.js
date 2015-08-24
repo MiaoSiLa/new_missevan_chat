@@ -37,8 +37,11 @@ var config = {
   },
 
   sso: {
+    // service: 'theatre', or:
+    service: 'missevan',
     url: 'http://192.168.1.10:3002/sso/',
-    secret_key: 'H1m60ntHOwKXniIXNxEBMxSSsk0Env1deAhJ'
+    secret_key: 'H1m60ntHOwKXniIXNxEBMxSSsk0Env1deAhJ',
+    // token_cookie_name: 'token'
   },
 
   app: {

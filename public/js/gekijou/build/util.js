@@ -1197,7 +1197,7 @@ Editorbar = (function(_super) {
   Editorbar.prototype.searchemotion = function() {
     var $input, query, self, url;
     self = this;
-    url = '/theatre/api/emojilist';
+    url = '/api/emojilist';
     $input = $('#emotion-list .searchinput');
     query = $input.val();
     if (query) {

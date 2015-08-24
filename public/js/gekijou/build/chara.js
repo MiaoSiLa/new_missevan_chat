@@ -169,7 +169,7 @@ Chara = (function() {
   Chara.prototype.searchIcon = function() {
     var b, bs, i, p, query, self, type, url, _i, _len;
     self = this;
-    url = '/theatre/api/iconlist?pagesize=12';
+    url = '/api/iconlist?pagesize=12';
     query = this.el.find('#soundsearchinput').val();
     if (query) {
       url += '&name=' + encodeURIComponent(query);
@@ -363,13 +363,16 @@ Chara = (function() {
   };
 
   Chara.prototype.init = function(cb) {
+    var user;
     this.bind();
     if (GG.env === 'dev') {
       this.devbind();
       if (this.charas.length > 0) {
         this.refresh();
       } else if (GG.user) {
-        this.selectId(this.add(GG.user));
+        user = $.extend(GG.user);
+        user.iconurl = user.avatar;
+        this.selectId(this.add(user));
         this.refresh();
       }
       this.searchIcon();

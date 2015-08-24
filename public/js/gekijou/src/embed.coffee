@@ -98,7 +98,7 @@ class ContactList
     self = @
     cl.find('.contact_item').click ->
       actorid = $(@).data 'actorid'
-      url = '/theatre/api/actor?id=' + actorid
+      url = '/api/actor?id=' + actorid
       $.ajax
         url: url,
         dataType: 'json',

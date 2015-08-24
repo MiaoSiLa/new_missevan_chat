@@ -146,7 +146,7 @@ class Chara
 
   searchIcon: () ->
     self = @
-    url = '/theatre/api/iconlist?pagesize=12'
+    url = '/api/iconlist?pagesize=12'
 
     # query
     query = @el.find('#soundsearchinput').val()
@@ -355,7 +355,9 @@ class Chara
       if @charas.length > 0
         @refresh()
       else if GG.user
-        @selectId @add GG.user
+        user = $.extend GG.user
+        user.iconurl = user.avatar;
+        @selectId @add user
         @refresh()
 
       @searchIcon()
