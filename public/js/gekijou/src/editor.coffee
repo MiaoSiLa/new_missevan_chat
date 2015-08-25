@@ -51,6 +51,8 @@ class GekijouEditor
       script += "  showname off\n"
     if @gekijou.opts['instantshow'] is on
       script += "  instantshow on\n"
+    if @gekijou.opts['bgm_sync'] is on
+      script += "  bgm_sync on\n"
     if @gekijou.opts['editormode'] is 'simple'
       script += "  editormode simple\n"
 

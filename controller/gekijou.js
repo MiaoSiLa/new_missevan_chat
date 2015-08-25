@@ -294,7 +294,7 @@ gekijou.get('/edit/:gekijou_id', function *() {
     return;
   }
 
-  if (geki.user_id !== this.user.id) {
+  if (!this.user.isAdmin && geki.user_id !== this.user.id) {
     this.status = 403;
     return;
   }
@@ -360,7 +360,7 @@ gekijou.post('/save', function *() {
           this.body = r;
           return;
         }
-        if (gekij.user_id !== this.user.id) {
+        if (!this.user.isAdmin && gekij.user_id !== this.user.id) {
           r.code = 2;
           r.message = '非作者不能进行编辑';
           this.body = r;
@@ -409,7 +409,7 @@ gekijou.post('/delete', function *() {
 
       if (geki.user_id !== this.user.id) {
         r.code = 2;
-        r.message = '非作者不能进行编辑';
+        r.message = '非作者不能删除';
         this.body = r;
         return;
       }

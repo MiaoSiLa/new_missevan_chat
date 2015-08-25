@@ -1,4 +1,4 @@
-var GAction, GEvent, GEventManager;
+var EventStatus, GAction, GEvent, GEventManager;
 
 GAction = (function() {
   function GAction(type) {
@@ -453,6 +453,99 @@ GEvent = (function() {
 
 })();
 
+EventStatus = (function() {
+  function EventStatus(em) {
+    this.em = em;
+  }
+
+  EventStatus.prototype.status = function(_i) {
+    var ac, ev, i, s, _j, _k, _len, _len1, _ref, _ref1;
+    s = {
+      bg_music: null,
+      bg_image: null,
+      time: 0
+    };
+    _ref = this.em.events;
+    for (i = _j = 0, _len = _ref.length; _j < _len; i = ++_j) {
+      ev = _ref[i];
+      if (i > _i) {
+        break;
+      }
+      _ref1 = ev.actions;
+      for (_k = 0, _len1 = _ref1.length; _k < _len1; _k++) {
+        ac = _ref1[_k];
+        if (ac.type === 'sound' && ac.stype === 'background') {
+          s.bg_music = {
+            val: ac.val,
+            action: ac,
+            time: s.time
+          };
+        } else if (ac.type === 'background') {
+          s.bg_image = {
+            val: ac.val,
+            action: ac,
+            time: s.time
+          };
+        }
+      }
+      s.time += ev.realtime();
+    }
+    return s;
+  };
+
+  EventStatus.prototype.compare = function(i2, i1) {
+    if (i1 == null) {
+      i1 = -1;
+    }
+    this.s2 = this.status(i2);
+    if (i1 !== -1) {
+      this.s1 = this.status(i1);
+    }
+  };
+
+  EventStatus.prototype.valchanged = function(k) {
+    if (this.s2 && this.s2[k] && this.s2[k].val) {
+      if (!this.s1 || this.s1 && (!this.s1[k] || (this.s1[k] && this.s1[k].val !== this.s2[k].val))) {
+        true;
+      }
+    } else if (this.s1 && this.s1[k] && (!this.s2 || !this.s2[k])) {
+      true;
+    }
+    return false;
+  };
+
+  EventStatus.prototype.recover = function(cb) {
+    var pos, s;
+    if (this.valchanged('bg_image')) {
+      if (this.s2 && this.s2.bg_image) {
+        this.s2.bg_image.action.run();
+      }
+    }
+    if (this.valchanged('bg_music')) {
+      if (this.s1 && this.s1.bg_music) {
+        this.s1.bg_music.action.stop();
+      }
+    }
+    if (this.s2 && this.s2.bg_music) {
+      s = this.s2.bg_music.action.sound;
+      if (s) {
+        if (GG.opts['bgm_sync']) {
+          pos = this.s2.time - this.s2.bg_music.time;
+          pos = pos % s.duration;
+          s.setPosition(pos);
+        }
+        s.resume();
+      }
+    }
+    if (cb != null) {
+      cb();
+    }
+  };
+
+  return EventStatus;
+
+})();
+
 GEventManager = (function() {
   function GEventManager() {
     this.events = [];
@@ -480,6 +573,15 @@ GEventManager = (function() {
 
   GEventManager.prototype.currentIndex = function() {
     return this._currentIndex;
+  };
+
+  GEventManager.prototype.switchTo = function(i) {
+    if (this._currentIndex === i) {
+      return;
+    }
+    this._status = new EventStatus(this);
+    this._status.compare(i, this._currentIndex);
+    this.current(i);
   };
 
   GEventManager.prototype.next = function() {
@@ -718,9 +820,19 @@ GEventManager = (function() {
   };
 
   GEventManager.prototype.run = function(cb) {
+    var cbrun, self;
     if (this._event) {
-      this.setVolume();
-      this._event.run(cb);
+      self = this;
+      cbrun = function() {
+        self.setVolume();
+        self._event.run(cb);
+      };
+      if (this._status) {
+        this._status.recover(cbrun);
+        this._status = null;
+      } else {
+        cbrun();
+      }
     }
   };
 

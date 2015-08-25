@@ -6,10 +6,23 @@ class SoundCollection
 
   init: (cb) ->
     # 初始化 soundManager
-    soundManager.onready -> cb() if cb?
+    soundManager.onready ->
+      if play.soundBox
+        # disable chat sound effect
+        play.soundBox.playChat = -> off
+      cb() if cb?
+      return
 
-  stopAll: ->
-    soundManager.stopAll()
+  stopAll: (nobg = off) ->
+    if nobg
+      for k of @_soundurlmap
+        if k isnt 'background'
+          url = @_soundurlmap[k]
+          if url
+            s = soundManager.getSoundById url
+            if s then s.stop()
+    else
+      soundManager.stopAll()
 
   pauseAll: ->
     soundManager.pauseAll()

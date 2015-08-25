@@ -54,6 +54,9 @@ GekijouEditor = (function() {
     if (this.gekijou.opts['instantshow'] === true) {
       script += "  instantshow on\n";
     }
+    if (this.gekijou.opts['bgm_sync'] === true) {
+      script += "  bgm_sync on\n";
+    }
     if (this.gekijou.opts['editormode'] === 'simple') {
       script += "  editormode simple\n";
     }

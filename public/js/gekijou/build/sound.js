@@ -8,14 +8,45 @@ SoundCollection = (function() {
 
   SoundCollection.prototype.init = function(cb) {
     return soundManager.onready(function() {
+      if (play.soundBox) {
+        play.soundBox.playChat = function() {
+          return false;
+        };
+      }
       if (cb != null) {
-        return cb();
+        cb();
       }
     });
   };
 
-  SoundCollection.prototype.stopAll = function() {
-    return soundManager.stopAll();
+  SoundCollection.prototype.stopAll = function(nobg) {
+    var k, s, url, _results;
+    if (nobg == null) {
+      nobg = false;
+    }
+    if (nobg) {
+      _results = [];
+      for (k in this._soundurlmap) {
+        if (k !== 'background') {
+          url = this._soundurlmap[k];
+          if (url) {
+            s = soundManager.getSoundById(url);
+            if (s) {
+              _results.push(s.stop());
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    } else {
+      return soundManager.stopAll();
+    }
   };
 
   SoundCollection.prototype.pauseAll = function() {

@@ -166,7 +166,7 @@ class Gekijou
       switch lineprops[0]
         when 'album'
           @album.set lineprops[1]
-        when 'showname', 'instantshow'
+        when 'showname', 'instantshow', 'bgm_sync'
           opt = {}
           if lineprops[1] is 'off'
             opt[lineprops[0]] = off
@@ -213,10 +213,14 @@ class Gekijou
     return
 
   moveTo: (i) ->
+    self = @
+    curIndex = @em.currentIndex()
+    @reset()
     @pb.moveToIndex i
-    @em.current i
+    @em.current curIndex
+    @sound.stopAll on
+    @em.switchTo i
     @played i
-    @sound.stopAll()
     @em.run()
     return
 
@@ -248,7 +252,6 @@ class Gekijou
         if i >= 0
           if @_playing
             @pause()
-          @reset()
           @moveTo i
           @play()
       when 'end'
@@ -334,6 +337,7 @@ class Gekijou
     @_playing = no
     @_finished = on
 
+    @sound.stopAll()
     @pb.finish()
 
     if GG.env isnt 'dev'

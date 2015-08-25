@@ -571,7 +571,6 @@ Playbar = (function(_super) {
             if (i + 1 >= GG.em.length()) {
               return;
             }
-            GG.gekijou.reset();
             GG.gekijou.moveTo(i + 1);
             break;
           case 40:
@@ -582,7 +581,6 @@ Playbar = (function(_super) {
             if (i - 1 < 0) {
               return;
             }
-            GG.gekijou.reset();
             GG.gekijou.moveTo(i - 1);
         }
       });
@@ -698,7 +696,6 @@ Playbar = (function(_super) {
           if (GG.gekijou.isplaying()) {
             GG.gekijou.pause();
           }
-          GG.gekijou.reset();
           GG.gekijou.moveTo(i);
           if (GG.chara.currentId() !== charaId) {
             GG.chara.selectId(charaId);
@@ -1329,6 +1326,7 @@ Editorbar = (function(_super) {
       modal = $('#settingsmodal');
       modal.find('#cb_show_name').prop('checked', GG.opts['showname']);
       modal.find('#cb_instant_show').prop('checked', GG.opts['instantshow']);
+      modal.find('#cb_bgm_sync').prop('checked', GG.opts['bgm_sync']);
       moTool.showModalBox(modal);
     });
     $('#settingsokbtn').click(function() {
@@ -1336,7 +1334,8 @@ Editorbar = (function(_super) {
       modal = $('#settingsmodal');
       opts = {
         showname: modal.find('#cb_show_name').prop('checked'),
-        instantshow: modal.find('#cb_instant_show').prop('checked')
+        instantshow: modal.find('#cb_instant_show').prop('checked'),
+        bgm_sync: modal.find('#cb_bgm_sync').prop('checked')
       };
       GG.gekijou.setOptions(opts);
       moTool.hideModalBox(modal);

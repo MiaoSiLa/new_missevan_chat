@@ -24,6 +24,9 @@
 #  # 指定了剧场呈现方式，是否为立即展示，默认为 `off`
 #  instantshow [on, off]
 #
+#  # 指定了背景乐是否随播放时间同步，默认为 `off`
+#  bgm_sync [on, off]
+#
 
 setup {
   album 55690

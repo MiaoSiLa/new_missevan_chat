@@ -390,6 +390,71 @@ class GEvent
   realtime: () ->
     @time
 
+class EventStatus
+  constructor: (@em) ->
+
+  status: (_i) ->
+    s =
+      bg_music: null,
+      bg_image: null,
+      time: 0
+
+    for ev, i in @em.events
+      if i > _i then break
+
+      for ac in ev.actions
+        if ac.type is 'sound' and ac.stype is 'background'
+          s.bg_music =
+            val: ac.val,
+            action: ac,
+            time: s.time
+        else if ac.type is 'background'
+          s.bg_image =
+            val: ac.val,
+            action: ac,
+            time: s.time
+      s.time += ev.realtime()
+
+    s
+
+  compare: (i2, i1 = -1) ->
+    @s2 = @status i2
+    @s1 = @status i1 if i1 isnt -1
+    return
+
+  valchanged: (k) ->
+    if @s2 && @s2[k] && @s2[k].val
+      if (not @s1 or @s1 and (not @s1[k] || (@s1[k] and @s1[k].val isnt @s2[k].val)))
+        # 原来没有 或者 原来有但是不同
+        on
+    else if @s1 and @s1[k] and (not @s2 or not @s2[k])
+      # 原来有现在没有
+      on
+    off
+
+  recover: (cb) ->
+    if @valchanged('bg_image')
+      if @s2 and @s2.bg_image
+        @s2.bg_image.action.run()
+      # else
+        # no possible
+        # remove background
+
+    if @valchanged('bg_music')
+      @s1.bg_music.action.stop() if @s1 and @s1.bg_music
+
+    if @s2 and @s2.bg_music
+      s = @s2.bg_music.action.sound
+      if s
+        if GG.opts['bgm_sync']
+          pos = @s2.time - @s2.bg_music.time
+          pos = pos % s.duration
+          s.setPosition pos
+        s.resume()
+
+    cb() if cb?
+    return
+
 class GEventManager
 
   constructor: () ->
@@ -411,6 +476,16 @@ class GEventManager
 
   currentIndex: ->
     @_currentIndex
+
+  switchTo: (i) ->
+    if @_currentIndex is i
+      return
+
+    @_status = new EventStatus(@)
+    @_status.compare i, @_currentIndex
+
+    @current i
+    return
 
   next: ->
     if @_currentIndex < @events.length - 1
@@ -585,8 +660,19 @@ class GEventManager
 
   run: (cb) ->
     if @_event
-      @setVolume()
-      @_event.run cb
+      self = @
+      cbrun = ->
+        self.setVolume()
+        self._event.run cb
+        return
+
+      if @_status
+        # 恢复背景乐等延续状态
+        @_status.recover cbrun
+        @_status = null
+      else
+        cbrun()
+
     return
 
   length: ->

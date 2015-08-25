@@ -175,6 +175,7 @@ Gekijou = (function() {
           break;
         case 'showname':
         case 'instantshow':
+        case 'bgm_sync':
           opt = {};
           if (lineprops[1] === 'off') {
             opt[lineprops[0]] = false;
@@ -232,10 +233,15 @@ Gekijou = (function() {
   };
 
   Gekijou.prototype.moveTo = function(i) {
+    var curIndex, self;
+    self = this;
+    curIndex = this.em.currentIndex();
+    this.reset();
     this.pb.moveToIndex(i);
-    this.em.current(i);
+    this.em.current(curIndex);
+    this.sound.stopAll(true);
+    this.em.switchTo(i);
     this.played(i);
-    this.sound.stopAll();
     this.em.run();
   };
 
@@ -275,7 +281,6 @@ Gekijou = (function() {
           if (this._playing) {
             this.pause();
           }
-          this.reset();
           this.moveTo(i);
           this.play();
         }
@@ -378,6 +383,7 @@ Gekijou = (function() {
     }
     this._playing = false;
     this._finished = true;
+    this.sound.stopAll();
     this.pb.finish();
     if (GG.env !== 'dev') {
       moTool.postAjax({

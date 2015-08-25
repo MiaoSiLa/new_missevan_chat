@@ -481,7 +481,6 @@ class Playbar extends ControlBar
             i = GG.em.currentIndex()
             if i + 1 >= GG.em.length()
               return
-            GG.gekijou.reset()
             GG.gekijou.moveTo i + 1
           when 40
             # down
@@ -489,7 +488,6 @@ class Playbar extends ControlBar
             i = GG.em.currentIndex()
             if i - 1 < 0
               return
-            GG.gekijou.reset()
             GG.gekijou.moveTo i - 1
         return
 
@@ -608,7 +606,6 @@ class Playbar extends ControlBar
 
           if GG.gekijou.isplaying()
             GG.gekijou.pause()
-          GG.gekijou.reset()
 
           # only play this event
           GG.gekijou.moveTo i
@@ -1176,6 +1173,7 @@ class Editorbar extends ControlBar
       modal = $ '#settingsmodal'
       modal.find('#cb_show_name').prop 'checked', GG.opts['showname']
       modal.find('#cb_instant_show').prop 'checked', GG.opts['instantshow']
+      modal.find('#cb_bgm_sync').prop 'checked', GG.opts['bgm_sync']
       moTool.showModalBox modal
       return
 
@@ -1184,7 +1182,8 @@ class Editorbar extends ControlBar
       modal = $ '#settingsmodal'
       opts =
         showname: modal.find('#cb_show_name').prop('checked'),
-        instantshow: modal.find('#cb_instant_show').prop('checked')
+        instantshow: modal.find('#cb_instant_show').prop('checked'),
+        bgm_sync: modal.find('#cb_bgm_sync').prop('checked')
       GG.gekijou.setOptions opts
       moTool.hideModalBox modal
       return
