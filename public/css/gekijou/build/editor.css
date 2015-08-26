@@ -39,6 +39,7 @@
   padding-right: 40px;
   padding-bottom: 65px;
   background-color: white;
+  overflow-y: auto;
 }
 #inputbox.full-editor #inputboxtextareapostbtn {
   z-index: 102;

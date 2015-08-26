@@ -924,8 +924,11 @@ class Editorbar extends ControlBar
               if html.indexOf('<') isnt -1
                 # need process html
                 s1 = html.replace /<img [^>]*?src=(".+?")[^>]*?\/?>/gi, "|img:$1|"
+                s1 = s1.replace /<br\/?>/gi, '\n'
+                s1 = s1.replace /<div>(.*?)<\/div>/gi, '\n$1'
                 s2 = s1.replace /<.*?>/g, ''
-                html = s2.replace /\|img\:"(.+?)"\|/gi, "<img src=\"$1\" />"
+                s2 = s2.replace /\|img\:"(.+?)"\|/gi, "<img src=\"$1\" />"
+                html = s2.replace /\n/g, '<br>'
                 $textarea.html html
               return
             return
@@ -1233,7 +1236,9 @@ class Editorbar extends ControlBar
         if self._extend
           text = $textbox.html()
           if text
-            curev.parseAction text, on
+            s1 = text.replace /<br\/?>/gi, '\n'
+            s1 = s1.replace /<div>(.*?)<\/div>/gi, '\n$1'
+            curev.parseAction s1, on
             $textbox.html ''
         else
           text = $textbox.val()
