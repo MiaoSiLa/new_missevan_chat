@@ -534,7 +534,11 @@ EventStatus = (function() {
           pos = pos % s.duration;
           s.setPosition(pos);
         }
-        s.resume();
+        if (s.playState === 0) {
+          s.play();
+        } else {
+          s.resume();
+        }
       }
     }
     if (cb != null) {

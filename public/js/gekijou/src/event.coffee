@@ -450,7 +450,10 @@ class EventStatus
           pos = @s2.time - @s2.bg_music.time
           pos = pos % s.duration
           s.setPosition pos
-        s.resume()
+        if s.playState is 0
+          s.play()
+        else
+          s.resume()
 
     cb() if cb?
     return
