@@ -282,7 +282,7 @@ Chara = (function() {
     $modal.find('#newchara_username').val(user.username);
     self = this;
     mainIconUrl = user.iconurl;
-    url = '/theatre/api/actor?id=' + user.iconid;
+    url = '/api/actor?id=' + user.iconid;
     $.ajax({
       url: url,
       dataType: 'json',
