@@ -335,9 +335,6 @@ gekijou.post('/save', function *() {
       }
 
       var geki = {
-        // dont update user information
-        //user_id: this.user.id,
-        //username: this.user.username,
         title: body.title,
         intro: body.intro,
         script: body.script
@@ -349,6 +346,10 @@ gekijou.post('/save', function *() {
           this.body = r;
           return;
         }
+      } else {
+        // set user info first time
+        geki.user_id = this.user.id;
+        geki.username = this.user.username;
       }
 
       var g;
