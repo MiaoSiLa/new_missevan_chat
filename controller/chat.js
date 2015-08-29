@@ -25,6 +25,15 @@ chat.get('/', function *() {
   });
 });
 
+chat.get('/ip', function *() {
+  this.body = {
+    'x-real-ip': this.headers['x-real-ip'],
+    'x-forwarded-for': this.headers['x-forwarded-for'],
+    'remoteip': this.headers['remoteip'],
+    'ip': this.ip
+  };
+});
+
 chat.get('/room/ticket',function *() {
 	if (this.user && this.user.teamid) {
 		var roomModel = new Room();
