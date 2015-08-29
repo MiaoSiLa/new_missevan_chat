@@ -55,7 +55,11 @@ var config = {
     keyGrip: [
       'phahMi0Pue3fohPae8Kohboo7phoAuy7ohnuqui9OhRoo3siLuEo1epi',
       'reihet5Yhs3xaeDhee0ieken0HoxahV8zahthah0Wahhree3KauaPh2i'
-    ]
+    ],
+
+    /* trust proxy header as real client ip  */
+    // leave empty to use default, x-forwarded-for[0], when app.proxy = true
+    trust_proxy: ''
   },
 
   web: {
