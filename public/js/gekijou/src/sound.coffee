@@ -13,6 +13,28 @@ class SoundCollection
       cb() if cb?
       return
 
+  get: (soundid, cb) ->
+    url = "/api/sound/getsound?soundid=" + soundid
+    $.ajax
+      url: url,
+      dataType: 'json',
+      success: (data) ->
+        cb(data);
+        return
+    return
+
+  load: (url, cb) ->
+    soundUrl = url
+    s = soundManager.createSound
+					id: soundUrl,
+					url: index.mo.soundPath + soundUrl,
+					multiShot: no,
+					onload: ->
+            cb() if cb?
+            return
+    s.load()
+    s
+
   stopAll: (nobg = off) ->
     if nobg
       for k of @_soundurlmap

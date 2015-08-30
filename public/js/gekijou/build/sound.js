@@ -19,6 +19,35 @@ SoundCollection = (function() {
     });
   };
 
+  SoundCollection.prototype.get = function(soundid, cb) {
+    var url;
+    url = "/api/sound/getsound?soundid=" + soundid;
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      success: function(data) {
+        cb(data);
+      }
+    });
+  };
+
+  SoundCollection.prototype.load = function(url, cb) {
+    var s, soundUrl;
+    soundUrl = url;
+    s = soundManager.createSound({
+      id: soundUrl,
+      url: index.mo.soundPath + soundUrl,
+      multiShot: false,
+      onload: function() {
+        if (cb != null) {
+          cb();
+        }
+      }
+    });
+    s.load();
+    return s;
+  };
+
   SoundCollection.prototype.stopAll = function(nobg) {
     var k, s, url, _results;
     if (nobg == null) {

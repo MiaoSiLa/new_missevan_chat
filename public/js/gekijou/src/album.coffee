@@ -51,7 +51,7 @@ class SoundAlbum
       # load
       self = @
       moTool.getAjax
-        url: "/sound/soundlist?albumid=" + albumid,
+        url: "/api/sound/soundlist?albumid=" + albumid,
         showLoad: no,
         callBack: (data) ->
           if data and data.state is 'success'

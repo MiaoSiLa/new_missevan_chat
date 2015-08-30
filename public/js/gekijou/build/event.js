@@ -33,25 +33,17 @@ GAction = (function() {
           cb();
           return;
         }
-        moTool.getAjax({
-          url: "/sound/getsound?soundid=" + this.val,
-          showLoad: false,
-          callBack: function(data2) {
-            var s, sound, soundUrl;
-            sound = data2.successVal.sound;
-            soundUrl = sound.soundurl;
-            s = soundManager.createSound({
-              id: soundUrl,
-              url: index.mo.soundPath + soundUrl,
-              multiShot: false,
-              onload: function() {
-                self.ready = true;
-                cb();
-              }
-            });
-            s.load();
+        GG.sound.get(this.val, function(data) {
+          var sound;
+          if (data && data.state === 'success' && data.info && data.info.sound) {
+            sound = data.info.sound;
             self.Jsound = sound;
-            self.sound = s;
+            self.sound = GG.sound.load(sound.soundurl, function() {
+              self.ready = true;
+              cb();
+            });
+          } else {
+            moTool.showError('加载声音 ' + self.val + ' 失败！');
           }
         });
         break;

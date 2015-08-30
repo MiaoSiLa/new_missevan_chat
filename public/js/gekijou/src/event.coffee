@@ -26,24 +26,18 @@ class GAction
           cb()
           return
 
-        moTool.getAjax
-          url: "/sound/getsound?soundid=" + @val,
-          showLoad: no,
-          callBack: (data2) ->
-            sound = data2.successVal.sound
-            soundUrl = sound.soundurl
-            s = soundManager.createSound
-        					id: soundUrl,
-        					url: index.mo.soundPath + soundUrl,
-        					multiShot: no,
-        					onload: ->
-                    self.ready = on
-                    cb()
-                    return
-            s.load()
+        GG.sound.get @val, (data) ->
+          if data and data.state is 'success' and \
+              data.info and data.info.sound
+            sound = data.info.sound
             self.Jsound = sound
-            self.sound = s
-            return
+            self.sound = GG.sound.load sound.soundurl, ->
+              self.ready = on
+              cb()
+              return
+          else
+            moTool.showError '加载声音 ' + self.val + ' 失败！'
+          return
       else
         cb()
 

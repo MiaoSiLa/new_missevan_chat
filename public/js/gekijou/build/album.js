@@ -63,7 +63,7 @@ SoundAlbum = (function() {
       }
       self = this;
       moTool.getAjax({
-        url: "/sound/soundlist?albumid=" + albumid,
+        url: "/api/sound/soundlist?albumid=" + albumid,
         showLoad: false,
         callBack: function(data) {
           var s, _i, _len, _ref;
