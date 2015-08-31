@@ -238,7 +238,8 @@ Chara = (function() {
   };
 
   Chara.prototype.updateCatalog = function(icon_catalogs) {
-    var html, ic, _i, _len;
+    var html, ic, self, _i, _len;
+    self = this;
     html = '<div class="s_m_t_r_b btn-default s_m_t_r_b_a">全部头像</div>\n';
     for (_i = 0, _len = icon_catalogs.length; _i < _len; _i++) {
       ic = icon_catalogs[_i];

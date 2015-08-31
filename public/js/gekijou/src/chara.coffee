@@ -205,6 +205,8 @@ class Chara
 
   updateCatalog: (icon_catalogs) ->
     # default
+    self = @
+    
     html = '<div class="s_m_t_r_b btn-default s_m_t_r_b_a">全部头像</div>\n';
     for ic in icon_catalogs
       html += '<div class="s_m_t_r_b btn-default" data-catalog="' + ic.id + '">' + ic.catalog_name + '</div>\n'
@@ -220,7 +222,7 @@ class Chara
       self.pagination.page 1
       self.searchIcon()
       return
-  
+
     return
 
   updatePagination: (page, pagecount) ->
