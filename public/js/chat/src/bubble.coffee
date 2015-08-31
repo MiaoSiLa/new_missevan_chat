@@ -77,6 +77,11 @@ class ChatBubble
   popup: (data, cb) ->
     self = @
 
+    # fault
+    if not data.sender
+      cb() if cb?
+      return
+
     subTitle = ''
     iconColor = if data.sender.iconColor? then data.sender.iconColor else '#91c0edm#cde1edm#709cc9m#5079c9m#709cc9';
 

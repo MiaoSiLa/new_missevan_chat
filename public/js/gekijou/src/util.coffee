@@ -235,6 +235,7 @@ class ImageTools
       add: (e, data) ->
         self.result = null
         curev = GG.em.current()
+        # curcharaid = GG.chara.currentId()
         if curev
           self.progress '0%'
           modal.find('#imageokbtn').addClass 'pending'
@@ -1257,16 +1258,20 @@ class Editorbar extends ControlBar
         return
 
       curev = self.em.current()
+      curcharaid = GG.chara.currentId()
       if curev
         switch type
           when 'chat'
-            if self._extend
-              $textarea = self.$ '#inputboxtextarea'
-              # TODO: check url and replace selection range
-              # class="chat-emotion"
-              $textarea.append '<img src=' + JSON.stringify(url) + ' />'
+            if curcharaid >= 0
+              if self._extend
+                $textarea = self.$ '#inputboxtextarea'
+                # TODO: check url and replace selection range
+                # class="chat-emotion"
+                $textarea.append '<img src=' + JSON.stringify(url) + ' />'
+              else
+                curev.showImage url
             else
-              curev.showImage url
+              moTool.showError '请先选择一个角色'
           #when 'nochara'
             # 状态图片
           when 'background'

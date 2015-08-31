@@ -97,6 +97,8 @@ class GAction
         when 'text'
           if not hasChara
             if GG.env is 'dev'
+              action.line = index.mo.chatLine
+              GG.bubble.text '错误的内容'
               moTool.showError '请先选择一个角色'
 
             callback()
