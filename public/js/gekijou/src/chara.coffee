@@ -209,6 +209,18 @@ class Chara
     for ic in icon_catalogs
       html += '<div class="s_m_t_r_b btn-default" data-catalog="' + ic.id + '">' + ic.catalog_name + '</div>\n'
     @el.find('.s_m_t_r').html html
+
+    # bind event
+    @el.find('.s_m_t_r_b').click ->
+      if not $(this).hasClass 's_m_t_r_b_a'
+        self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'
+        $(this).addClass 's_m_t_r_b_a'
+
+      self.el.find('#soundsearchinput').val ''
+      self.pagination.page 1
+      self.searchIcon()
+      return
+  
     return
 
   updatePagination: (page, pagecount) ->
@@ -318,16 +330,6 @@ class Chara
     $chbtns.find('#nocharabtn').click ->
       # no chara button click
       self.select -1
-      return
-
-    @el.find('.s_m_t_r_b').click ->
-      if not $(this).hasClass 's_m_t_r_b_a'
-        self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass 's_m_t_r_b_a'
-        $(this).addClass 's_m_t_r_b_a'
-
-      self.el.find('#soundsearchinput').val ''
-      self.pagination.page 1
-      self.searchIcon()
       return
 
     @el.find('#searchbtn').click ->

@@ -245,6 +245,15 @@ Chara = (function() {
       html += '<div class="s_m_t_r_b btn-default" data-catalog="' + ic.id + '">' + ic.catalog_name + '</div>\n';
     }
     this.el.find('.s_m_t_r').html(html);
+    this.el.find('.s_m_t_r_b').click(function() {
+      if (!$(this).hasClass('s_m_t_r_b_a')) {
+        self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass('s_m_t_r_b_a');
+        $(this).addClass('s_m_t_r_b_a');
+      }
+      self.el.find('#soundsearchinput').val('');
+      self.pagination.page(1);
+      self.searchIcon();
+    });
   };
 
   Chara.prototype.updatePagination = function(page, pagecount) {
@@ -345,15 +354,6 @@ Chara = (function() {
     $chbtns.show();
     $chbtns.find('#nocharabtn').click(function() {
       self.select(-1);
-    });
-    this.el.find('.s_m_t_r_b').click(function() {
-      if (!$(this).hasClass('s_m_t_r_b_a')) {
-        self.el.find('.s_m_t_r_b.s_m_t_r_b_a').removeClass('s_m_t_r_b_a');
-        $(this).addClass('s_m_t_r_b_a');
-      }
-      self.el.find('#soundsearchinput').val('');
-      self.pagination.page(1);
-      self.searchIcon();
     });
     this.el.find('#searchbtn').click(function() {
       self.pagination.page(1);
