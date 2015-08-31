@@ -81,3 +81,7 @@ config.js
 .jshintrc
 .tern-project
 .idea/
+
+# minify
+*.min.js
+*.min.css
