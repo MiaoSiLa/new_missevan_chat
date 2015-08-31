@@ -87,6 +87,12 @@ ChatBubble = (function() {
   ChatBubble.prototype.popup = function(data, cb) {
     var chathtml, colorlist, iconColor, img, self, subTitle, subTitleColor, text, userName, userNameColor, userNameHtml;
     self = this;
+    if (!data.sender) {
+      if (cb != null) {
+        cb();
+      }
+      return;
+    }
     subTitle = '';
     iconColor = data.sender.iconColor != null ? data.sender.iconColor : '#91c0edm#cde1edm#709cc9m#5079c9m#709cc9';
     colorlist = iconColor.split('m');

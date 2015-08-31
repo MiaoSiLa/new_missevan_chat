@@ -1403,20 +1403,25 @@ Editorbar = (function(_super) {
       }
     });
     this.imgtool.initImageUpload(function(err, type, url) {
-      var $textarea, curev;
+      var $textarea, curcharaid, curev;
       if (err || typeof url !== 'string') {
         moTool.showError('图片上传失败');
         return;
       }
       curev = self.em.current();
+      curcharaid = GG.chara.currentId();
       if (curev) {
         switch (type) {
           case 'chat':
-            if (self._extend) {
-              $textarea = self.$('#inputboxtextarea');
-              $textarea.append('<img src=' + JSON.stringify(url) + ' />');
+            if (curcharaid >= 0) {
+              if (self._extend) {
+                $textarea = self.$('#inputboxtextarea');
+                $textarea.append('<img src=' + JSON.stringify(url) + ' />');
+              } else {
+                curev.showImage(url);
+              }
             } else {
-              curev.showImage(url);
+              moTool.showError('请先选择一个角色');
             }
             break;
           case 'background':
