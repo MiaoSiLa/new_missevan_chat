@@ -166,6 +166,20 @@ Chara = (function() {
     });
   };
 
+  Chara.prototype.initIconCatalog = function() {
+    var self, url;
+    self = this;
+    url = '/api/cataloglist/actor';
+    moTool.getAjax({
+      url: url,
+      callBack: function(data) {
+        if (data.state === 'success' && data.info) {
+          self.updateCatalog(data.info);
+        }
+      }
+    });
+  };
+
   Chara.prototype.searchIcon = function() {
     var b, bs, i, p, query, self, type, url, _i, _len;
     self = this;
@@ -221,6 +235,16 @@ Chara = (function() {
         self.showIcons(iconusers);
       }
     });
+  };
+
+  Chara.prototype.updateCatalog = function(icon_catalogs) {
+    var html, ic, _i, _len;
+    html = '<div class="s_m_t_r_b btn-default s_m_t_r_b_a">全部头像</div>\n';
+    for (_i = 0, _len = icon_catalogs.length; _i < _len; _i++) {
+      ic = icon_catalogs[_i];
+      html += '<div class="s_m_t_r_b btn-default" data-catalog="' + ic.id + '">' + ic.catalog_name + '</div>\n';
+    }
+    this.el.find('.s_m_t_r').html(html);
   };
 
   Chara.prototype.updatePagination = function(page, pagecount) {
@@ -375,6 +399,7 @@ Chara = (function() {
         this.selectId(this.add(user));
         this.refresh();
       }
+      this.initIconCatalog();
       this.searchIcon();
     } else {
       this.el.addClass('non-editor');

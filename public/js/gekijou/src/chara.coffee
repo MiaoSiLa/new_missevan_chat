@@ -144,6 +144,19 @@ class Chara
 
     return
 
+  initIconCatalog: () ->
+    self = @
+    url = '/api/cataloglist/actor'
+
+    moTool.getAjax
+      url: url,
+      callBack: (data) ->
+        if data.state is 'success' and data.info
+          self.updateCatalog data.info
+        return
+
+    return
+
   searchIcon: () ->
     self = @
     url = '/api/iconlist?pagesize=12'
@@ -188,6 +201,14 @@ class Chara
         self.showIcons iconusers
         return
 
+    return
+
+  updateCatalog: (icon_catalogs) ->
+    # default
+    html = '<div class="s_m_t_r_b btn-default s_m_t_r_b_a">全部头像</div>\n';
+    for ic in icon_catalogs
+      html += '<div class="s_m_t_r_b btn-default" data-catalog="' + ic.id + '">' + ic.catalog_name + '</div>\n'
+    @el.find('.s_m_t_r').html html
     return
 
   updatePagination: (page, pagecount) ->
@@ -360,6 +381,7 @@ class Chara
         @selectId @add user
         @refresh()
 
+      @initIconCatalog()
       @searchIcon()
     else
       @el.addClass 'non-editor'

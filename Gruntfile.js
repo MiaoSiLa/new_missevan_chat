@@ -100,10 +100,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', ['less', 'coffee', 'cssmin', 'uglify:release']);
+  grunt.registerTask('default', ['less', 'coffee', 'cssmin', 'uglify']);
   grunt.registerTask('js', ['coffee:compile']);
   grunt.registerTask('embed', ['coffee:embed', 'uglify:embed']);
   grunt.registerTask('css', ['less']);
+  grunt.registerTask('min', ['cssmin', 'uglify']);
 
   /*
   grunt.loadNpmTasks('grunt-contrib-concat');

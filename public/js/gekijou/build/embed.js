@@ -103,7 +103,7 @@ ContactList = (function() {
     cl.find('.contact_item').click(function() {
       var actorid, url;
       actorid = $(this).data('actorid');
-      url = '/theatre/api/actor?id=' + actorid;
+      url = '/api/actor?id=' + actorid;
       $.ajax({
         url: url,
         dataType: 'json',
