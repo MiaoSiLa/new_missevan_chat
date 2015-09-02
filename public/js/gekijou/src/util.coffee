@@ -1235,6 +1235,10 @@ class Editorbar extends ControlBar
       if curev
         $textbox = self.$('#inputboxtextarea')
         if self._extend
+          curcharaid = GG.chara.currentId()
+          if curcharaid < 0
+            moTool.showError '请先选择一个角色'
+            return
           text = $textbox.html()
           if text
             s1 = text.replace /<br\/?>/gi, '\n'
@@ -1258,20 +1262,16 @@ class Editorbar extends ControlBar
         return
 
       curev = self.em.current()
-      curcharaid = GG.chara.currentId()
       if curev
         switch type
           when 'chat'
-            if curcharaid >= 0
-              if self._extend
-                $textarea = self.$ '#inputboxtextarea'
-                # TODO: check url and replace selection range
-                # class="chat-emotion"
-                $textarea.append '<img src=' + JSON.stringify(url) + ' />'
-              else
-                curev.showImage url
+            if self._extend
+              $textarea = self.$ '#inputboxtextarea'
+              # TODO: check url and replace selection range
+              # class="chat-emotion"
+              $textarea.append '<img src=' + JSON.stringify(url) + ' />'
             else
-              moTool.showError '请先选择一个角色'
+              curev.showImage url
           #when 'nochara'
             # 状态图片
           when 'background'

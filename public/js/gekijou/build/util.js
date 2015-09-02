@@ -1378,11 +1378,16 @@ Editorbar = (function(_super) {
       self.setcmd(cmd);
     });
     this.$('#inputboxtextareapostbtn').click(function() {
-      var $textbox, curev, s1, text;
+      var $textbox, curcharaid, curev, s1, text;
       curev = self.em.current();
       if (curev) {
         $textbox = self.$('#inputboxtextarea');
         if (self._extend) {
+          curcharaid = GG.chara.currentId();
+          if (curcharaid < 0) {
+            moTool.showError('请先选择一个角色');
+            return;
+          }
           text = $textbox.html();
           if (text) {
             s1 = text.replace(/<br\/?>/gi, '\n');
@@ -1403,25 +1408,20 @@ Editorbar = (function(_super) {
       }
     });
     this.imgtool.initImageUpload(function(err, type, url) {
-      var $textarea, curcharaid, curev;
+      var $textarea, curev;
       if (err || typeof url !== 'string') {
         moTool.showError('图片上传失败');
         return;
       }
       curev = self.em.current();
-      curcharaid = GG.chara.currentId();
       if (curev) {
         switch (type) {
           case 'chat':
-            if (curcharaid >= 0) {
-              if (self._extend) {
-                $textarea = self.$('#inputboxtextarea');
-                $textarea.append('<img src=' + JSON.stringify(url) + ' />');
-              } else {
-                curev.showImage(url);
-              }
+            if (self._extend) {
+              $textarea = self.$('#inputboxtextarea');
+              $textarea.append('<img src=' + JSON.stringify(url) + ' />');
             } else {
-              moTool.showError('请先选择一个角色');
+              curev.showImage(url);
             }
             break;
           case 'background':
