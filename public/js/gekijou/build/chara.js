@@ -9,7 +9,7 @@ var Chara;
 Chara = (function() {
   function Chara(el) {
     this.el = el;
-    this.iconUrlPrefix = 'http://static.missevan.cn/avatars/';
+    this.iconUrlPrefix = 'http://cdn.xiaojuchang.tv/avatars/';
     this.charas = [];
     this._lastid = 0;
     this._showmodal = false;

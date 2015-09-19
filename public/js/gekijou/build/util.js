@@ -279,7 +279,7 @@ ImageTools = (function() {
       }
     });
     input.fileupload({
-      url: 'http://backend1.missevan.cn/mimage/chatimage',
+      url: 'http://ju.missevan.cn/mimage/chatimage',
       dropZone: dz,
       dataType: 'json',
       multipart: true,
